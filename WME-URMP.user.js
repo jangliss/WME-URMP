@@ -2584,7 +2584,7 @@ function WMEURMPT_Injected() {
     button.setAttribute("download", t + "s.csv");
     var data = ""
     var displayedCount = 0;
-    data += "date opened,type,age,visited,description,num comments,date updated,updated by,resolved,url\n";
+    data += "date opened,type,age,visited,description,num comments,date updated,updated by,updated age,resolved,url\n";
     var src = WMEURMPT.URList;
     var filterFunc = WMEURMPT.isURFiltered;
     var limit = WMEURMPT.currentURLimitTo;
@@ -2607,10 +2607,18 @@ function WMEURMPT_Injected() {
       displayedCount++;
       var number = t == "UR" ? WMEURMPT.getDuration(src[i].data.driveDate) : src[i].data.weight;
       var type = typeFunc(t == "UR" ? src[i].data.type : src[i].data.subType);
-      var updatedBy = (src[i].data.updatedBy == -1 ? "Wazer": "Editor");
-      var updatedDate = (src[i].data.updatedOn === null ? "" : ((new Date(src[i].data.updatedOn)).toLocaleString()));
+      var commentCount = src[i].data.session.comments.length;
+      var updatedBy = (src[i].data.updatedBy === -1 ? "Reporter": "Editor");
+      if (commentCount > 0) {
+        var m = commentCount - 1;
+        updatedBy = src[i].data.session.comments[m].userName;
+      }
+      var updatedDate = (src[i].data.updatedOn === null ? "" : ((new Date(src[i].data.updatedOn)).toLocaleString('sv-SE')));
+      var updatedDays = (src[i].data.updatedOn === null ? 0 : ((new Date()).getTime() - (new Date(src[i].data.updatedOn).getTime())));
+      updatedDays = updatedDays / (1000*60*60*24);
+      var updatedAge = Math.round(updatedDays);
       var url = location.protocol + "//" + location.host + location.pathname + "?lon=" + src[i].lonlat.lon + "&lat=" + src[i].lonlat.lat + "&zoom=5" + (t == "UR" ? "&mapUpdateRequest=" : "&mapProblem=") + src[i].id;
-      data += "\"" + src[i].data.localDriveTime + "\",\"" + type + "\",\"" + number + "\",\"" + src[i].alreadyVisited + "\",\"" + (t == "UR" ? src[i].data.hasOwnProperty("description") && src[i].data.description ? src[i].data.description : "N/A" : "") + "\",\"" + src[i].data.session.comments.length + "\",\"" + updatedDate + "\",\"" + updatedBy + "\",\"" + (src[i].data.resolvedOn === null ? "N":"Y") +"\",\"" + url + "\"\n";
+      data += "\"" + src[i].data.localDriveTime + "\",\"" + type + "\",\"" + number + "\",\"" + src[i].alreadyVisited + "\",\"" + (t == "UR" ? src[i].data.hasOwnProperty("description") && src[i].data.description ? src[i].data.description : "N/A" : "") + "\",\"" + commentCount + "\",\"" + updatedDate + "\",\"" + updatedBy + "\",\"" + updatedAge + "\",\"" + (src[i].data.resolvedOn === null ? "N":"Y") +"\",\"" + url + "\"\n";
     }
     button.href = "data:text/plain;base64," + btoa(unescape(encodeURIComponent(data)));
   };
