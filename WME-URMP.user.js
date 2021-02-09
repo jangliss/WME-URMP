@@ -2608,7 +2608,7 @@ function WMEURMPT_Injected() {
       var number = t == "UR" ? WMEURMPT.getDuration(src[i].data.driveDate) : src[i].data.weight;
       var type = typeFunc(t == "UR" ? src[i].data.type : src[i].data.subType);
       var commentCount = src[i].data.session.comments.length;
-      var updatedBy = (src[i].data.updatedBy === -1 ? "Reporter": "Editor");
+      var updatedBy = "";
       if (commentCount > 0) {
         var m = commentCount - 1;
         updatedBy = src[i].data.session.comments[m].userName;
