@@ -464,13 +464,6 @@ function WMEURMPT_Injected() {
       return;
     }
     WMEURMPT.load();
-    W.app.modeController.model.bind("change:mode", function() {
-      if (W.app.modeController.getState() !== undefined) {
-        WMEURMPT.unregisterEvents();
-      }
-      if (W.app.modeController.getState() === undefined) {
-      }
-    });
     W.prefs.on("change:isImperial", function() {
       WMEURMPT.unregisterEvents();
     });
