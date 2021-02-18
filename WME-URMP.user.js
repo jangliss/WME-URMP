@@ -2574,7 +2574,11 @@ function WMEURMPT_Injected() {
     button.href = "data:text/plain;base64," + btoa(unescape(encodeURIComponent(data)));
   };
   WMEURMPT.exportCSV_URMPs = function(t, button) {
-    button.setAttribute("download", t + "s.csv");
+    let now = new Date();
+    let monthStr = now.getMonth() + 1;
+    let dayStr = now.getDate();
+    var nowStr = now.getFullYear() + "-" + ((monthStr < 10 ? '0':'') + monthStr) + ((dayStr < 10 ? '-0' : '-') + dayStr) + "_" + now.getHours() + "-" + now.getMinutes();
+    button.setAttribute("download", t + "s_" + nowStr + ".csv");
     var data = ""
     var displayedCount = 0;
     data += "date opened,type,age,visited,description,num comments,date updated,updated by,updated age,resolved,url\n";
@@ -2891,7 +2895,7 @@ function WMEURMPT_Injected() {
     elt.innerHTML = '<img src="data:image/png;base64,' + WMEURMPT.icon_csv + '" width="14px" height="14px" alt="Export CSV" title="Export CSV" />';
     elt.onclick = function() {
       var that = this;
-      WMEURMPT.exportCSV_URMPs("UR", that);
+      WMEURMPT.exportCSV_URMPs("MP", that);
     };
     mpMenu.appendChild(elt);
     elt = WMEURMPT.createElement("span");
