@@ -2581,7 +2581,7 @@ function WMEURMPT_Injected() {
     button.setAttribute("download", t + "s_" + nowStr + ".csv");
     var data = ""
     var displayedCount = 0;
-    data += "date opened,type,age,visited,description,num comments,date updated,updated by,updated age,resolved,url\n";
+    data += "date opened,type,age,visited,description,num comments,date updated,updated by,updated age,resolved,url,id\n";
     var src = WMEURMPT.URList;
     var filterFunc = WMEURMPT.isURFiltered;
     var limit = WMEURMPT.currentURLimitTo;
@@ -2615,7 +2615,7 @@ function WMEURMPT_Injected() {
       updatedDays = updatedDays / (1000*60*60*24);
       var updatedAge = Math.round(updatedDays);
       var url = location.protocol + "//" + location.host + location.pathname + "?lon=" + src[i].lonlat.lon + "&lat=" + src[i].lonlat.lat + "&zoom=5" + (t == "UR" ? "&mapUpdateRequest=" : "&mapProblem=") + src[i].id;
-      data += "\"" + src[i].data.localDriveTime + "\",\"" + type + "\",\"" + number + "\",\"" + src[i].alreadyVisited + "\",\"" + (t == "UR" ? src[i].data.hasOwnProperty("description") && src[i].data.description ? src[i].data.description : "N/A" : "") + "\",\"" + commentCount + "\",\"" + updatedDate + "\",\"" + updatedBy + "\",\"" + updatedAge + "\",\"" + (src[i].data.resolvedOn === null ? "N":"Y") +"\",\"" + url + "\"\n";
+      data += "\"" + src[i].data.localDriveTime + "\",\"" + type + "\",\"" + number + "\",\"" + src[i].alreadyVisited + "\",\"" + (t == "UR" ? src[i].data.hasOwnProperty("description") && src[i].data.description ? src[i].data.description : "N/A" : "") + "\",\"" + commentCount + "\",\"" + updatedDate + "\",\"" + updatedBy + "\",\"" + updatedAge + "\",\"" + (src[i].data.resolvedOn === null ? "N":"Y") +"\",\"" + url + "\",\"" + src[i].id + "\"\n";
     }
     button.href = "data:text/plain;base64," + btoa(unescape(encodeURIComponent(data)));
   };
