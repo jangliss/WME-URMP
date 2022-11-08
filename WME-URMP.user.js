@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.1
+// @version     3.9.4
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     https://www.waze.com/editor*
@@ -10,12 +10,13 @@
 // @exclude     https://www.waze.com/user/*
 // @exclude     https://www.waze.com/*/user/*
 // @icon        data:image/png;base64,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
+// @grant       GM_addElement
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @grant       unsafeWindow
-// @copyright   2017, dummyd2, seb-d59
-// @author    	dummyd2, seb-d59
+// @copyright   2022, dummyd2, seb-d59, jangliss
+// @author    	dummyd2, seb-d59, jangliss
 // @connect     seb.d59.waze.free.fr
 // ==/UserScript==
 
@@ -33,7 +34,7 @@
  *
  *   NoModifications - You may NOT MODIFY the script.
  *
- *  You are invited to contact the author: dummyd2 on waze forum for more details.
+ *  You are invited to contact the author: jangliss on waze forum for more details.
  *
 ********/
 
@@ -62,10 +63,11 @@ function downloadHelperInjected() {
     }, 500);
   }};
 }
-var downloadHelperInjectedScript = document.createElement("script");
-downloadHelperInjectedScript.textContent = "" + downloadHelperInjected.toString() + " \n" + "downloadHelperInjected();";
-downloadHelperInjectedScript.setAttribute("type", "application/javascript");
-document.body.appendChild(downloadHelperInjectedScript);
+
+let downloadHelperInjectedScript = GM_addElement('script', {
+  textContent: "" + downloadHelperInjected.toString() + " \n" + "downloadHelperInjected();"  
+});
+
 if (typeof unsafeWindow === "undefined") {
   unsafeWindow = function() {
     var dummyElem = document.createElement("p");
@@ -130,10 +132,10 @@ function GMStorageHelperInjected() {
     }, 500);
   }};
 }
-var GMStorageHelperInjectedScript = document.createElement("script");
-GMStorageHelperInjectedScript.textContent = "" + GMStorageHelperInjected.toString() + " \n" + "GMStorageHelperInjected();";
-GMStorageHelperInjectedScript.setAttribute("type", "application/javascript");
-document.body.appendChild(GMStorageHelperInjectedScript);
+let GMStorageHelperInjectedScript = GM_addElement('script', {
+  textContent: "" + GMStorageHelperInjected.toString() + " \n" + "GMStorageHelperInjected();"
+});
+
 if (typeof unsafeWindow === "undefined") {
   unsafeWindow = function() {
     var dummyElem = document.createElement("p");
@@ -159,8 +161,8 @@ function lookForGMStorageHelperJob() {
 window.setTimeout(lookForGMStorageHelperJob);
 function WMEURMPT_Injected() {
   var WMEURMPT = {};
-  WMEURMPT.isDebug = true;
-  WMEURMPT.urmpt_version = "3.9.1";
+  WMEURMPT.isDebug = false;
+  WMEURMPT.urmpt_version = "3.9.4";
   WMEURMPT.URList = [];
   WMEURMPT.URMap = {};
   WMEURMPT.MPList = [];
@@ -231,12 +233,12 @@ function WMEURMPT_Injected() {
   WMEURMPT.scanMC = true;
   WMEURMPT.scanPUR = true;
   WMEURMPT.flashOdd = true;
-  WMEURMPT.URDescriptionMaxLength = 18;
-  WMEURMPT.MPDescriptionMaxLength = 27;
+  WMEURMPT.URDescriptionMaxLength = 15;
+  WMEURMPT.MPDescriptionMaxLength = 20;
   WMEURMPT.MCSubjectMaxLength = 9;
-  WMEURMPT.MCBodyMaxLength = 20;
-  WMEURMPT.PURCategoriesMaxLength = 10;
-  WMEURMPT.PURNameMaxLength = 15;
+  WMEURMPT.MCBodyMaxLength = 12;
+  WMEURMPT.PURCategoriesMaxLength = 9;
+  WMEURMPT.PURNameMaxLength = 12;
   WMEURMPT.visitedURBeforeActionsSaved = [];
   WMEURMPT.visitedMPBeforeActionsSaved = [];
   WMEURMPT.visitedTPBeforeActionsSaved = [];
@@ -380,7 +382,7 @@ function WMEURMPT_Injected() {
     return l;
   };
   WMEURMPT.getDuration = function(ts) {
-    var aDate = new Date;
+    var aDate = new Date();
     var now = aDate.getTime();
     var duration = now - ts;
     aDate.setHours(0);
@@ -448,7 +450,7 @@ function WMEURMPT_Injected() {
     window.setTimeout(WMEURMPT.initialize, 500);
   };
   WMEURMPT.setupPolicies = function() {
-    if (typeof(TrustedHTML) !== "undefined") {
+    if (typeof(trustedTypes) !== "undefined") {
       WMEURMPT.policySafeHTML = trustedTypes.createPolicy("policySafeHTML", {
         createHTML: (innerText) => innerText
       });
@@ -588,7 +590,7 @@ function WMEURMPT_Injected() {
     WMEURMPT.logDebug("WMEURMPT.managedAreas", WMEURMPT.managedAreas);
   };
   WMEURMPT.initCountryList = function() {
-    var countryList = new WMEURMPT.URT_AREA;
+    var countryList = new WMEURMPT.URT_AREA();
     countryList.category = "country";
     countryList.getCategoryElementsFromServer(WMEURMPT.newCountryListAvailable);
   };
@@ -771,23 +773,19 @@ function WMEURMPT_Injected() {
             if (this.bintree.left.components[i].bintreeContainsPoint(point) == true) {
               return true;
             }
-          } else {
-            if (this.bintree.left.components[i].containsPoint(point) == true) {
+          } else if (this.bintree.left.components[i].containsPoint(point) == true) {
               return true;
             }
           }
-        }
         for (var i = 0; i < this.bintree.right.components.length; i++) {
           if (this.bintree.right.components[i].hasOwnProperty("bintree") == true) {
             if (this.bintree.right.components[i].bintreeContainsPoint(point) == true) {
               return true;
             }
-          } else {
-            if (this.bintree.right.components[i].containsPoint(point) == true) {
+          } else if (this.bintree.right.components[i].containsPoint(point) == true) {
               return true;
             }
           }
-        }
         return false;
       }
       return this.containsPoint(point);
@@ -933,12 +931,10 @@ function WMEURMPT_Injected() {
     if (ids.length != 0) {
       url = "https://" + document.location.host + WMEURMPT.wazeConfigApiUpdateRequestSessions + "?ids=" + ids.join(",");
       if (XMLHttpRequest) {
-        xhr3_object = new XMLHttpRequest;
-      } else {
-        if (ActiveXObject) {
+        xhr3_object = new XMLHttpRequest();
+      } else if (ActiveXObject) {
           xhr3_object = new ActiveXObject("Microsoft.XMLHTTP");
         }
-      }
       var URcomments = null;
       xhr3_object.open("GET", url, false);
       xhr3_object.ontimeout = function() {
@@ -1129,14 +1125,12 @@ function WMEURMPT_Injected() {
           if (ur.data.session.comments[i].userName.toLowerCase() == WMEURMPT.currentURKeyWord.toLowerCase()) {
             found = true;
             break;
-          } else {
-            if (ur.data.session.comments[i].text.toLowerCase().indexOf(WMEURMPT.currentURKeyWord.toLowerCase()) != -1) {
+          } else if (ur.data.session.comments[i].text.toLowerCase().indexOf(WMEURMPT.currentURKeyWord.toLowerCase()) != -1) {
               found = true;
               break;
             }
           }
         }
-      }
       if (!found) {
         return true;
       }
@@ -1828,7 +1822,7 @@ function WMEURMPT_Injected() {
   WMEURMPT.addCountryToAreaList = function() {
     var country = WMEURMPT.getId("urmpt-countryList").value;
     WMEURMPT.log("Add country to filter list: " + country);
-    var area = new WMEURMPT.URT_AREA;
+    var area = new WMEURMPT.URT_AREA();
     area.category = "country";
     var areaPath = country.split("->");
     if (areaPath.length > 1) {
@@ -1881,7 +1875,7 @@ function WMEURMPT_Injected() {
       alert("Please, choose a file before.");
       return;
     }
-    var ca = new WMEURMPT.URT_AREA;
+    var ca = new WMEURMPT.URT_AREA();
     ca.category = "custom";
     ca.name = elName.value;
     WMEURMPT.log("Add CA to scan list: " + ca.name);
@@ -1895,7 +1889,7 @@ function WMEURMPT_Injected() {
   WMEURMPT.handleFileSelectAddFromJSON = function(evt) {
     var files = evt.target.files;
     for (var i = 0, f; f = files[i]; i++) {
-      var reader = new FileReader;
+      var reader = new FileReader();
       reader.onload = function(theFile) {
         return function(e) {
           WMEURMPT.lastUploadedJSON = e.target.result;
@@ -1912,7 +1906,7 @@ function WMEURMPT_Injected() {
     }
     var customAreas = JSON.parse(WMEURMPT.lastUploadedJSON);
     customAreas.forEach(function(a) {
-      var ca = new WMEURMPT.URT_AREA;
+      var ca = new WMEURMPT.URT_AREA();
       ca.category = "custom";
       ca.name = a.name;
       WMEURMPT.log("Add CA to scan list: " + ca.name);
@@ -1952,7 +1946,7 @@ function WMEURMPT_Injected() {
       alert("You must draw an area venue and not save it. Then you can add it as a custom area.");
       return;
     }
-    var ca = new WMEURMPT.URT_AREA;
+    var ca = new WMEURMPT.URT_AREA();
     ca.category = "custom";
     ca.name = elName.value;
     WMEURMPT.log("Add CA to scan list: " + ca.name);
@@ -1991,7 +1985,7 @@ function WMEURMPT_Injected() {
       alert("The lon/lat coords are not filled correctly.");
       return;
     }
-    var ca = new WMEURMPT.URT_AREA;
+    var ca = new WMEURMPT.URT_AREA();
     ca.category = "custom";
     ca.name = elName.value;
     WMEURMPT.log("Add CA to scan list: " + ca.name);
@@ -2026,7 +2020,7 @@ function WMEURMPT_Injected() {
         WMEURMPT.getId("urmpt-area-custom-save-" + WMEURMPT.areaList.custom[c].name).style.display = "inline";
         var area = WMEURMPT.areaList.custom[c];
         var featureLandmark = require("Waze/Feature/Vector/Landmark");
-        var landmark = new featureLandmark;
+        var landmark = new featureLandmark();
         var center = area.geometryOL.geometry.getCentroid();
         var xy = OpenLayers.Layer.SphericalMercator.forwardMercator(center.x, center.y);
         WMEURMPT.wazeMap.setCenter(xy);
@@ -2076,7 +2070,7 @@ function WMEURMPT_Injected() {
       return;
     }
     WMEURMPT.removeCustomNameFromAreaList(areaName);
-    var ca = new WMEURMPT.URT_AREA;
+    var ca = new WMEURMPT.URT_AREA();
     ca.category = "custom";
     ca.name = areaName;
     ca.geometryWKT = "POLYGON ((";
@@ -2132,7 +2126,7 @@ function WMEURMPT_Injected() {
     }
     for (var c = 0; c < WMEURMPT.areaList.country.length; c++) {
       if (WMEURMPT.areaList.country[c].geometryOL == null) {
-        WMEURMPT.areaList.country[c].geometryOL = (new OpenLayers.Format.WKT).read(WMEURMPT.areaList.country[c].geometryWKT);
+        WMEURMPT.areaList.country[c].geometryOL = (new OpenLayers.Format.WKT()).read(WMEURMPT.areaList.country[c].geometryWKT);
         if (WMEURMPT.areaList.country[c].geometryOL == null || WMEURMPT.areaList.country[c].geometryOL.hasOwnProperty("geometry") == false) {
           WMEURMPT.log("Error on area " + WMEURMPT.areaList.country[c].name + ". Removing it... :(");
           WMEURMPT.areaList.country.splice(c, 1);
@@ -2179,7 +2173,7 @@ function WMEURMPT_Injected() {
     }
     for (var c = 0; c < WMEURMPT.areaList.custom.length; c++) {
       if (WMEURMPT.areaList.custom[c].geometryOL == null) {
-        WMEURMPT.areaList.custom[c].geometryOL = (new OpenLayers.Format.WKT).read(WMEURMPT.areaList.custom[c].geometryWKT);
+        WMEURMPT.areaList.custom[c].geometryOL = (new OpenLayers.Format.WKT()).read(WMEURMPT.areaList.custom[c].geometryWKT);
         if (WMEURMPT.areaList.custom[c].geometryOL == null || WMEURMPT.areaList.custom[c].geometryOL.hasOwnProperty("geometry") == false) {
           WMEURMPT.log("Error on area " + WMEURMPT.areaList.custom[c].name + ". Removing it... :(");
           WMEURMPT.areaList.custom.splice(c, 1);
@@ -2548,11 +2542,9 @@ function WMEURMPT_Injected() {
   WMEURMPT.setupStatHandlers = function() {
     if (typeof $.fn.datepicker !== "undefined") {
       $("#urmpt-stat-from,#urmpt-stat-to").datepicker();
-    } else {
-      if (typeof $.fn.daterangepicker !== "undefined") {
+    } else if (typeof $.fn.daterangepicker !== "undefined") {
         $("#urmpt-stat-from,#urmpt-stat-to").daterangepicker({singleDatePicker:!0, locale:{format:"YYYY-MM-DD"}});
       }
-    }
     WMEURMPT.getId("urmpt-stat-refresh").onclick = function() {
       var dateFrom = WMEURMPT.getId("urmpt-stat-from").value;
       var dateTo = WMEURMPT.getId("urmpt-stat-to").value;
@@ -2561,7 +2553,7 @@ function WMEURMPT_Injected() {
     WMEURMPT.getId("urmpt-stat-export_csv").onclick = WMEURMPT.exportStatsToCSV;
   };
   WMEURMPT.exportStatsToCSV = function() {
-    this.setAttribute("download", "URMPT_Stats_" + (new Date).toISOString().substr(0, 10) + "_" + WMEURMPT.me.userName + ".csv");
+    this.setAttribute("download", "URMPT_Stats_" + (new Date()).toISOString().substr(0, 10) + "_" + WMEURMPT.me.userName + ".csv");
     this.href = "data:application/octet-stream;charset=utf-8;base64," + btoa(WMEURMPT.statsCSV);
   };
   WMEURMPT.connectStatHandler = function() {
@@ -2674,25 +2666,21 @@ function WMEURMPT_Injected() {
         if (t == "UR") {
           if (number < 15) {
             color = "yellow";
-          } else {
-            if (number < 30) {
+          } else if (number < 30) {
               color = "orange";
             } else {
               color = "red";
             }
-          }
         } else {
           if (number < 51) {
             color = "yellow";
-          } else {
-            if (number < 100) {
+          } else if (number < 100) {
               color = "orange";
             } else {
               color = "red";
             }
           }
         }
-      }
       if (data.hasOwnProperty(type) == false) {
         data[type] = [];
       }
@@ -2786,7 +2774,7 @@ function WMEURMPT_Injected() {
     var urmp_tab_content = WMEURMPT.createElement("div", "urmpt-tab-content");
     urmp_tab_content.className = "tab-content";
     urmp_tab_content.style.paddingBottom = "10px";
-    urmp_tab_content.style.paddingTop = "10px";
+    urmp_tab_content.style.paddingTop = "0px";
     urmp_tab_content.style.paddingLeft = "5px";
     urmp_tab_content.style.paddingRight = "5px";
     addon.appendChild(urmp_tab_content);
@@ -2884,7 +2872,7 @@ function WMEURMPT_Injected() {
     var mp_tab_pane = WMEURMPT.createElement("section", "urmp-tabs-mp");
     mp_tab_pane.className = "tab-pane";
     mp_tab_pane.style.paddingLeft = "0px";
-    mp_tab_pane.style.paddingRight = "0px";
+    mp_tab_pane.style.paddingRight = "35px";
     urmp_tab_content.appendChild(mp_tab_pane);
     var mpMenu = WMEURMPT.createElement("center");
     mp_tab_pane.appendChild(mpMenu);
@@ -2967,7 +2955,7 @@ function WMEURMPT_Injected() {
     var mc_tab_pane = WMEURMPT.createElement("section", "urmp-tabs-mc");
     mc_tab_pane.className = "tab-pane";
     mc_tab_pane.style.paddingLeft = "0px";
-    mc_tab_pane.style.paddingRight = "0px";
+    mc_tab_pane.style.paddingRight = "35px";
     urmp_tab_content.appendChild(mc_tab_pane);
     var mcMenu = WMEURMPT.createElement("center");
     mc_tab_pane.appendChild(mcMenu);
@@ -3011,7 +2999,7 @@ function WMEURMPT_Injected() {
     var pur_tab_pane = WMEURMPT.createElement("section", "urmp-tabs-pur");
     pur_tab_pane.className = "tab-pane";
     pur_tab_pane.style.paddingLeft = "0px";
-    pur_tab_pane.style.paddingRight = "0px";
+    pur_tab_pane.style.paddingRight = "35px";
     urmp_tab_content.appendChild(pur_tab_pane);
     var purMenu = WMEURMPT.createElement("center");
     pur_tab_pane.appendChild(purMenu);
@@ -3061,14 +3049,14 @@ function WMEURMPT_Injected() {
     var os_tab_pane = WMEURMPT.createElement("section", "urmp-tabs-os");
     os_tab_pane.className = "tab-pane";
     os_tab_pane.style.paddingLeft = "0px";
-    os_tab_pane.style.paddingRight = "0px";
+    os_tab_pane.style.paddingRight = "40px";
     urmp_tab_content.appendChild(os_tab_pane);
     var divStats = WMEURMPT.createElement("div", "urmpt-stats");
     os_tab_pane.appendChild(divStats);
     var areas_tab_pane = WMEURMPT.createElement("section", "urmp-tabs-areas");
     areas_tab_pane.className = "tab-pane";
     areas_tab_pane.style.paddingLeft = "0px";
-    areas_tab_pane.style.paddingRight = "0px";
+    areas_tab_pane.style.paddingRight = "40px";
     urmp_tab_content.appendChild(areas_tab_pane);
     if (WMEURMPT.ul >= 8 || WMEURMPT.me.isCountryManager()) {
       var divCM = WMEURMPT.createElement("div");
@@ -3162,6 +3150,7 @@ function WMEURMPT_Injected() {
     areas_tab_pane.appendChild(divCA);
     var settings_tab_pane = WMEURMPT.createElement("section", "urmp-tabs-settings");
     settings_tab_pane.className = "tab-pane";
+    settings_tab_pane.style.paddingRight = "35px";
     urmp_tab_content.appendChild(settings_tab_pane);
     var ur_description_column_width = WMEURMPT.createElement("span");
     ur_description_column_width.innerHTML = WMEURMPT.convertHtml('UR description column width: <input style="height:20px" type="text" size="3" id="urmpt-setting-urdescriptionwidth" value="' + WMEURMPT.URDescriptionMaxLength + '"/><br>');
@@ -4226,12 +4215,10 @@ function WMEURMPT_Injected() {
         }
         if (categoriesA.toUpperCase() < categoriesB.toUpperCase()) {
           return -1;
-        } else {
-          if (categoriesA.toUpperCase() > categoriesB.toUpperCase()) {
+        } else if (categoriesA.toUpperCase() > categoriesB.toUpperCase()) {
             return 1;
           } else {
             return WMEURMPT.comparePUR(a, b, i + 1);
-          }
         }
         break;
       case WMEURMPT.sortModeListPUR.categoriesASC:
@@ -4245,36 +4232,30 @@ function WMEURMPT_Injected() {
         }
         if (categoriesA.toUpperCase() > categoriesB.toUpperCase()) {
           return -1;
-        } else {
-          if (categoriesA.toUpperCase() < categoriesB.toUpperCase()) {
+        } else if (categoriesA.toUpperCase() < categoriesB.toUpperCase()) {
             return 1;
           } else {
             return WMEURMPT.comparePUR(a, b, i + 1);
-          }
         }
         break;
       case WMEURMPT.sortModeListPUR.nameDSC:
         var nameA = a.data.name, nameB = b.data.name;
         if (nameA.toUpperCase() < nameB.toUpperCase()) {
           return -1;
-        } else {
-          if (nameA.toUpperCase() > nameB.toUpperCase()) {
+        } else if (nameA.toUpperCase() > nameB.toUpperCase()) {
             return 1;
           } else {
             return WMEURMPT.comparePUR(a, b, i + 1);
-          }
         }
         break;
       case WMEURMPT.sortModeListPUR.nameASC:
         var nameA = a.data.name, nameB = b.data.name;
         if (nameA.toUpperCase() > nameB.toUpperCase()) {
           return -1;
-        } else {
-          if (nameA.toUpperCase() < nameB.toUpperCase()) {
+        } else if (nameA.toUpperCase() < nameB.toUpperCase()) {
             return 1;
           } else {
             return WMEURMPT.comparePUR(a, b, i + 1);
-          }
         }
         break;
       case WMEURMPT.sortModeListPUR.distanceDSC:
@@ -4420,10 +4401,8 @@ function WMEURMPT_Injected() {
     if (ageInDays < 15) {
       b = 0;
       g = 255 - ageInDays * 17;
-    } else {
-      if (ageInDays < 30) {
+    } else if (ageInDays < 30) {
         b = (ageInDays - 15) * 17;
-      }
     }
     if (g < 0) {
       g = 0;
@@ -4440,17 +4419,13 @@ function WMEURMPT_Injected() {
     if (MPWeight == 2) {
       r = 255;
       b = 0;
-    } else {
-      if (MPWeight == 3) {
+    } else if (MPWeight == 3) {
         g = 255;
         b = 0;
-      } else {
-        if (MPWeight > 3) {
+    } else if (MPWeight > 3) {
           r = 0;
           g = 255;
           b = 0;
-        }
-      }
     }
     return "#" + WMEURMPT.decimalToHex(r, 2) + WMEURMPT.decimalToHex(g, 2) + WMEURMPT.decimalToHex(b, 2);
   };
@@ -4693,7 +4668,7 @@ function WMEURMPT_Injected() {
     }
     for (var i = 0; i < WMEURMPT.MPList.length; i++) {
       if (WMEURMPT.MPList[i].type == "problem" && WMEURMPT.MPList[i].data.hasOwnProperty("subType") && WMEURMPT.MPList[i].data.subType == 300) {
-        var aDate = new Date;
+        var aDate = new Date();
         var now = aDate.getTime();
         var deltaH = (WMEURMPT.MPList[i].data.startTime - now) / 3600000;
         var MPWeight = Math.ceil((720 - deltaH) / 7.2);
@@ -5301,15 +5276,13 @@ function WMEURMPT_Injected() {
           if (remaining < 10) {
             spanText.innerHTML = WMEURMPT.escapeHtml(WMEURMPT.URList[urIndex].data.description.substr(0, WMEURMPT.URDescriptionMaxLength));
             WMEURMPT.URList[urIndex].data.descriptionOffset = -10;
-          } else {
-            if (remaining < WMEURMPT.URDescriptionMaxLength) {
+          } else if (remaining < WMEURMPT.URDescriptionMaxLength) {
               WMEURMPT.URList[urIndex].data.descriptionOffset++;
             } else {
               if (WMEURMPT.URList[urIndex].data.descriptionOffset > 0) {
                 spanText.innerHTML = WMEURMPT.escapeHtml(WMEURMPT.URList[urIndex].data.description.substr(WMEURMPT.URList[urIndex].data.descriptionOffset + 1, WMEURMPT.URDescriptionMaxLength));
               }
               WMEURMPT.URList[urIndex].data.descriptionOffset++;
-            }
           }
         }
       }
@@ -5349,15 +5322,13 @@ function WMEURMPT_Injected() {
           if (remaining < 10) {
             spanText.innerHTML = WMEURMPT.escapeHtml(description.substr(0, WMEURMPT.MPDescriptionMaxLength));
             WMEURMPT.MPList[mpIndex].data.descriptionOffset = -10;
-          } else {
-            if (remaining < WMEURMPT.MPDescriptionMaxLength) {
+          } else if (remaining < WMEURMPT.MPDescriptionMaxLength) {
               WMEURMPT.MPList[mpIndex].data.descriptionOffset++;
             } else {
               if (WMEURMPT.MPList[mpIndex].data.descriptionOffset > 0) {
                 spanText.innerHTML = WMEURMPT.escapeHtml(description.substr(WMEURMPT.MPList[mpIndex].data.descriptionOffset + 1, WMEURMPT.MPDescriptionMaxLength));
               }
               WMEURMPT.MPList[mpIndex].data.descriptionOffset++;
-            }
           }
         }
       }
@@ -5399,15 +5370,13 @@ function WMEURMPT_Injected() {
             if (remaining < 10) {
               spanText.innerHTML = WMEURMPT.escapeHtml(text.substr(0, child.maxl));
               theMC.data[child.att + "Offset"] = -10;
-            } else {
-              if (remaining < child.maxl) {
+            } else if (remaining < child.maxl) {
                 theMC.data[child.att + "Offset"]++;
               } else {
                 if (theMC.data[child.att + "Offset"] > 0) {
                   spanText.innerHTML = WMEURMPT.escapeHtml(text.substr(theMC.data[child.att + "Offset"] + 1, child.maxl));
                 }
                 theMC.data[child.att + "Offset"]++;
-              }
             }
           });
         }
@@ -5455,15 +5424,13 @@ function WMEURMPT_Injected() {
               if (remaining < 10) {
                 spanText.innerHTML = WMEURMPT.escapeHtml(text.substr(0, child.maxl));
                 thePUR.data.categoriesOffset = -10;
-              } else {
-                if (remaining < child.maxl) {
+              } else if (remaining < child.maxl) {
                   thePUR.data.categoriesOffset++;
                 } else {
                   if (thePUR.data.categoriesOffset > 0) {
                     spanText.innerHTML = WMEURMPT.escapeHtml(text.substr(thePUR.data.categoriesOffset + 1, child.maxl));
                   }
                   thePUR.data.categoriesOffset++;
-                }
               }
             }
             if (child.att == "name") {
@@ -5482,15 +5449,13 @@ function WMEURMPT_Injected() {
               if (remaining < 10) {
                 spanText.innerHTML = WMEURMPT.escapeHtml(text.substr(0, child.maxl));
                 thePUR.data[child.att + "Offset"] = -10;
-              } else {
-                if (remaining < child.maxl) {
+              } else if (remaining < child.maxl) {
                   thePUR.data[child.att + "Offset"]++;
                 } else {
                   if (thePUR.data[child.att + "Offset"] > 0) {
                     spanText.innerHTML = WMEURMPT.escapeHtml(text.substr(thePUR.data[child.att + "Offset"] + 1, child.maxl));
                   }
                   thePUR.data[child.att + "Offset"]++;
-                }
               }
             }
           });
@@ -5929,8 +5894,7 @@ function WMEURMPT_Injected() {
         WMEURMPT.logDebug("clickUR ur: ", ur);
         if (ur) {
           ur.refreshFromWMEData();
-        } else {
-          if (ur == null) {
+        } else if (ur == null) {
             var theUR = WMEURMPT.wazeModel.mapUpdateRequests.getObjectById(WMEURMPT.currentURID);
             WMEURMPT.logDebug("clickUR - theUR: ", theUR);
             if (theUR.geometry.hasOwnProperty("realX") && theUR.geometry.hasOwnProperty("realY")) {
@@ -5944,7 +5908,6 @@ function WMEURMPT_Injected() {
             if (ur.refreshFromWMEData()) {
               WMEURMPT.URList.push(ur);
               WMEURMPT.URMap = WMEURMPT.listToObject(WMEURMPT.URList);
-            }
           }
         }
         WMEURMPT.updateIHMFromURList();
@@ -5960,8 +5923,7 @@ function WMEURMPT_Injected() {
     var pur = WMEURMPT.getPURFromId(WMEURMPT.currentPURID);
     if (pur) {
       pur.refreshFromWMEData();
-    } else {
-      if (pur == null) {
+    } else if (pur == null) {
         var thePUR = WMEURMPT.wazeModel.venues.objects[WMEURMPT.currentPURID];
         var lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(thePUR.attributes.geometry.getCentroid().x, thePUR.attributes.geometry.getCentroid().y);
         WMEURMPT.logDebug("clickPUR - lonlat: ", lonlat);
@@ -5970,7 +5932,6 @@ function WMEURMPT_Injected() {
         if (pur.refreshFromWMEData()) {
           WMEURMPT.PURList.push(pur);
           WMEURMPT.PURMap = WMEURMPT.listToObject(WMEURMPT.PURList);
-        }
       }
     }
     WMEURMPT.updateIHMFromPURList();
@@ -5983,15 +5944,13 @@ function WMEURMPT_Injected() {
     var mc = WMEURMPT.getMCFromId(WMEURMPT.currentMCID);
     if (mc) {
       mc.refreshFromWMEData();
-    } else {
-      if (mc == null) {
+    } else if (mc == null) {
         var theMC = WMEURMPT.wazeModel.mapComments.objects[WMEURMPT.currentMCID];
         var lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theMC.attributes.geometry.getCentroid().x, theMC.attributes.geometry.getCentroid().y);
         mc = new WMEURMPT.URT_MC(theMC.attributes.id, lonlat.lon, lonlat.lat);
         if (mc.refreshFromWMEData()) {
           WMEURMPT.MCList.push(mc);
           WMEURMPT.MCMap = WMEURMPT.listToObject(WMEURMPT.MCList);
-        }
       }
     }
     WMEURMPT.updateIHMFromMCList();
@@ -6028,13 +5987,11 @@ function WMEURMPT_Injected() {
     if (ur != null && WMEURMPT.wazeMap.panelRegion.currentView.conversationView !== undefined) {
       if (WMEURMPT.wazeMap.panelRegion.currentView.conversationView && ur.data.session.comments.length == WMEURMPT.wazeMap.panelRegion.currentView.conversationView.viewModel.attributes.commentCount) {
         WMEURMPT.log("Comment is updated...");
-      } else {
-        if (WMEURMPT.wazeMap.panelRegion.currentView.conversationView) {
+      } else if (WMEURMPT.wazeMap.panelRegion.currentView.conversationView) {
           WMEURMPT.log("update Comment and refresh...");
           ur.refreshFromWMEData(true);
           ur.lastVisitCommentsCount = ur.data.session.comments.length;
           WMEURMPT.updateIHMFromURList();
-        }
       }
     }
   };
@@ -6169,7 +6126,7 @@ function WMEURMPT_Injected() {
         mp.data.resolvedBy = null;
         mp.data.resolvedByName = null;
       } else {
-        var now = new Date;
+        var now = new Date();
         mp.data.resolvedOn = now.getTime();
         mp.data.resolvedBy = WMEURMPT.me.id;
         mp.data.resolvedByName = WMEURMPT.me.userName;
@@ -6187,7 +6144,7 @@ function WMEURMPT_Injected() {
         ur.data.resolvedBy = null;
         ur.data.resolvedByName = null;
       } else {
-        var now = new Date;
+        var now = new Date();
         ur.data.resolvedOn = now.getTime();
         ur.data.resolvedBy = WMEURMPT.me.id;
         ur.data.resolvedByName = WMEURMPT.me.userName;
@@ -6232,12 +6189,10 @@ function WMEURMPT_Injected() {
     var url = "https://" + document.location.host + WMEURMPT.wazeConfigApiFeatures + "?language=en" + (WMEURMPT.scanUR ? "&mapUpdateRequestFilter=3%2C0" : "") + (WMEURMPT.scanMP ? "&problemFilter=3%2C3" : "") + "&mapComments=" + (WMEURMPT.scanMC ? "true" : "false") + "&venueLevel=3&venueFilter=" + (WMEURMPT.scanPUR ? "3%2C3%2C3" : "0%2C0%2C0") + "&editableAreas=true&bbox=" + bounds.left + "%2C" + bounds.bottom + "%2C" + bounds.right + "%2C" + bounds.top;
     var xhr3_object = null;
     if (XMLHttpRequest) {
-      xhr3_object = new XMLHttpRequest;
-    } else {
-      if (ActiveXObject) {
+      xhr3_object = new XMLHttpRequest();
+    } else if (ActiveXObject) {
         xhr3_object = new ActiveXObject("Microsoft.XMLHTTP");
       }
-    }
     var MPs = null;
     xhr3_object.open("GET", url, false);
     xhr3_object.send(null);
@@ -6483,11 +6438,9 @@ function WMEURMPT_Injected() {
       if (urIds.length != 0) {
         url = "https://" + document.location.host + WMEURMPT.wazeConfigApiUpdateRequestSessions + "?ids=" + urIds.join(",");
         if (XMLHttpRequest) {
-          xhr3_object = new XMLHttpRequest;
-        } else {
-          if (ActiveXObject) {
+          xhr3_object = new XMLHttpRequest();
+        } else if (ActiveXObject) {
             xhr3_object = new ActiveXObject("Microsoft.XMLHTTP");
-          }
         }
         var URcomments = null;
         xhr3_object.open("GET", url, false);
@@ -6771,7 +6724,7 @@ function WMEURMPT_Injected() {
         for (var lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
           for (var lon = lonlatFrom.lon; lon < lonlatTo.lon; lon += 0.5) {
             WMEURMPT.logDebug("Scan editable area from: " + lon + " " + lat + " to: " + (lon + 1) + " " + (lat + 1));
-            var tileBounds = new OpenLayers.Bounds;
+            var tileBounds = new OpenLayers.Bounds();
             tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)));
             tileBounds.extend(new OpenLayers.LonLat((lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)));
             WMEURMPT.scanAreaBoundsList.push(tileBounds);
@@ -6791,7 +6744,7 @@ function WMEURMPT_Injected() {
         for (var lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
           for (var lon = lonlatFrom.lon; lon < lonlatTo.lon; lon += 0.5) {
             WMEURMPT.logDebug("Scan drive area from: " + lon + " " + lat + " to: " + (lon + 1) + " " + (lat + 1));
-            var tileBounds = new OpenLayers.Bounds;
+            var tileBounds = new OpenLayers.Bounds();
             tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)));
             tileBounds.extend(new OpenLayers.LonLat((lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)));
             WMEURMPT.scanAreaBoundsList.push(tileBounds);
@@ -6811,7 +6764,7 @@ function WMEURMPT_Injected() {
         for (var lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
           for (var lon = lonlatFrom.lon; lon < lonlatTo.lon; lon += 0.5) {
             WMEURMPT.logDebug("Scan managed area from: " + lon + " " + lat + " to: " + (lon + 1) + " " + (lat + 1));
-            var tileBounds = new OpenLayers.Bounds;
+            var tileBounds = new OpenLayers.Bounds();
             tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)));
             tileBounds.extend(new OpenLayers.LonLat((lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)));
             WMEURMPT.scanAreaBoundsList.push(tileBounds);
@@ -6844,14 +6797,14 @@ function WMEURMPT_Injected() {
               lonStep = 180 - lon;
             }
             WMEURMPT.logDebug("Scan country from: " + lon + " " + lat + " to: " + (lon + lonStep) + " " + (lat + 0.5));
-            var tileBounds = new OpenLayers.Bounds;
+            var tileBounds = new OpenLayers.Bounds();
             tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)));
             tileBounds.extend(new OpenLayers.LonLat((lon + lonStep).toFixed(6), (lat + 0.5).toFixed(6)));
             WMEURMPT.scanAreaBoundsList.push(tileBounds);
             if (lonStep != 0.5) {
               lonStep = 0.5 - lonStep;
               WMEURMPT.logDebug("Scan country from: 0! " + lat + " to: " + lonStep + " " + (lat + 0.5));
-              var tileBounds = new OpenLayers.Bounds;
+              var tileBounds = new OpenLayers.Bounds();
               tileBounds.extend(new OpenLayers.LonLat(0, lat.toFixed(6)));
               tileBounds.extend(new OpenLayers.LonLat(lonStep.toFixed(6), (lat + 0.5).toFixed(6)));
               WMEURMPT.scanAreaBoundsList.push(tileBounds);
@@ -6879,7 +6832,7 @@ function WMEURMPT_Injected() {
         for (var lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
           for (var lon = lonlatFrom.lon; lon < lonlatTo.lon; lon += 0.5) {
             WMEURMPT.logDebug("Scan custom from: " + lon + " " + lat + " to: " + (lon + 1) + " " + (lat + 1));
-            var tileBounds = new OpenLayers.Bounds;
+            var tileBounds = new OpenLayers.Bounds();
             tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)));
             tileBounds.extend(new OpenLayers.LonLat((lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)));
             WMEURMPT.scanAreaBoundsList.push(tileBounds);
@@ -6928,19 +6881,19 @@ function WMEURMPT_Injected() {
       WMEURMPT.scanAreaBoundsList.shift();
       if (tileBounds.right - tileBounds.left > 0.02 && tileBounds.top - tileBounds.bottom > 0.02) {
         WMEURMPT.log("Error from waze server. Try a split...");
-        var newTileBounds = new OpenLayers.Bounds;
+        var newTileBounds = new OpenLayers.Bounds();
         newTileBounds.extend(new OpenLayers.LonLat(tileBounds.left, tileBounds.bottom));
         newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, (tileBounds.bottom + tileBounds.top) / 2.0));
         WMEURMPT.scanAreaBoundsList.unshift(newTileBounds);
-        newTileBounds = new OpenLayers.Bounds;
+        newTileBounds = new OpenLayers.Bounds();
         newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, tileBounds.bottom));
         newTileBounds.extend(new OpenLayers.LonLat(tileBounds.right, (tileBounds.bottom + tileBounds.top) / 2.0));
         WMEURMPT.scanAreaBoundsList.unshift(newTileBounds);
-        newTileBounds = new OpenLayers.Bounds;
+        newTileBounds = new OpenLayers.Bounds();
         newTileBounds.extend(new OpenLayers.LonLat(tileBounds.left, (tileBounds.bottom + tileBounds.top) / 2.0));
         newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, tileBounds.top));
         WMEURMPT.scanAreaBoundsList.unshift(newTileBounds);
-        newTileBounds = new OpenLayers.Bounds;
+        newTileBounds = new OpenLayers.Bounds();
         newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, (tileBounds.bottom + tileBounds.top) / 2.0));
         newTileBounds.extend(new OpenLayers.LonLat(tileBounds.right, tileBounds.top));
         WMEURMPT.scanAreaBoundsList.unshift(newTileBounds);
@@ -6976,19 +6929,19 @@ function WMEURMPT_Injected() {
     if (MPs != null) {
       if (MPs.hasOwnProperty("error") && MPs.error == 1) {
         WMEURMPT.log("Found " + MPs.logMessage.length + " " + MPs.logMessage.obj + ". This is a waze server limit. Enqueuing sub tile...");
-        var newTileBounds = new OpenLayers.Bounds;
+        var newTileBounds = new OpenLayers.Bounds();
         newTileBounds.extend(new OpenLayers.LonLat(tileBounds.left, tileBounds.bottom));
         newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, (tileBounds.bottom + tileBounds.top) / 2.0));
         WMEURMPT.scanAreaBoundsList.unshift(newTileBounds);
-        newTileBounds = new OpenLayers.Bounds;
+        newTileBounds = new OpenLayers.Bounds();
         newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, tileBounds.bottom));
         newTileBounds.extend(new OpenLayers.LonLat(tileBounds.right, (tileBounds.bottom + tileBounds.top) / 2.0));
         WMEURMPT.scanAreaBoundsList.unshift(newTileBounds);
-        newTileBounds = new OpenLayers.Bounds;
+        newTileBounds = new OpenLayers.Bounds();
         newTileBounds.extend(new OpenLayers.LonLat(tileBounds.left, (tileBounds.bottom + tileBounds.top) / 2.0));
         newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, tileBounds.top));
         WMEURMPT.scanAreaBoundsList.unshift(newTileBounds);
-        newTileBounds = new OpenLayers.Bounds;
+        newTileBounds = new OpenLayers.Bounds();
         newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, (tileBounds.bottom + tileBounds.top) / 2.0));
         newTileBounds.extend(new OpenLayers.LonLat(tileBounds.right, tileBounds.top));
         WMEURMPT.scanAreaBoundsList.unshift(newTileBounds);
@@ -7008,7 +6961,7 @@ function WMEURMPT_Injected() {
   };
   WMEURMPT.removeOldURMP = function(filterArea, type, tileBounds) {
     var i = 0;
-    var now = new Date;
+    var now = new Date();
     if (WMEURMPT.scanUR) {
       while (i < WMEURMPT.URList.length) {
         if (WMEURMPT.URList[i].data.hasOwnProperty("session") == false) {
@@ -7248,11 +7201,9 @@ function WMEURMPT_Injected() {
       } else {
         url = "https://" + document.location.host + WMEURMPT.wazeConfigApiUpdateRequestSessions + "?ids=" + this.id;
         if (XMLHttpRequest) {
-          xhr3_object = new XMLHttpRequest;
-        } else {
-          if (ActiveXObject) {
+          xhr3_object = new XMLHttpRequest();
+        } else if (ActiveXObject) {
             xhr3_object = new ActiveXObject("Microsoft.XMLHTTP");
-          }
         }
         var URcomments = null;
         xhr3_object.open("GET", url, false);
@@ -7768,14 +7719,12 @@ function WMEURMPT_Injected() {
           }
           WMEURMPT.logDebug("this.id: " + this.id + "; this.data.venueUpdateRequests[" + n + "].dateAdded: " + this.data.venueUpdateRequests[n].dateAdded, this);
         }
-      } else {
-        if (thePUR.attributes.hasOwnProperty("venueUpdateRequests") && thePUR.attributes.venueUpdateRequests.length == 0) {
+      } else if (thePUR.attributes.hasOwnProperty("venueUpdateRequests") && thePUR.attributes.venueUpdateRequests.length == 0) {
           WMEURMPT.PURList.splice(WMEURMPT.PURMap[this.id], 1);
           WMEURMPT.PURMap = WMEURMPT.listToObject(WMEURMPT.PURList);
           this.clean();
           WMEURMPT.updateIHMFromPURList();
           return;
-        }
       }
       this.clean();
       this.updateDistanceToMapCenter();
@@ -8122,14 +8071,14 @@ function WMEURMPT_Injected() {
     if (data.data != null) {
       WMEURMPT.areaList = JSON.parse(data.data);
       for (var c = 0; c < WMEURMPT.areaList.country.length; c++) {
-        var areatmp = new WMEURMPT.URT_AREA;
+        var areatmp = new WMEURMPT.URT_AREA();
         WMEURMPT.areaList.country[c].geometryOL = null;
         WMEURMPT.areaList.country[c].getGeometryFromServer = areatmp.getGeometryFromServer;
         WMEURMPT.areaList.country[c].getCategoryElementsFromServer = areatmp.getCategoryElementsFromServer;
         WMEURMPT.areaList.country[c].isInside = areatmp.isInside;
       }
       for (var c = 0; c < WMEURMPT.areaList.custom.length; c++) {
-        var areatmp = new WMEURMPT.URT_AREA;
+        var areatmp = new WMEURMPT.URT_AREA();
         WMEURMPT.areaList.custom[c].geometryOL = null;
         WMEURMPT.areaList.custom[c].getGeometryFromServer = areatmp.getGeometryFromServer;
         WMEURMPT.areaList.custom[c].getCategoryElementsFromServer = areatmp.getCategoryElementsFromServer;
@@ -8244,7 +8193,7 @@ function WMEURMPT_Injected() {
   WMEURMPT.log("Ready");
   WMEURMPT.bootstrapURT();
 }
-var WMEURMPT_Injected_script = document.createElement("script");
-WMEURMPT_Injected_script.textContent = "" + WMEURMPT_Injected.toString() + " \n" + "WMEURMPT_Injected();";
-WMEURMPT_Injected_script.setAttribute("type", "application/javascript");
-document.body.appendChild(WMEURMPT_Injected_script);
+
+let WMEURMPT_Injected_script = GM_addElement('script', {
+  textContent: "" + WMEURMPT_Injected.toString() + " \n" + "WMEURMPT_Injected();"
+});
