@@ -5063,7 +5063,7 @@ function WMEURMPT_Injected() {
           }
         }
         if (nbPUR > 1) {
-          PURtype = ": ";
+          PURtype = "s: ";
           for (var tt = 0; tt < nbPUR; tt++) {
               if(WMEURMPT.PURList[i].data.venueUpdateRequests[tt].type == "IMAGE") {
                   PURtype += "Picture";
