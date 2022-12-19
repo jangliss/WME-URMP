@@ -4284,26 +4284,16 @@ function WMEURMPT_Injected() {
         return b.distanceToMapCenter - a.distanceToMapCenter;
         break;
       case WMEURMPT.sortModeListPUR.nbpurDSC:
-        var valueA = (a.data.venueUpdateRequests.length == 1 ? a.data.venueUpdateRequests[0].type + (a.data.venueUpdateRequests[0].subType === undefined ? "" : a.data.venueUpdateRequests[0].subType) : "z" + a.data.venueUpdateRequests.length);
-        var valueB = (b.data.venueUpdateRequests.length == 1 ? b.data.venueUpdateRequests[0].type + (b.data.venueUpdateRequests[0].subType === undefined ? "" : b.data.venueUpdateRequests[0].subType) : "z" + b.data.venueUpdateRequests.length);
-        if (valueA < valueB) {
-          return -1;
-        } else if (valueA > valueB) {
-          return 1;
-        } else {
+        if (a.data.venueUpdateRequests.length == b.data.venueUpdateRequests.length) {
           return WMEURMPT.comparePUR(a, b, i + 1);
         }
+        return a.data.venueUpdateRequests.length - b.data.venueUpdateRequests.length;
         break;
       case WMEURMPT.sortModeListPUR.nbpurASC:
-        var valueA = (a.data.venueUpdateRequests.length == 1 ? a.data.venueUpdateRequests[0].type + (a.data.venueUpdateRequests[0].subType === undefined ? "" : a.data.venueUpdateRequests[0].subType) : "z" + a.data.venueUpdateRequests.length);
-        var valueB = (b.data.venueUpdateRequests.length == 1 ? b.data.venueUpdateRequests[0].type + (b.data.venueUpdateRequests[0].subType === undefined ? "" : b.data.venueUpdateRequests[0].subType) : "z" + b.data.venueUpdateRequests.length);
-        if (valueA > valueB) {
-          return -1;
-        } else if (valueA < valueB) {
-          return 1;
-        } else {
+        if (a.data.venueUpdateRequests.length == b.data.venueUpdateRequests.length) {
           return WMEURMPT.comparePUR(a, b, i + 1);
         }
+        return b.data.venueUpdateRequests.length - a.data.venueUpdateRequests.length;
         break;
     }
     return 0;
@@ -4603,7 +4593,7 @@ function WMEURMPT_Injected() {
       content += '<td><span id="urt-descriptionur-' + WMEURMPT.URList[i].id + '" title="' + descriptionHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + descriptionHTMLNormalized + "</span></td>";
       content += '<td style="text-align: center"><span  id="urt-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(comments) + '">' + WMEURMPT.URList[i].data.session.comments.length + "</span></td>";
       content += '<td style="text-align: right">' + distanceStr + "</td>";
-      content += '<td style="width: 20px;" id="urt-targetur-' + i + '" title="' + WMEURMPT.URList[i].id + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>';
+      content += '<td style="width: 20px;" id="urt-targetur-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.URList[i].id : "") + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>';
       content += "</tr>";
     }
     content += "</table>";
@@ -4790,7 +4780,7 @@ function WMEURMPT_Injected() {
       }
       content += '<td><span id="mpt-descriptionmp-' + WMEURMPT.MPList[i].id + '" title="' + descriptionHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + descriptionHTMLNormalized + "</span></td>";
       content += '<td style="text-align: right">' + distanceStr + "</td>";
-      content += '<td style="width: 20px;" id="mpt-targetmp-' + i + '" title="' + WMEURMPT.MPList[i].id + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>';
+      content += '<td style="width: 20px;" id="mpt-targetmp-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.MPList[i].id : "") + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>';
       content += "</tr>";
     }
     content += "</table>";
@@ -4941,7 +4931,7 @@ function WMEURMPT_Injected() {
       content += '<td><span id="mct-bodymc-' + WMEURMPT.MCList[i].id + '" title="' + bodyHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + bodyHTMLNormalized + "</span></td>";
       content += '<td style="text-align: center"><span  id="mct-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(conversation) + '">' + (WMEURMPT.MCList[i].data.hasOwnProperty("conversation") ? WMEURMPT.MCList[i].data.conversation.length : "0") + "</span></td>";
       content += '<td style="text-align: right">' + distanceStr + "</td>";
-      content += '<td style="width: 20px;" id="mct-targetmc-' + i + '" title="' + WMEURMPT.MCList[i].id + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>';
+      content += '<td style="width: 20px;" id="mct-targetmc-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.MCList[i].id : "") + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>';
       content += "</tr>";
     }
     content += "</table>";
@@ -5043,42 +5033,8 @@ function WMEURMPT_Injected() {
       displayedPURCount++;
       var PURDays = WMEURMPT.getDuration(WMEURMPT.PURList[i].data.dateAddedMin);
       var nbPUR = null;
-      var PURtype = null;
       if (WMEURMPT.PURList[i].data.hasOwnProperty("venueUpdateRequests") && WMEURMPT.PURList[i].data.venueUpdateRequests.length != 0) {
         nbPUR = WMEURMPT.PURList[i].data.venueUpdateRequests.length;
-        var PURicon = null;
-        if (nbPUR == 1) {
-          if(WMEURMPT.PURList[i].data.venueUpdateRequests[0].type == "IMAGE") {
-            PURicon = "camera";
-            PURtype = ": Picture";
-          } else if (WMEURMPT.PURList[i].data.venueUpdateRequests[0].type == "VENUE") {
-            PURicon = "plus-circle";
-            PURtype = ": New Place";
-          } else if (WMEURMPT.PURList[i].data.venueUpdateRequests[0].type == "REQUEST" && WMEURMPT.PURList[i].data.venueUpdateRequests[0].subType == "FLAG") {
-            PURicon = "flag";
-            PURtype = ": Flagged";
-          } else if (WMEURMPT.PURList[i].data.venueUpdateRequests[0].type == "REQUEST" && WMEURMPT.PURList[i].data.venueUpdateRequests[0].subType == "UPDATE") {
-            PURicon = "pencil";
-            PURtype = ": Update";
-          }
-        }
-        if (nbPUR > 1) {
-          PURtype = "s: ";
-          for (var tt = 0; tt < nbPUR; tt++) {
-              if(WMEURMPT.PURList[i].data.venueUpdateRequests[tt].type == "IMAGE") {
-                  PURtype += "Picture";
-              } else if (WMEURMPT.PURList[i].data.venueUpdateRequests[tt].type == "VENUE") {
-                  PURtype += "New Place";
-              } else if (WMEURMPT.PURList[i].data.venueUpdateRequests[tt].type == "REQUEST" && WMEURMPT.PURList[i].data.venueUpdateRequests[tt].subType == "FLAG") {
-                  PURtype += "Flagged";
-              } else if (WMEURMPT.PURList[i].data.venueUpdateRequests[tt].type == "REQUEST" && WMEURMPT.PURList[i].data.venueUpdateRequests[tt].subType == "UPDATE") {
-                  PURtype += "Update";
-              }
-              if (tt < nbPUR - 1){
-                  PURtype += ", ";
-              }
-          }
-        }
       }
       var distance = WMEURMPT.PURList[i].distanceToMapCenter;
       var distanceStr = "";
@@ -5099,7 +5055,7 @@ function WMEURMPT_Injected() {
       content += '<tr id="purt-tr-' + i + '" >';
       content += '<td class="urt-blacklist" id="purt-blacklist-' + i + '" style="cursor: pointer;" title="' + (WMEURMPT.PURList[i].blackListed ? "whitelist" : "blacklist") + ' this PUR" >&nbsp;</td>';
       content += '<td title="' + PURDays + ' days" style="text-align: center;"><span style="width: 100%; display: block;">' + PURDays + "</span></td>";
-      content += '<td title="' + nbPUR + ' PUR'+ PURtype+'" style="text-align: center;"><span style="width: 100%; display: block;">' + (nbPUR == 1 ? '<a href="#"><center><i class="fa fa-' + PURicon + '"></i></center></a>' : nbPUR) + "</span></td>";
+      content += '<td title="' + nbPUR + ' pur(s)" style="text-align: center;"><span style="width: 100%; display: block;">' + nbPUR + "</span></td>";
       var categoriesHTML = "";
       for (var n = 0; n < WMEURMPT.PURList[i].data.categories.length; n++) {
         categoriesHTML += WMEURMPT.getPURCategoriesFromCategories(WMEURMPT.PURList[i].data.categories[n]) + " ";
@@ -5121,7 +5077,7 @@ function WMEURMPT_Injected() {
       }
       content += '<td><span id="purt-namepur-' + WMEURMPT.PURList[i].id + '" title="' + nameHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + nameHTMLNormalized + "</span></td>";
       content += '<td style="text-align: right">' + distanceStr + "</td>";
-      content += '<td style="width: 20px;" id="purt-targetpur-' + i + '" title="' + WMEURMPT.PURList[i].id + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>';
+      content += '<td style="width: 20px;" id="purt-targetpur-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.PURList[i].id : "") + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>';
       content += "</tr>";
     }
     content += "</table>";
