@@ -186,6 +186,7 @@ function WMEURMPT_Injected() {
   WMEURMPT.PURFilterList = {hideOutOfMyManagedArea:1, hideVisited:2, hideBlacklisted:4, hideWhitelisted:8, hideLimitTo:16, hideArea:32, hideNotKW:64, hideCategorie:128, hideOutOfMyDriveArea:256};
   WMEURMPT.taggedURList = ["[NOTE]", "[CONSTRUCTION]", "[ROADWORKS]", "[CLOSURE]", "[EVENT]", "[WSLM]"];
   WMEURMPT.URAgeColIsLastComment = false;
+  WMEURMPT.disableScrolling = false;
   WMEURMPT.currentSortModeUR = WMEURMPT.sortModeListUR.ageDSC;
   WMEURMPT.currentSortModeMP = WMEURMPT.sortModeListMP.priorityDSC;
   WMEURMPT.currentSortModeMC = WMEURMPT.sortModeListMC.distanceASC;
@@ -3174,8 +3175,11 @@ function WMEURMPT_Injected() {
     ur_tagged_list_span.innerHTML = WMEURMPT.convertHtml('UR Tag keywords: <input style="height:20px;width:100%;" type="text" id="urmpt-setting-urtaglist" value="' + WMEURMPT.taggedURList.join(";") + '"/>');
     settings_tab_pane.appendChild(ur_tagged_list_span);
     var ur_ageColumn_span = WMEURMPT.createElement("span");
-    ur_ageColumn_span.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-uragecolislastcomment" ' + (WMEURMPT.URAgeColIsLastComment ? "checked " : "") + "/> UR age column is last comment age");
+    ur_ageColumn_span.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-uragecolislastcomment" ' + (WMEURMPT.URAgeColIsLastComment ? "checked " : "") + "/> UR age column is last comment age<br>");
     settings_tab_pane.appendChild(ur_ageColumn_span);
+    var disable_scrolling_span = WMEURMPT.createElement("span");
+    disable_scrolling_span.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-disablescrolling" ' + (WMEURMPT.disableScrolling ? "checked " : "") + "/> Disable text scrolling in tables");
+    settings_tab_pane.appendChild(disable_scrolling_span);
     window.setTimeout(WMEURMPT.setupCAEvents);
     window.setTimeout(WMEURMPT.updateScanGroup);
     var userTabs = WMEURMPT.getId("user-tabs");
@@ -3437,7 +3441,16 @@ function WMEURMPT_Injected() {
       WMEURMPT.URAgeColIsLastComment = e.target.checked;
       WMEURMPT.saveOptions();
     });
-    WMEURMPT.updateLongTextCrop();
+    WMEURMPT.getId("urmpt-setting-disablescrolling").addEventListener("change", function(e) {
+      WMEURMPT.disableScrolling = e.target.checked;
+      WMEURMPT.saveOptions();
+      if (! WMEURMPT.disableScrolling) {
+        WMEURMPT.updateLongTextCrop();
+      }
+    });
+    if (! WMEURMPT.disableScrolling) {
+      WMEURMPT.updateLongTextCrop();
+    }
     var cssElt = WMEURMPT.createElement("style");
     cssElt.type = "text/css";
     var css = "";
@@ -5462,7 +5475,9 @@ function WMEURMPT_Injected() {
         }
       }
     }
-    window.setTimeout(WMEURMPT.updateLongTextCrop, 150);
+    if (! WMEURMPT.disableScrolling) {
+      window.setTimeout(WMEURMPT.updateLongTextCrop, 150);
+    }
   };
   WMEURMPT.targetMapToUR = function(lon, lat, URId) {
     WMEURMPT.log("Target map to UR: " + URId);
@@ -7917,7 +7932,7 @@ function WMEURMPT_Injected() {
   WMEURMPT.saveOptions = function() {
     var options = {filterUR:WMEURMPT.currentURFilter, filterMP:WMEURMPT.currentMPFilter, filterMC:WMEURMPT.currentMCFilter, filterPUR:WMEURMPT.currentPURFilter, filterURKeyword:WMEURMPT.currentURKeyWord, filterMCKeyword:WMEURMPT.currentMCKeyWord, filterPURKeyword:WMEURMPT.currentPURKeyWord, filterURLimitTo:WMEURMPT.currentURLimitTo, filterMPLimitTo:WMEURMPT.currentMPLimitTo, filterMCLimitTo:WMEURMPT.currentMCLimitTo, filterPURLimitTo:WMEURMPT.currentPURLimitTo, displayLegend:WMEURMPT.displayLegend, 
     isEnabled:WMEURMPT.isEnabled, isAutoScan:WMEURMPT.isAutoScan, isComputeDistances:WMEURMPT.isComputeDistances, scanUR:WMEURMPT.scanUR, scanMP:WMEURMPT.scanMP, scanMC:WMEURMPT.scanMC, scanPUR:WMEURMPT.scanPUR, filterUROnlyType:WMEURMPT.currentUROnlyType, filterMPOnlyType:WMEURMPT.currentMPOnlyType, filterPUROnlyCategorie:WMEURMPT.currentPUROnlyCategorie, filterUROnlyArea:WMEURMPT.currentUROnlyArea, filterMPOnlyArea:WMEURMPT.currentMPOnlyArea, filterMCOnlyArea:WMEURMPT.currentMCOnlyArea, filterPUROnlyArea:WMEURMPT.currentPUROnlyArea, 
-    filterURCommentsCount:WMEURMPT.currentURCommentsCount, URDescriptionMaxLength:WMEURMPT.URDescriptionMaxLength, MPDescriptionMaxLength:WMEURMPT.MPDescriptionMaxLength, MCSubjectMaxLength:WMEURMPT.MCSubjectMaxLength, MCBodyMaxLength:WMEURMPT.MCBodyMaxLength, PURCategoriesMaxLength:WMEURMPT.PURCategoriesMaxLength, PURNameMaxLength:WMEURMPT.PURNameMaxLength, taggedURList:WMEURMPT.taggedURList, URAgeColIsLastComment:WMEURMPT.URAgeColIsLastComment};
+    filterURCommentsCount:WMEURMPT.currentURCommentsCount, URDescriptionMaxLength:WMEURMPT.URDescriptionMaxLength, MPDescriptionMaxLength:WMEURMPT.MPDescriptionMaxLength, MCSubjectMaxLength:WMEURMPT.MCSubjectMaxLength, MCBodyMaxLength:WMEURMPT.MCBodyMaxLength, PURCategoriesMaxLength:WMEURMPT.PURCategoriesMaxLength, PURNameMaxLength:WMEURMPT.PURNameMaxLength, taggedURList:WMEURMPT.taggedURList, URAgeColIsLastComment:WMEURMPT.URAgeColIsLastComment, disableScrolling:WMEURMPT.disableScrolling};
     WMEURMPT.log("save options: ", options);
     GMStorageHelper.save("WMEURMPTracking_options", JSON.stringify(options));
   };
@@ -8002,6 +8017,7 @@ function WMEURMPT_Injected() {
       WMEURMPT.PURNameMaxLength = typeof options.PURNameMaxLength === "undefined" ? WMEURMPT.PURNameMaxLength : options.PURNameMaxLength;
       WMEURMPT.taggedURList = typeof options.taggedURList === "undefined" ? WMEURMPT.taggedURList : options.taggedURList;
       WMEURMPT.URAgeColIsLastComment = typeof options.URAgeColIsLastComment === "undefined" ? WMEURMPT.URAgeColIsLastComment : options.URAgeColIsLastComment;
+      WMEURMPT.disableScrolling = typeof options.disableScrolling === "undefined" ? WMEURMPT.disableScrolling : options.disableScrolling;
     }
   };
   WMEURMPT.urlistLoaded = function(data) {
