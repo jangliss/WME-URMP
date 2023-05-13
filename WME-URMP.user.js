@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.4
+// @version     3.9.5
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     https://www.waze.com/editor*
@@ -15,7 +15,7 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @grant       unsafeWindow
-// @copyright   2022, dummyd2, seb-d59, jangliss
+// @copyright   2023, dummyd2, seb-d59, jangliss
 // @author    	dummyd2, seb-d59, jangliss
 // @connect     seb.d59.waze.free.fr
 // ==/UserScript==
@@ -536,9 +536,18 @@ function WMEURMPT_Injected() {
     WMEURMPT.wazeModel.mapUpdateRequests.on("objectschanged", WMEURMPT.newDataAvailableStarts);
     WMEURMPT.wazeModel.mapUpdateRequests.on("objectsadded", WMEURMPT.newDataAvailableStarts);
     WMEURMPT.wazeModel.mapUpdateRequests.on("objectsremoved", WMEURMPT.newDataAvailableStarts);
-    WMEURMPT.wazeModel.problems.on("objectschanged", WMEURMPT.newDataAvailableStarts);
-    WMEURMPT.wazeModel.problems.on("objectsadded", WMEURMPT.newDataAvailableStarts);
-    WMEURMPT.wazeModel.problems.on("objectsremoved", WMEURMPT.newDataAvailableStarts);
+
+    if (typeof WMEURMPT.wazeModel.problems !== 'undefined') {
+      WMEURMPT.wazeModel.problems.on("objectschanged", WMEURMPT.newDataAvailableStarts);
+      WMEURMPT.wazeModel.problems.on("objectsadded", WMEURMPT.newDataAvailableStarts);
+      WMEURMPT.wazeModel.problems.on("objectsremoved", WMEURMPT.newDataAvailableStarts);
+    }
+    else if (typeof WMEURMPT.wazeModel.mapProblems !== 'undefined') {
+      WMEURMPT.wazeModel.mapProblems.on("objectschanged", WMEURMPT.newDataAvailableStarts);
+      WMEURMPT.wazeModel.mapProblems.on("objectsadded", WMEURMPT.newDataAvailableStarts);
+      WMEURMPT.wazeModel.mapProblems.on("objectsremoved", WMEURMPT.newDataAvailableStarts);  
+    }
+
     WMEURMPT.wazeModel.mapComments.on("objectschanged", WMEURMPT.newDataAvailableStarts);
     WMEURMPT.wazeModel.mapComments.on("objectsadded", WMEURMPT.newDataAvailableStarts);
     WMEURMPT.wazeModel.mapComments.on("objectsremoved", WMEURMPT.newDataAvailableStarts);
@@ -876,10 +885,20 @@ function WMEURMPT_Injected() {
   };
   WMEURMPT.getSelectedUR = function() {
     try {
-      for (var m in WMEURMPT.wazeMap.updateRequestLayer.featureMarkers) {
-        if (WMEURMPT.wazeMap.updateRequestLayer.featureMarkers.hasOwnProperty(m)) {
+      let  urLayer = WMEURMPT.wazeMap.getLayerByName('update_requests');
+      if (typeof urLayer.featureLayers !== "undefined") {
+        for (var m in urLayer.featureMarkers) {
           if (WMEURMPT.wazeMap.updateRequestLayer.featureMarkers[m].marker.icon.imageDiv.className.indexOf("selected") != -1) {
             return m;
+          }
+        }
+      } else {
+        for( const m of urLayer.markers) {
+          if (m.element.classList.contains('marker-selected')) {
+            if (typeof m.element.attributes['data-id'] !== "undefined") {
+              return m.element.attributes['data-id'].value;
+            }
+            return null;
           }
         }
       }
@@ -896,27 +915,22 @@ function WMEURMPT_Injected() {
   };
   WMEURMPT.getSelectedPUR = function() {
     try {
-      for (var m in W.map.placeUpdatesLayer.markers) {
+      let layer = WMEURMPT.wazeMap.getLayerByName('place_updates');
+      if (typeof layer.markers !== 'undefined') {
+        for(const m of layer.markers) {
+          if (m.element.classList.contains('marker-selected')) {
+            return m.element.attributes['data-id'].value;
+          }
+        }
+      }
+      else if (typeof layer.featureMarkers !== 'undefined') {
         if (WMEURMPT.wazeMap.placeUpdatesLayer.markers.hasOwnProperty(m)) {
           if (WMEURMPT.wazeMap.placeUpdatesLayer.markers[m].model.selected === true) {
             return m;
           }
         }
       }
-      for (var m in WMEURMPT.wazeMap.parkingPlaceUpdatesLayer.markers) {
-        if (WMEURMPT.wazeMap.parkingPlaceUpdatesLayer.markers.hasOwnProperty(m)) {
-          if (WMEURMPT.wazeMap.parkingPlaceUpdatesLayer.markers[m].model.selected === true) {
-            return m;
-          }
-        }
-      }
-      for (var m in WMEURMPT.wazeMap.residentialPlaceUpdatesLayer.markers) {
-        if (WMEURMPT.wazeMap.residentialPlaceUpdatesLayer.markers.hasOwnProperty(m)) {
-          if (WMEURMPT.wazeMap.residentialPlaceUpdatesLayer.markers[m].model.selected === true) {
-            return m;
-          }
-        }
-      }
+
     } catch (e) {
       WMEURMPT.log("error while getting selected PUR: ", e);
     }
@@ -5534,7 +5548,7 @@ function WMEURMPT_Injected() {
     var ur = WMEURMPT.wazeModel.mapUpdateRequests.getObjectById(URId.URId);
     if (ur != null && session != null) {
       WMEURMPT.logDebug("Select UR by ID: " + URId.URId);
-      if (WMEURMPT.wazeMap.updateRequestLayer.featureMarkers.hasOwnProperty(URId.URId)) {
+      if ((typeof WMEURMPT.wazeMap.updateRequestLayer.featureMarkers !== "undefined") && (WMEURMPT.wazeMap.updateRequestLayer.featureMarkers.hasOwnProperty(URId.URId))) {
         WMEURMPT.wazeMap.updateRequestLayer.featureMarkers[URId.URId].marker.icon.imageDiv.click();
         var htmlSelectedUR = document.getElementsByClassName("selected")[0];
         var htmlSelectedURID = parseInt(htmlSelectedUR.getAttribute("data-id"));
@@ -5568,6 +5582,37 @@ function WMEURMPT_Injected() {
         window.setTimeout(WMEURMPT.openConversationPannel, 100);
         WMEURMPT.log("UR selected: " + WMEURMPT.currentURID);
         window.setTimeout(WMEURMPT.restackUR, 250);
+      }
+      else if (typeof WMEURMPT.wazeMap.getLayerByName('update_requests').markers !== undefined) {
+        let marker = WMEURMPT.wazeMap.getLayerByName('update_requests').markers.filter( elem => elem.element.attributes['data-id'].value == URId.URId);
+        marker[0].element.click();
+
+        var htmlSelectedUR = document.getElementsByClassName('marker-selected')[0];
+        var htmlSelectedURID = parseInt(htmlSelectedUR.getAttribute('data-id'));
+        WMEURMPT.logDebug("selectURById htmlSelectedURID: ", htmlSelectedURID);
+        if (URId.URId != htmlSelectedURID) {
+          WMEURMPT.log("URs " + URId.URId + " & " + htmlSelectedURID + " Stacked !: ");
+          var offset = 100000;
+          var htmlSelectedURAtt = WMEURMPT.wazeModel.mapUpdateRequests.objects[htmlSelectedURID].attributes;
+          if (htmlSelectedURAtt.geometry.oriX === undefined) {
+            WMEURMPT.stackedUR.id = htmlSelectedURID;
+            WMEURMPT.stackedUR.oriX = htmlSelectedURAtt.geometry.x;
+            WMEURMPT.stackedUR.oriY = htmlSelectedURAtt.geometry.y;
+            WMEURMPT.stackedURList.push(WMEURMPT.stackedUR);
+            htmlSelectedURAtt.geometry.oriX = htmlSelectedURAtt.geometry.x;
+            htmlSelectedURAtt.geometry.x += offset;
+            htmlSelectedURAtt.geometry.oriY = htmlSelectedURAtt.geometry.y;
+            htmlSelectedURAtt.geometry.y += offset;
+            offset += 1000;
+          }
+          if (WMEURMPT.wazeMap.panelRegion.hasOwnProperty("currentView")) {
+            WMEURMPT.wazeMap.panelRegion.currentView.destroy();
+          }
+          URId.attempts++;
+          WMEURMPT.log("Can not select UR " + URId.URId + ". Trying again " + URId.attempts + "/10...");
+          window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectURById, [URId]), 100);
+          return;
+        }
       }
       if (!WMEURMPT.isAutoScan) {
         var theUR = WMEURMPT.getURFromId(URId.URId);
@@ -6301,6 +6346,9 @@ function WMEURMPT_Injected() {
       if (MPs.hasOwnProperty("mapUpdateRequests")) {
         while (cmp < MPs.mapUpdateRequests.objects.length) {
           var theUR = MPs.mapUpdateRequests.objects[cmp];
+          if (theUR.type == 23) {
+            MPs.mapUpdateRequests.objects.splice(cmp,1);
+          }
           if (WMEURMPT.ul < WMEURMPT.rl4cp && theUR.open == false) {
             MPs.mapUpdateRequests.objects.splice(cmp, 1);
             continue;
