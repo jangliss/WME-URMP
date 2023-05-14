@@ -886,9 +886,9 @@ function WMEURMPT_Injected() {
   WMEURMPT.getSelectedUR = function() {
     try {
       let  urLayer = WMEURMPT.wazeMap.getLayerByName('update_requests');
-      if (typeof urLayer.featureLayers !== "undefined") {
+      if (typeof urLayer.featureMarkers !== "undefined") {
         for (var m in urLayer.featureMarkers) {
-          if (WMEURMPT.wazeMap.updateRequestLayer.featureMarkers[m].marker.icon.imageDiv.className.indexOf("selected") != -1) {
+          if (urLayer.featureMarkers[m].marker.icon.imageDiv.className.indexOf("selected") != -1) {
             return m;
           }
         }
@@ -915,19 +915,23 @@ function WMEURMPT_Injected() {
   };
   WMEURMPT.getSelectedPUR = function() {
     try {
-      let layer = WMEURMPT.wazeMap.getLayerByName('place_updates');
-      if (typeof layer.markers !== 'undefined') {
-        for(const m of layer.markers) {
-          if (m.element.classList.contains('marker-selected')) {
-            return m.element.attributes['data-id'].value;
+
+      let placeUpdates = WMEURMPT.wazeMap.getLayers().filter(elem => elem.className == 'place-updates');
+
+      for (const purLayer of placeUpdates) {
+        if (typeof purLayer.markers !== 'undefined') {
+          for(const m of purLayer.markers) {
+            if (m.element.classList.contains('marker-selected')) {
+              return m.element.attributes['data-id'].value;
+            }
           }
         }
-      }
-      else if (typeof layer.featureMarkers !== 'undefined') {
-        if (WMEURMPT.wazeMap.placeUpdatesLayer.markers.hasOwnProperty(m)) {
-          if (WMEURMPT.wazeMap.placeUpdatesLayer.markers[m].model.selected === true) {
-            return m;
-          }
+        else if (typeof purLayer.featureMarkers !== 'undefined') {
+          for(const m in purLayer.featureMarkers) {
+            if (purLayer.featureMarkers.hasOwnProperty(m) && purLayer.featureMarkers[m].marker.icon.div.classList.contains('marker-selected')) {
+              return m;
+            }
+          }          
         }
       }
 
@@ -5550,7 +5554,7 @@ function WMEURMPT_Injected() {
       WMEURMPT.logDebug("Select UR by ID: " + URId.URId);
       if ((typeof WMEURMPT.wazeMap.updateRequestLayer.featureMarkers !== "undefined") && (WMEURMPT.wazeMap.updateRequestLayer.featureMarkers.hasOwnProperty(URId.URId))) {
         WMEURMPT.wazeMap.updateRequestLayer.featureMarkers[URId.URId].marker.icon.imageDiv.click();
-        var htmlSelectedUR = document.getElementsByClassName("selected")[0];
+        var htmlSelectedUR = document.getElementsByClassName("marker-selected")[0];
         var htmlSelectedURID = parseInt(htmlSelectedUR.getAttribute("data-id"));
         WMEURMPT.logDebug("selectURById htmlSelectedURID: ", htmlSelectedURID);
         if (URId.URId != htmlSelectedURID) {
@@ -6044,16 +6048,13 @@ function WMEURMPT_Injected() {
   };
   WMEURMPT.conversationSent = function() {
     var ur = WMEURMPT.getURFromId(WMEURMPT.currentURID);
-    if (ur != null && WMEURMPT.wazeMap.panelRegion.currentView.conversationView !== undefined) {
-      if (WMEURMPT.wazeMap.panelRegion.currentView.conversationView && ur.data.session.comments.length == WMEURMPT.wazeMap.panelRegion.currentView.conversationView.viewModel.attributes.commentCount) {
-        WMEURMPT.log("Comment is updated...");
-      } else if (WMEURMPT.wazeMap.panelRegion.currentView.conversationView) {
-          WMEURMPT.log("update Comment and refresh...");
-          ur.refreshFromWMEData(true);
-          ur.lastVisitCommentsCount = ur.data.session.comments.length;
-          WMEURMPT.updateIHMFromURList();
-      }
+    if (ur !== null) {
+      WMEURMPT.log("update Comment and refresh...");
+      ur.refreshFromWMEData(true);
+      ur.lastVisitCommentsCount = ur.data.session.comments.length;
+      WMEURMPT.updateIHMFromURList();
     }
+
   };
   WMEURMPT.clickFollowUR = function() {
     WMEURMPT.logDebug("FOLLOW or UNFOLLOW. That is the question");
