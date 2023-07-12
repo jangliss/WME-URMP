@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.6
+// @version     3.9.7
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @match     https://www.waze.com/editor*
@@ -162,7 +162,7 @@ window.setTimeout(lookForGMStorageHelperJob);
 function WMEURMPT_Injected() {
   var WMEURMPT = {};
   WMEURMPT.isDebug = false;
-  WMEURMPT.urmpt_version = "3.9.6";
+  WMEURMPT.urmpt_version = "3.9.7";
   WMEURMPT.URList = [];
   WMEURMPT.URMap = {};
   WMEURMPT.MPList = [];
