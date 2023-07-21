@@ -17,7 +17,7 @@
 // @grant       unsafeWindow
 // @copyright   2023, dummyd2, seb-d59, jangliss
 // @author      dummyd2, seb-d59, jangliss
-// @connect     seb.d59.waze.free.fr
+// @connect     waze.netdork.net
 // ==/UserScript==
 
 /*******
@@ -271,7 +271,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.visitedTPBeforeActionsSaved = []
   WMEURMPT.lastUploadedWKT = null
   WMEURMPT.securityOn_visitedURBeforeActionsSaved_set = false
-  WMEURMPT.servers = [{ name: 'seb-d59', url: 'http://seb.d59.waze.free.fr/' }]
+  WMEURMPT.servers = [{ name: 'jangliss', url: 'https://waze.netdork.net/urmp/' }]
   WMEURMPT.customAreaList = []
   WMEURMPT.areaList = { custom: [], country: [] }
   WMEURMPT.statsCSV = ''
