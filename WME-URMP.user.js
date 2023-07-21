@@ -308,7 +308,7 @@ function WMEURMPT_Injected () {
     const els = node.getElementsByTagName('*')
     if (els instanceof HTMLCollection) {
       a = Array.from(els)
-        .filter(elem => elem.className === classname)
+        .filter(elem => elem.classList.contains(classname))
     }
     return a
   }
@@ -346,7 +346,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getId = function (node) {
-    if (WMEURMPT.dom.hasOwnProperty(node) === true && WMEURMPT.dom[node] !== null) {
+    if (Object.prototype.hasOwnProperty.call(WMEURMPT.dom, node) === true && WMEURMPT.dom[node] !== null) {
       return WMEURMPT.dom[node]
     }
     const el = document.getElementById(node)
@@ -393,7 +393,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.invertObject = function (obj) {
     const newObj = {}
     for (const prop in obj) {
-      if (obj.hasOwnProperty(prop)) {
+      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
         newObj[obj[prop]] = prop
       }
     }
@@ -481,10 +481,10 @@ function WMEURMPT_Injected () {
       const URAtt = WMEURMPT.wazeModel.mapUpdateRequests.objects[id].attributes
       URAtt.geometry.x = WMEURMPT.stackedURList[i].oriX
       URAtt.geometry.y = WMEURMPT.stackedURList[i].oriY
-      if (URAtt.geometry.oriX !== undefined) {
+      if (URAtt.geometry.oriX !== 'undefined') {
         delete URAtt.geometry.oriX
       }
-      if (URAtt.geometry.oriY !== undefined) {
+      if (URAtt.geometry.oriY !== 'undefined') {
         delete URAtt.geometry.oriY
       }
     }
@@ -830,9 +830,9 @@ function WMEURMPT_Injected () {
       if (point.x < this.bounds.left || point.x > this.bounds.right || point.y < this.bounds.bottom || point.y > this.bounds.top) {
         return false
       }
-      if (this.hasOwnProperty('bintree') === true) {
+      if (Object.prototype.hasOwnProperty.call(this, 'bintree') === true) {
         for (let i = 0; i < this.bintree.left.components.length; i++) {
-          if (this.bintree.left.components[i].hasOwnProperty('bintree') === true) {
+          if (Object.prototype.hasOwnProperty.call(this.bintree.left.components[i], 'bintree') === true) {
             if (this.bintree.left.components[i].bintreeContainsPoint(point) === true) {
               return true
             }
@@ -841,7 +841,7 @@ function WMEURMPT_Injected () {
           }
         }
         for (let i = 0; i < this.bintree.right.components.length; i++) {
-          if (this.bintree.right.components[i].hasOwnProperty('bintree') === true) {
+          if (Object.prototype.hasOwnProperty.call(this.bintree.right.components[i], 'bintree') === true) {
             if (this.bintree.right.components[i].bintreeContainsPoint(point) === true) {
               return true
             }
@@ -887,12 +887,12 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.inScreenUpdatableArea = function (xy) {
-    if (WMEURMPT.wazeModel.userAreas.objects.hasOwnProperty('managed')) {
+    if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.userAreas.objects, 'managed')) {
       if (WMEURMPT.wazeModel.userAreas.objects.managed.geometry.containsPoint(xy)) {
         return true
       }
     }
-    if (WMEURMPT.wazeModel.userAreas.objects.hasOwnProperty('drives')) {
+    if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.userAreas.objects, 'drives')) {
       if (WMEURMPT.wazeModel.userAreas.objects.drives.geometry.containsPoint(xy)) {
         return true
       }
@@ -1190,12 +1190,12 @@ function WMEURMPT_Injected () {
       if (ur.data.description !== null && ur.data.description.toLowerCase().indexOf(WMEURMPT.currentURKeyWord.toLowerCase()) !== -1) {
         found = true
       }
-      if (!found && ur.data.open === false && ur.data.hasOwnProperty('resolvedByName') && ur.data.resolvedByName.toLowerCase() === WMEURMPT.currentURKeyWord.toLowerCase()) {
+      if (!found && ur.data.open === false && Object.prototype.hasOwnProperty.call(ur.data, 'resolvedByName') && ur.data.resolvedByName.toLowerCase() === WMEURMPT.currentURKeyWord.toLowerCase()) {
         found = true
       }
       if (!found && ur.data.session.comments.length > 0) {
         for (let i = 0; i < ur.data.session.comments.length; i++) {
-          if (ur.data.session.comments[i].hasOwnProperty('userName') === false) {
+          if (Object.prototype.hasOwnProperty.call(ur.data.session.comments[i], 'userName') === false) {
             continue
           }
           if (typeof ur.data.session.comments[i].userName !== 'string') {
@@ -1221,7 +1221,7 @@ function WMEURMPT_Injected () {
           inside = false
           filterArea = WMEURMPT.areaList.custom[i].geometryOL.geometry.components
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -1243,7 +1243,7 @@ function WMEURMPT_Injected () {
           inside = false
           filterArea = WMEURMPT.areaList.country[i].geometryOL.geometry.components
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -1306,7 +1306,7 @@ function WMEURMPT_Injected () {
           inside = false
           filterArea = WMEURMPT.areaList.custom[i].geometryOL.geometry.components
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -1328,7 +1328,7 @@ function WMEURMPT_Injected () {
           inside = false
           filterArea = WMEURMPT.areaList.country[i].geometryOL.geometry.components
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -1380,7 +1380,7 @@ function WMEURMPT_Injected () {
           inside = false
           filterArea = WMEURMPT.areaList.custom[i].geometryOL.geometry.components
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -1402,7 +1402,7 @@ function WMEURMPT_Injected () {
           inside = false
           filterArea = WMEURMPT.areaList.country[i].geometryOL.geometry.components
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -1457,7 +1457,7 @@ function WMEURMPT_Injected () {
           inside = false
           filterArea = WMEURMPT.areaList.custom[i].geometryOL.geometry.components
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -1479,7 +1479,7 @@ function WMEURMPT_Injected () {
           inside = false
           filterArea = WMEURMPT.areaList.country[i].geometryOL.geometry.components
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -2009,7 +2009,7 @@ function WMEURMPT_Injected () {
     let theVenue = null
     let count = 0
     for (const v in WMEURMPT.wazeModel.venues.objects) {
-      if (WMEURMPT.wazeModel.venues.objects.hasOwnProperty(v) === false) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.venues.objects, v) === false) {
         continue
       }
       const venue = WMEURMPT.wazeModel.venues.objects[v]
@@ -2128,7 +2128,7 @@ function WMEURMPT_Injected () {
     let theVenue = null
     let count = 0
     for (const v in WMEURMPT.wazeModel.venues.objects) {
-      if (WMEURMPT.wazeModel.venues.objects.hasOwnProperty(v) === false) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.venues.objects, v) === false) {
         continue
       }
       const venue = WMEURMPT.wazeModel.venues.objects[v]
@@ -2215,7 +2215,7 @@ function WMEURMPT_Injected () {
     for (let c = 0; c < WMEURMPT.areaList.country.length; c++) {
       if (WMEURMPT.areaList.country[c].geometryOL == null) {
         WMEURMPT.areaList.country[c].geometryOL = (new OpenLayers.Format.WKT()).read(WMEURMPT.areaList.country[c].geometryWKT)
-        if (WMEURMPT.areaList.country[c].geometryOL == null || WMEURMPT.areaList.country[c].geometryOL.hasOwnProperty('geometry') === false) {
+        if (WMEURMPT.areaList.country[c].geometryOL == null || Object.prototype.hasOwnProperty.call(WMEURMPT.areaList.country[c].geometryOL, 'geometry') === false) {
           WMEURMPT.log('Error on area ' + WMEURMPT.areaList.country[c].name + '. Removing it... :(')
           WMEURMPT.areaList.country.splice(c, 1)
           c--
@@ -2262,7 +2262,7 @@ function WMEURMPT_Injected () {
     for (let c = 0; c < WMEURMPT.areaList.custom.length; c++) {
       if (WMEURMPT.areaList.custom[c].geometryOL == null) {
         WMEURMPT.areaList.custom[c].geometryOL = (new OpenLayers.Format.WKT()).read(WMEURMPT.areaList.custom[c].geometryWKT)
-        if (WMEURMPT.areaList.custom[c].geometryOL == null || WMEURMPT.areaList.custom[c].geometryOL.hasOwnProperty('geometry') === false) {
+        if (WMEURMPT.areaList.custom[c].geometryOL == null || Object.prototype.hasOwnProperty.call(WMEURMPT.areaList.custom[c].geometryOL, 'geometry') === false) {
           WMEURMPT.log('Error on area ' + WMEURMPT.areaList.custom[c].name + '. Removing it... :(')
           WMEURMPT.areaList.custom.splice(c, 1)
           c--
@@ -2433,7 +2433,7 @@ function WMEURMPT_Injected () {
           if (userName === 'Reporter' || userName === 'Unknown') {
             continue
           }
-          if (bestPipeletteList.hasOwnProperty(userName)) {
+          if (Object.prototype.hasOwnProperty.call(bestPipeletteList, userName)) {
             bestPipeletteList[userName]++
           } else {
             bestPipeletteList[userName] = 1
@@ -2441,7 +2441,7 @@ function WMEURMPT_Injected () {
         }
       }
       if (!ur.data.open) {
-        if (bestURCloserList.hasOwnProperty(ur.data.resolvedByName)) {
+        if (Object.prototype.hasOwnProperty.call(bestURCloserList, ur.data.resolvedByName)) {
           bestURCloserList[ur.data.resolvedByName].total++
         } else {
           bestURCloserList[ur.data.resolvedByName] = { total: 1, solved: 0 }
@@ -2454,7 +2454,7 @@ function WMEURMPT_Injected () {
     for (let i = 0; i < fromMPList.length; i++) {
       const mp = fromMPList[i]
       if (!mp.data.open) {
-        if (bestMPCloserList.hasOwnProperty(mp.data.resolvedByName)) {
+        if (Object.prototype.hasOwnProperty.call(bestMPCloserList, mp.data.resolvedByName)) {
           bestMPCloserList[mp.data.resolvedByName].total++
         } else {
           bestMPCloserList[mp.data.resolvedByName] = { total: 1, solved: 0 }
@@ -2466,19 +2466,19 @@ function WMEURMPT_Injected () {
     }
     const sortablePipelettes = []
     for (const p in bestPipeletteList) {
-      if (bestPipeletteList.hasOwnProperty(p)) {
+      if (Object.prototype.hasOwnProperty.call(bestPipeletteList, p)) {
         sortablePipelettes.push([p, bestPipeletteList[p]])
       }
     }
     const sortableURClosers = []
     for (const c in bestURCloserList) {
-      if (bestURCloserList.hasOwnProperty(c)) {
+      if (Object.prototype.hasOwnProperty.call(bestURCloserList, c)) {
         sortableURClosers.push([c, bestURCloserList[c]])
       }
     }
     const sortableMPClosers = []
     for (const c in bestMPCloserList) {
-      if (bestMPCloserList.hasOwnProperty(c)) {
+      if (Object.prototype.hasOwnProperty.call(bestMPCloserList, c)) {
         sortableMPClosers.push([c, bestMPCloserList[c]])
       }
     }
@@ -2693,7 +2693,7 @@ function WMEURMPT_Injected () {
       const number = t === 'UR' ? WMEURMPT.getDuration(src[i].data.driveDate) : src[i].data.weight
       const type = typeFunc(t === 'UR' ? src[i].data.type : src[i].data.subType)
       const url = location.protocol + '//' + location.host + location.pathname + '?lon=' + src[i].lonlat.lon + '&lat=' + src[i].lonlat.lat + '&zoom=5' + (t === 'UR' ? '&mapUpdateRequest=' : '&mapProblem=') + src[i].id
-      data += '[url=' + url + ']' + (t === 'MP' ? 'Severity: ' : '') + number + (t === 'UR' ? ' days' : '') + ' ' + ' | ' + type + (t === 'UR' ? src[i].data.hasOwnProperty('description') && src[i].data.description ? ' | ' + src[i].data.description : ' | N/A' : '') + '[/url]' + NL
+      data += '[url=' + url + ']' + (t === 'MP' ? 'Severity: ' : '') + number + (t === 'UR' ? ' days' : '') + ' ' + ' | ' + type + (t === 'UR' ? Object.prototype.hasOwnProperty.call(src[i].data, 'description') && src[i].data.description ? ' | ' + src[i].data.description : ' | N/A' : '') + '[/url]' + NL
     }
     button.href = 'data:text/plain;base64,' + btoa(unescape(encodeURIComponent(data)))
   }
@@ -2754,7 +2754,7 @@ function WMEURMPT_Injected () {
       updatedDays = updatedDays / (1000 * 60 * 60 * 24)
       const updatedAge = Math.round(updatedDays)
       const url = location.protocol + '//' + location.host + location.pathname + '?lon=' + src[i].lonlat.lon + '&lat=' + src[i].lonlat.lat + '&zoom=5' + (t === 'UR' ? '&mapUpdateRequest=' : '&mapProblem=') + src[i].id
-      data += '"' + src[i].data.localDriveTime + '","' + type + '","' + number + '","' + src[i].alreadyVisited + '","' + (t === 'UR' ? src[i].data.hasOwnProperty('description') && src[i].data.description ? src[i].data.description : 'N/A' : '') + '","' + commentCount + '","' + updatedDate + '","' + updatedBy + '","' + updatedAge + '","' + (src[i].data.resolvedOn === null ? 'N' : 'Y') + '","' + url + '","' + src[i].id + '"' + NL
+      data += '"' + src[i].data.localDriveTime + '","' + type + '","' + number + '","' + src[i].alreadyVisited + '","' + (t === 'UR' ? Object.prototype.hasOwnProperty.call(src[i].data, 'description') && src[i].data.description ? src[i].data.description : 'N/A' : '') + '","' + commentCount + '","' + updatedDate + '","' + updatedBy + '","' + updatedAge + '","' + (src[i].data.resolvedOn === null ? 'N' : 'Y') + '","' + url + '","' + src[i].id + '"' + NL
     }
     button.href = 'data:text/plain;base64,' + btoa(unescape(encodeURIComponent(data)))
   }
@@ -2819,7 +2819,7 @@ function WMEURMPT_Injected () {
           }
         }
       }
-      if (data.hasOwnProperty(type) === false) {
+      if (Object.prototype.hasOwnProperty.call(data, type) === false) {
         data[type] = []
       }
       data[type].push({ lonlat: src[i].lonlat, color })
@@ -4016,7 +4016,7 @@ function WMEURMPT_Injected () {
     const mc = WMEURMPT.getMCFromId(MCId)
     if (mc != null) {
       WMEURMPT.log('Mark MC ' + MCId + ' as visited')
-      mc.lastVisitCommentsCount = mc.data.hasOwnProperty('conversation') ? mc.data.conversation.length : 0
+      mc.lastVisitCommentsCount = Object.prototype.hasOwnProperty.call(mc.data, 'conversation') ? mc.data.conversation.length : 0
       mc.alreadyVisited = true
       WMEURMPT.updateIHMFromMCList()
     }
@@ -4345,15 +4345,15 @@ function WMEURMPT_Injected () {
         }
         return b.distanceToMapCenter - a.distanceToMapCenter
       case WMEURMPT.sortModeListMC.commentCountDSC:
-        acount = a.data.hasOwnProperty('conversation') ? a.data.conversation.length : 0
-        bcount = b.data.hasOwnProperty('conversation') ? b.data.conversation.length : 0
+        acount = Object.prototype.hasOwnProperty.call(a.data, 'conversation') ? a.data.conversation.length : 0
+        bcount = Object.prototype.hasOwnProperty.call(b.data, 'conversation') ? b.data.conversation.length : 0
         if (acount === bcount) {
           return WMEURMPT.compareMC(a, b, i + 1)
         }
         return acount - bcount
       case WMEURMPT.sortModeListMC.commentCountASC:
-        acount = a.data.hasOwnProperty('conversation') ? a.data.conversation.length : 0
-        bcount = b.data.hasOwnProperty('conversation') ? b.data.conversation.length : 0
+        acount = Object.prototype.hasOwnProperty.call(a.data, 'conversation') ? a.data.conversation.length : 0
+        bcount = Object.prototype.hasOwnProperty.call(b.data, 'conversation') ? b.data.conversation.length : 0
         if (acount === bcount) {
           return WMEURMPT.compareMC(a, b, i + 1)
         }
@@ -4860,7 +4860,7 @@ function WMEURMPT_Injected () {
       return
     }
     for (let i = 0; i < WMEURMPT.MPList.length; i++) {
-      if (WMEURMPT.MPList[i].type === 'problem' && WMEURMPT.MPList[i].data.hasOwnProperty('subType') && WMEURMPT.MPList[i].data.subType === 300) {
+      if (WMEURMPT.MPList[i].type === 'problem' && Object.prototype.hasOwnProperty.call(WMEURMPT.MPList[i].data, 'subType') && WMEURMPT.MPList[i].data.subType === 300) {
         const aDate = new Date()
         const now = aDate.getTime()
         const deltaH = (WMEURMPT.MPList[i].data.startTime - now) / 3600000
@@ -4902,7 +4902,7 @@ function WMEURMPT_Injected () {
       displayedMPCount++
       let MPWeight = 0
       let isClosure = false
-      if (WMEURMPT.MPList[i].type === 'problem' && WMEURMPT.MPList[i].data.hasOwnProperty('subType') && WMEURMPT.MPList[i].data.subType === 300) {
+      if (WMEURMPT.MPList[i].type === 'problem' && Object.prototype.hasOwnProperty.call(WMEURMPT.MPList[i].data, 'subType') && WMEURMPT.MPList[i].data.subType === 300) {
         isClosure = true
       }
       if (WMEURMPT.MPList[i].type === 'problem') {
@@ -5061,7 +5061,7 @@ function WMEURMPT_Injected () {
         MCDays = WMEURMPT.getDuration(WMEURMPT.MCList[i].data.createdOn)
       }
       let conversation = ''
-      if (WMEURMPT.MCList[i].data.hasOwnProperty('conversation')) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.MCList[i].data, 'conversation')) {
         const conversationArray = []
         WMEURMPT.MCList[i].data.conversation.forEach(function (c, j) {
           let text = c.userName + ' (' + (new Date(c.createdOn)).toLocaleString() + '):' + NL
@@ -5106,7 +5106,7 @@ function WMEURMPT_Injected () {
         bodyHTMLNormalized += (new Array(WMEURMPT.MCBodyMaxLength - bodyHTMLNormalized.length + 1)).join('&nbsp')
       }
       content += '<td><span id="mct-bodymc-' + WMEURMPT.MCList[i].id + '" title="' + bodyHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + bodyHTMLNormalized + '</span></td>'
-      content += '<td style="text-align: center"><span  id="mct-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(conversation) + '">' + (WMEURMPT.MCList[i].data.hasOwnProperty('conversation') ? WMEURMPT.MCList[i].data.conversation.length : '0') + '</span></td>'
+      content += '<td style="text-align: center"><span  id="mct-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(conversation) + '">' + (Object.prototype.hasOwnProperty.call(WMEURMPT.MCList[i].data, 'conversation') ? WMEURMPT.MCList[i].data.conversation.length : '0') + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="mct-targetmc-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.MCList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
       content += '</tr>'
@@ -5205,13 +5205,13 @@ function WMEURMPT_Injected () {
         hiddenPURCount++
         continue
       }
-      if (WMEURMPT.PURList[i].data.hasOwnProperty('venueUpdateRequests') && WMEURMPT.PURList[i].data.venueUpdateRequests.length === 0) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.PURList[i].data, 'venueUpdateRequests') && WMEURMPT.PURList[i].data.venueUpdateRequests.length === 0) {
         continue
       }
       displayedPURCount++
       const PURDays = WMEURMPT.getDuration(WMEURMPT.PURList[i].data.dateAddedMin)
       let nbPUR = null
-      if (WMEURMPT.PURList[i].data.hasOwnProperty('venueUpdateRequests') && WMEURMPT.PURList[i].data.venueUpdateRequests.length !== 0) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.PURList[i].data, 'venueUpdateRequests') && WMEURMPT.PURList[i].data.venueUpdateRequests.length !== 0) {
         nbPUR = WMEURMPT.PURList[i].data.venueUpdateRequests.length
       }
       const distance = WMEURMPT.PURList[i].distanceToMapCenter
@@ -5245,7 +5245,7 @@ function WMEURMPT_Injected () {
       }
       content += '<td><span id="purt-categoriespur-' + WMEURMPT.PURList[i].id + '" title="' + categoriesHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + categoriesHTMLNormalized + '</span></td>'
       let nameHTML = WMEURMPT.PURList[i].data.name
-      if (nameHTML === undefined) {
+      if (nameHTML === 'undefined') {
         nameHTML = 'undefined'
       }
       let nameHTMLNormalized = (new Array(WMEURMPT.PURNameMaxLength - 3 + 1)).join('&nbsp')
@@ -5338,7 +5338,8 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.updateFlashingURs = function () {
     for (let i = 0; i < WMEURMPT.URList.length; i++) {
-      if (WMEURMPT.isURFiltered(WMEURMPT.URList[i])) {
+      const urObj = WMEURMPT.URList[i]
+      if (WMEURMPT.isURFiltered(urObj)) {
         continue
       }
       const span = WMEURMPT.getId('urt-commentscount-' + i)
@@ -5349,20 +5350,20 @@ function WMEURMPT_Injected () {
       if (tr == null) {
         continue
       }
-      if (WMEURMPT.URList[i].alreadyVisited === false && tr.className !== 'urt-bg-highlighted') {
+      if (urObj.alreadyVisited === false && tr.className !== 'urt-bg-highlighted') {
         tr.className = 'urt-bg-highlighted'
       } else {
-        if (WMEURMPT.URList[i].alreadyVisited === true) {
+        if (urObj.alreadyVisited === true) {
           tr.className = ''
         }
       }
-      if (WMEURMPT.URList[i].data.session.isFollowing === true) {
+      if (urObj.data.session.isFollowing === true) {
         tr.className = 'urt-bg-ifollow'
       }
-      if (WMEURMPT.URList[i].id === WMEURMPT.selectedURID) {
+      if (urObj.id === WMEURMPT.selectedURID) {
         tr.className = 'urt-bg-selected'
       }
-      if (WMEURMPT.URList[i].data.hasOwnProperty('session') === true && WMEURMPT.URList[i].lastVisitCommentsCount < WMEURMPT.URList[i].data.session.comments.length) {
+      if (Object.prototype.hasOwnProperty.call(urObj.data, 'session') === true && urObj.lastVisitCommentsCount < urObj.data.session.comments.length) {
         span.className = 'urt-bg-newcomments'
       } else {
         span.className = ''
@@ -5406,7 +5407,7 @@ function WMEURMPT_Injected () {
       if (WMEURMPT.MCList[i].id === WMEURMPT.selectedMCID) {
         tr.className = 'urt-bg-selected'
       }
-      if (WMEURMPT.MCList[i].data.hasOwnProperty('conversation') === true && WMEURMPT.MCList[i].lastVisitCommentsCount < WMEURMPT.MCList[i].data.conversation.length) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.MCList[i].data, 'conversation') === true && WMEURMPT.MCList[i].lastVisitCommentsCount < WMEURMPT.MCList[i].data.conversation.length) {
         const span = WMEURMPT.getId('mct-commentscount-' + i)
         if (span != null) {
           span.className = 'urt-bg-newcomments'
@@ -5713,7 +5714,7 @@ function WMEURMPT_Injected () {
       return
     }
     if (URId.attempts === 0) {
-      if (WMEURMPT.wazeMap.panelRegion.hasOwnProperty('currentView')) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
         WMEURMPT.wazeMap.panelRegion.currentView.destroy()
       }
     }
@@ -5725,7 +5726,7 @@ function WMEURMPT_Injected () {
       const urLayer = WMEURMPT.wazeMap.getLayerByName('update_requests')
 
       if (typeof urLayer.markers !== 'undefined') {
-        const marker = urLayer.markers.filter(elem => parseInt(elem.element.getAttribute('data-id')) === URId.URId)
+        const marker = urLayer.markers.filter(elem => elem.element.getAttribute('data-id') === URId.URId.toString())
         marker[0].element.click()
 
         const htmlSelectedUR = document.getElementsByClassName('marker-selected')[0]
@@ -5735,7 +5736,7 @@ function WMEURMPT_Injected () {
           WMEURMPT.log('URs ' + URId.URId + ' & ' + htmlSelectedURID + ' Stacked !: ')
           let offset = 100000
           const htmlSelectedURAtt = WMEURMPT.wazeModel.mapUpdateRequests.objects[htmlSelectedURID].attributes
-          if (htmlSelectedURAtt.geometry.oriX === undefined) {
+          if (htmlSelectedURAtt.geometry.oriX === 'undefined') {
             WMEURMPT.stackedUR.id = htmlSelectedURID
             WMEURMPT.stackedUR.oriX = htmlSelectedURAtt.geometry.x
             WMEURMPT.stackedUR.oriY = htmlSelectedURAtt.geometry.y
@@ -5746,7 +5747,7 @@ function WMEURMPT_Injected () {
             htmlSelectedURAtt.geometry.y += offset
             offset += 1000
           }
-          if (WMEURMPT.wazeMap.panelRegion.hasOwnProperty('currentView')) {
+          if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
             WMEURMPT.wazeMap.panelRegion.currentView.destroy()
           }
           URId.attempts++
@@ -5775,7 +5776,7 @@ function WMEURMPT_Injected () {
       return
     }
     if (MPId.attempts === 0) {
-      if (WMEURMPT.wazeMap.panelRegion.hasOwnProperty('currentView')) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
         WMEURMPT.wazeMap.panelRegion.currentView.destroy()
       }
     }
@@ -5807,7 +5808,7 @@ function WMEURMPT_Injected () {
       return
     }
     if (MCId.attempts === 0) {
-      if (WMEURMPT.wazeMap.panelRegion.hasOwnProperty('currentView')) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
         WMEURMPT.wazeMap.panelRegion.currentView.destroy()
       }
     }
@@ -5831,7 +5832,7 @@ function WMEURMPT_Injected () {
       return
     }
     if (PURId.attempts === 0) {
-      if (WMEURMPT.wazeMap.panelRegion.hasOwnProperty('currentView')) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
         WMEURMPT.wazeMap.panelRegion.currentView.destroy()
       }
     }
@@ -5906,7 +5907,7 @@ function WMEURMPT_Injected () {
       const POIs = WMEURMPT.wazeModel.venues.getObjectArray()
       const PURs = []
       for (let n = 0; n < POIs.length; n++) {
-        if (POIs[n].attributes.hasOwnProperty('venueUpdateRequests') && POIs[n].attributes.venueUpdateRequests.length >> 0) {
+        if (Object.prototype.hasOwnProperty.call(POIs[n].attributes, 'venueUpdateRequests') && POIs[n].attributes.venueUpdateRequests.length >> 0) {
           PURs.push(POIs[n].attributes)
         }
       }
@@ -6109,7 +6110,7 @@ function WMEURMPT_Injected () {
           const theUR = WMEURMPT.wazeModel.mapUpdateRequests.getObjectById(WMEURMPT.currentURID)
           let URLonlat = null
           WMEURMPT.logDebug('clickUR - theUR: ', theUR)
-          if (theUR.geometry.hasOwnProperty('realX') && theUR.geometry.hasOwnProperty('realY')) {
+          if (Object.prototype.hasOwnProperty.call(theUR.geometry, 'realX') && Object.prototype.hasOwnProperty.call(theUR.geometry, 'realY')) {
             URLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theUR.geometry.realX, theUR.geometry.realY)
           } else {
             URLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theUR.geometry.x, theUR.geometry.y)
@@ -6332,7 +6333,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.logDebug('Action added:', lastAction)
     lastAction = lastAction.action
     WMEURMPT.logDebug('Action added lastAction :', lastAction)
-    if (lastAction.hasOwnProperty('object') && lastAction.object.hasOwnProperty('type') && lastAction.object.type === 'mapProblem') {
+    if (Object.prototype.hasOwnProperty.call(lastAction, 'object') && Object.prototype.hasOwnProperty.call(lastAction.object, 'type') && lastAction.object.type === 'mapProblem') {
       const mp = WMEURMPT.getMPFromId(lastAction.attributes.id)
       if (mp == null) {
         return
@@ -6350,7 +6351,7 @@ function WMEURMPT_Injected () {
       }
       WMEURMPT.updateIHMFromMPList()
     }
-    if (lastAction.hasOwnProperty('object') && lastAction.object.hasOwnProperty('type') && lastAction.object.type === 'mapUpdateRequest') {
+    if (Object.prototype.hasOwnProperty.call(lastAction, 'object') && Object.prototype.hasOwnProperty.call(lastAction.object, 'type') && lastAction.object.type === 'mapUpdateRequest') {
       const ur = WMEURMPT.getURFromId(lastAction.attributes.id)
       if (ur == null) {
         return
@@ -6368,7 +6369,7 @@ function WMEURMPT_Injected () {
       }
       WMEURMPT.updateIHMFromURList()
     }
-    if (lastAction.hasOwnProperty('request') && lastAction.request.attributes.hasOwnProperty('approved')) {
+    if (Object.prototype.hasOwnProperty.call(lastAction, 'request') && Object.prototype.hasOwnProperty.call(lastAction.request.attributes, 'approved')) {
       let pur = WMEURMPT.getPURFromId(lastAction.venue.attributes.id)
       if (pur) {
         pur.refreshFromWMEData()
@@ -6383,7 +6384,7 @@ function WMEURMPT_Injected () {
       }
       WMEURMPT.updateIHMFromPURList()
     }
-    if (lastAction.hasOwnProperty('object') && lastAction.object.hasOwnProperty('type') && lastAction.object.type === 'mapComment') {
+    if (Object.prototype.hasOwnProperty.call(lastAction, 'object') && Object.prototype.hasOwnProperty.call(lastAction.object, 'type') && lastAction.object.type === 'mapComment') {
       if (typeof lastAction.object.attributes.id === 'string') {
         let mc = WMEURMPT.getMCFromId(lastAction.object.attributes.id)
         if (mc) {
@@ -6428,19 +6429,19 @@ function WMEURMPT_Injected () {
     if (MPs == null) {
       return null
     }
-    if (!MPs.hasOwnProperty('mapUpdateRequests') && !MPs.hasOwnProperty('problems') && !MPs.hasOwnProperty('mapComments') && !MPs.hasOwnProperty('venues')) {
+    if (!Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests') && !Object.prototype.hasOwnProperty.call(MPs, 'problems') && !Object.prototype.hasOwnProperty.call(MPs, 'mapComments') && !Object.prototype.hasOwnProperty.call(MPs, 'venues')) {
       return null
     }
-    if (MPs.hasOwnProperty('mapUpdateRequests') && MPs.mapUpdateRequests.objects.length === 500) {
+    if (Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests') && MPs.mapUpdateRequests.objects.length === 500) {
       return { error: 1, logMessage: { obj: 'mapUpdateRequests', length: 500 } }
     }
-    if (MPs.hasOwnProperty('problems') && MPs.problems.objects.length === 500) {
+    if (Object.prototype.hasOwnProperty.call(MPs, 'problems') && MPs.problems.objects.length === 500) {
       return { error: 1, logMessage: { obj: 'problems', length: 500 } }
     }
-    if (MPs.hasOwnProperty('mapComments') && MPs.mapComments.objects.length === 500) {
+    if (Object.prototype.hasOwnProperty.call(MPs, 'mapComments') && MPs.mapComments.objects.length === 500) {
       return { error: 1, logMessage: { obj: 'mapComments', length: 500 } }
     }
-    if (MPs.hasOwnProperty('venues') && MPs.venues.objects.length >= 1200) {
+    if (Object.prototype.hasOwnProperty.call(MPs, 'venues') && MPs.venues.objects.length >= 1200) {
       return { error: 1, logMessage: { obj: 'venues', length: 1200 } }
     }
     if (filter != null) {
@@ -6467,7 +6468,7 @@ function WMEURMPT_Injected () {
         }
       }
       let cmp = 0
-      if (MPs.hasOwnProperty('problems')) {
+      if (Object.prototype.hasOwnProperty.call(MPs, 'problems')) {
         while (cmp < MPs.problems.objects.length) {
           const theMP = MPs.problems.objects[cmp]
           if (WMEURMPT.ul < WMEURMPT.rl4cp && theMP.open === false) {
@@ -6481,7 +6482,7 @@ function WMEURMPT_Injected () {
           }
           let inside = false
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -6501,7 +6502,7 @@ function WMEURMPT_Injected () {
         }
       }
       cmp = 0
-      if (MPs.hasOwnProperty('mapUpdateRequests')) {
+      if (Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests')) {
         while (cmp < MPs.mapUpdateRequests.objects.length) {
           const theUR = MPs.mapUpdateRequests.objects[cmp]
           const skipType = [18, 23]
@@ -6520,7 +6521,7 @@ function WMEURMPT_Injected () {
           }
           let inside = false
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -6540,7 +6541,7 @@ function WMEURMPT_Injected () {
         }
       }
       cmp = 0
-      if (MPs.hasOwnProperty('mapComments')) {
+      if (Object.prototype.hasOwnProperty.call(MPs, 'mapComments')) {
         while (cmp < MPs.mapComments.objects.length) {
           const theMC = MPs.mapComments.objects[cmp]
           let lonlat = null
@@ -6571,7 +6572,7 @@ function WMEURMPT_Injected () {
           }
           let inside = false
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -6591,10 +6592,10 @@ function WMEURMPT_Injected () {
         }
       }
       cmp = 0
-      if (MPs.hasOwnProperty('venues')) {
+      if (Object.prototype.hasOwnProperty.call(MPs, 'venues')) {
         while (cmp < MPs.venues.objects.length) {
           const thePUR = MPs.venues.objects[cmp]
-          if (!thePUR.hasOwnProperty('venueUpdateRequests')) {
+          if (!Object.prototype.hasOwnProperty.call(thePUR, 'venueUpdateRequests')) {
             MPs.venues.objects.splice(cmp, 1)
             continue
           }
@@ -6630,7 +6631,7 @@ function WMEURMPT_Injected () {
           }
           let inside = false
           for (let a = 0; a < filterArea.length; a++) {
-            if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
               if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
                 inside = true
                 break
@@ -6653,7 +6654,7 @@ function WMEURMPT_Injected () {
       MPs.filterType = filter.type
       MPs.tile = bounds
     }
-    if (MPs.hasOwnProperty('mapUpdateRequests')) {
+    if (Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests')) {
       const urIds = []
       for (let i = 0; i < MPs.mapUpdateRequests.objects.length; i++) {
         urIds.push(MPs.mapUpdateRequests.objects[i].id)
@@ -6710,7 +6711,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.updateURList = function (URs) {
-    if (URs.hasOwnProperty('mapUpdateRequests') === false) {
+    if (Object.prototype.hasOwnProperty.call(URs, 'mapUpdateRequests') === false) {
       return
     }
     for (let i = 0; i < URs.mapUpdateRequests.objects.length; i++) {
@@ -6761,7 +6762,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.updateMPList = function (MPs) {
-    if (MPs.hasOwnProperty('problems') === false) {
+    if (Object.prototype.hasOwnProperty.call(MPs, 'problems') === false) {
       return
     }
     WMEURMPT.logDebug('updatelist MPs:', MPs)
@@ -6794,7 +6795,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.updateMCList = function (MCs) {
-    if (MCs.hasOwnProperty('mapComments') === false) {
+    if (Object.prototype.hasOwnProperty.call(MCs, 'mapComments') === false) {
       return
     }
     for (let i = 0; i < MCs.mapComments.objects.length; i++) {
@@ -6835,7 +6836,7 @@ function WMEURMPT_Injected () {
           break
         }
       }
-      if (mc.data.hasOwnProperty('conversation')) {
+      if (Object.prototype.hasOwnProperty.call(mc.data, 'conversation')) {
         mc.data.conversation.forEach(function (c, i) {
           if (c.userID === WMEURMPT.me.id) {
             c.userName = WMEURMPT.me.userName
@@ -6862,7 +6863,7 @@ function WMEURMPT_Injected () {
     }
   }
   WMEURMPT.updatePURList = function (PURs) {
-    if (PURs.hasOwnProperty('venues') === false) {
+    if (Object.prototype.hasOwnProperty.call(PURs, 'venues') === false) {
       return
     }
     for (let i = 0; i < PURs.venues.objects.length; i++) {
@@ -6889,7 +6890,7 @@ function WMEURMPT_Injected () {
       }
       pur.data = JSON.parse(JSON.stringify(PURs.venues.objects[i]))
       pur.updated = true
-      if (pur.data.name === undefined) {
+      if (pur.data.name === 'undefined') {
         pur.data.name = 'undefined'
       }
       pur.data.createdByName = 'Unknown'
@@ -7148,7 +7149,7 @@ function WMEURMPT_Injected () {
 
     WMEURMPT.scanAreaBoundsList.shift()
     if (MPs != null) {
-      if (MPs.hasOwnProperty('error') && MPs.error === 1) {
+      if (Object.prototype.hasOwnProperty.call(MPs, 'error') && MPs.error === 1) {
         WMEURMPT.log('Found ' + MPs.logMessage.length + ' ' + MPs.logMessage.obj + '. This is a waze server limit. Enqueuing sub tile...')
         let newTileBounds = new OpenLayers.Bounds()
         newTileBounds.extend(new OpenLayers.LonLat(tileBounds.left, tileBounds.bottom))
@@ -7168,7 +7169,7 @@ function WMEURMPT_Injected () {
         WMEURMPT.scanAreaBoundsList.unshift(newTileBounds)
         WMEURMPT.scanAreaBoundsCount += 4
       } else {
-        WMEURMPT.log('Found: ' + (MPs.hasOwnProperty('mapUpdateRequests') ? MPs.mapUpdateRequests.objects.length + ' URs; ' : '') + (MPs.hasOwnProperty('problems') ? MPs.problems.objects.length + ' MPs; ' : '') + (MPs.hasOwnProperty('mapComments') ? MPs.mapComments.objects.length + ' MCs; ' : '') + (MPs.hasOwnProperty('venues') ? MPs.venues.objects.length + ' PURs' : ''))
+        WMEURMPT.log('Found: ' + (Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests') ? MPs.mapUpdateRequests.objects.length + ' URs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'problems') ? MPs.problems.objects.length + ' MPs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'mapComments') ? MPs.mapComments.objects.length + ' MCs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'venues') ? MPs.venues.objects.length + ' PURs' : ''))
         WMEURMPT.updateURList(MPs)
         WMEURMPT.updateMPList(MPs)
         WMEURMPT.updateMCList(MPs)
@@ -7185,7 +7186,7 @@ function WMEURMPT_Injected () {
     const now = new Date()
     if (WMEURMPT.scanUR) {
       while (i < WMEURMPT.URList.length) {
-        if (WMEURMPT.URList[i].data.hasOwnProperty('session') === false) {
+        if (Object.prototype.hasOwnProperty.call(WMEURMPT.URList[i].data, 'session') === false) {
           WMEURMPT.log('pas bon ca: ', WMEURMPT.URList[i])
         }
         let xy = new OpenLayers.Geometry.Point(WMEURMPT.URList[i].lonlat.lon, WMEURMPT.URList[i].lonlat.lat)
@@ -7198,7 +7199,7 @@ function WMEURMPT_Injected () {
         }
         let inside = false
         for (let a = 0; a < filterArea.length; a++) {
-          if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
             if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
               inside = true
               break
@@ -7236,7 +7237,7 @@ function WMEURMPT_Injected () {
         }
         let inside = false
         for (let a = 0; a < filterArea.length; a++) {
-          if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
             if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
               inside = true
               break
@@ -7274,7 +7275,7 @@ function WMEURMPT_Injected () {
         }
         let inside = false
         for (let a = 0; a < filterArea.length; a++) {
-          if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
             if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
               inside = true
               break
@@ -7312,7 +7313,7 @@ function WMEURMPT_Injected () {
         }
         let inside = false
         for (let a = 0; a < filterArea.length; a++) {
-          if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
             if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
               inside = true
               break
@@ -7351,23 +7352,23 @@ function WMEURMPT_Injected () {
     this.clean = clean
     this.updateDistanceToMapCenter = updateDistanceToMapCenter
     function clean () {
-      if (this.data.hasOwnProperty('bounds') === true) {
+      if (Object.prototype.hasOwnProperty.call(this.data, 'bounds') === true) {
         delete this.data.bounds
       }
-      if (this.data.hasOwnProperty('geometry') === true) {
+      if (Object.prototype.hasOwnProperty.call(this.data, 'geometry') === true) {
         delete this.data.geometry
       }
-      if (this.data.hasOwnProperty('session') === true) {
-        if (this.data.session.hasOwnProperty('driveGeometry') === true) {
+      if (Object.prototype.hasOwnProperty.call(this.data, 'session') === true) {
+        if (Object.prototype.hasOwnProperty.call(this.data.session, 'driveGeometry') === true) {
           delete this.data.session.driveGeometry
         }
-        if (this.data.session.hasOwnProperty('routeGeometry') === true) {
+        if (Object.prototype.hasOwnProperty.call(this.data.session, 'routeGeometry') === true) {
           delete this.data.session.routeGeometry
         }
-        if (this.data.session.hasOwnProperty('routeInstructions') === true) {
+        if (Object.prototype.hasOwnProperty.call(this.data.session, 'routeInstructions') === true) {
           delete this.data.session.routeInstructions
         }
-        if (this.data.session.hasOwnProperty('users') === true) {
+        if (Object.prototype.hasOwnProperty.call(this.data.session, 'users') === true) {
           delete this.data.session.users
         }
       }
@@ -7634,7 +7635,7 @@ function WMEURMPT_Injected () {
     function refreshFromWMEData () {
       WMEURMPT.logDebug('Refresh MP: ', WMEURMPT.wazeModel.mapProblems.additionalInfo)
       let theMP = null
-      if (WMEURMPT.wazeModel.mapProblems.objects.hasOwnProperty(this.id)) {
+      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.mapProblems.objects, this.id)) {
         theMP = WMEURMPT.wazeModel.mapProblems.objects[this.id]
       }
       if (theMP == null) {
@@ -7717,10 +7718,10 @@ function WMEURMPT_Injected () {
     this.clean = clean
     this.updateDistanceToMapCenter = updateDistanceToMapCenter
     function clean () {
-      if (this.data.hasOwnProperty('bounds') === true) {
+      if (Object.prototype.hasOwnProperty.call(this.data, 'bounds') === true) {
         delete this.data.bounds
       }
-      if (this.data.hasOwnProperty('geometry') === true) {
+      if (Object.prototype.hasOwnProperty.call(this.data, 'geometry') === true) {
         delete this.data.geometry
       }
     }
@@ -7761,7 +7762,7 @@ function WMEURMPT_Injected () {
         }
       }
       this.data.conversation = []
-      if (theMC.attributes.hasOwnProperty('conversation')) {
+      if (Object.prototype.hasOwnProperty.call(theMC, 'conversation')) {
         theMC.attributes.conversation.forEach(function (c, i) {
           if (c.userID === WMEURMPT.me.id) {
             c.userName = WMEURMPT.me.userName
@@ -7773,7 +7774,7 @@ function WMEURMPT_Injected () {
           this.data.conversation[this.data.conversation.length - 1].userName = theMC.model.users.objects[c.userID].userName
         }, this)
       }
-      if (theMC.hasOwnProperty('state') && theMC.state === 'DELETE') {
+      if (Object.prototype.hasOwnProperty.call(theMC, 'state') && theMC.state === 'DELETE') {
         WMEURMPT.MCList.splice(WMEURMPT.MCMap[this.id], 1)
         WMEURMPT.MCMap = WMEURMPT.listToObject(WMEURMPT.MCList)
         this.clean()
@@ -7814,7 +7815,7 @@ function WMEURMPT_Injected () {
                   break
                 }
               }
-              if (this.data.hasOwnProperty('conversation')) {
+              if (Object.prototype.hasOwnProperty.call(this.data, 'conversation')) {
                 this.data.conversation.forEach(function (c, j) {
                   if (c.userID === WMEURMPT.me.id) {
                     c.userName = WMEURMPT.me.userName
@@ -7877,10 +7878,10 @@ function WMEURMPT_Injected () {
     this.clean = clean
     this.updateDistanceToMapCenter = updateDistanceToMapCenter
     function clean () {
-      if (this.data.hasOwnProperty('bounds') === true) {
+      if (Object.prototype.hasOwnProperty.call(this.data, 'bounds') === true) {
         delete this.data.bounds
       }
-      if (this.data.hasOwnProperty('geometry') === true) {
+      if (Object.prototype.hasOwnProperty.call(this.data, 'geometry') === true) {
         delete this.data.geometry
       }
     }
@@ -7920,12 +7921,12 @@ function WMEURMPT_Injected () {
           break
         }
       }
-      if (thePUR.attributes.hasOwnProperty('venueUpdateRequests') && thePUR.attributes.venueUpdateRequests.length >> 0) {
+      if (Object.prototype.hasOwnProperty.call(thePUR.attributes, 'venueUpdateRequests') && thePUR.attributes.venueUpdateRequests.length >> 0) {
         this.data.venueUpdateRequests = []
         this.data.dateAddedMin = 0
         this.data.dateAddedMax = 0
         for (let n = 0; n < thePUR.attributes.venueUpdateRequests.length; n++) {
-          if (thePUR.attributes.venueUpdateRequests[n].changed.hasOwnProperty('approved') && thePUR.attributes.venueUpdateRequests[n].changed.approved !== null) {
+          if (Object.prototype.hasOwnProperty.call(thePUR.attributes.venueUpdateRequests[n].changed, 'approved') && thePUR.attributes.venueUpdateRequests[n].changed.approved !== null) {
             thePUR.attributes.venueUpdateRequests.splice(n, 1)
             continue
           }
@@ -7949,7 +7950,7 @@ function WMEURMPT_Injected () {
           }
           WMEURMPT.logDebug('this.id: ' + this.id + '; this.data.venueUpdateRequests[' + n + '].dateAdded: ' + this.data.venueUpdateRequests[n].dateAdded, this)
         }
-      } else if (thePUR.attributes.hasOwnProperty('venueUpdateRequests') && thePUR.attributes.venueUpdateRequests.length === 0) {
+      } else if (Object.prototype.hasOwnProperty.call(thePUR.attributes, 'venueUpdateRequests') && thePUR.attributes.venueUpdateRequests.length === 0) {
         WMEURMPT.PURList.splice(WMEURMPT.PURMap[this.id], 1)
         WMEURMPT.PURMap = WMEURMPT.listToObject(WMEURMPT.PURList)
         this.clean()
@@ -7976,7 +7977,7 @@ function WMEURMPT_Injected () {
               }
               WMEURMPT.logDebug('refresh from server ' + this.id + ';', PURs.venues.objects[i])
               this.data = PURs.venues.objects[i]
-              if (this.data.name === undefined) {
+              if (this.data.name === 'undefined') {
                 this.data.name = 'undefined'
               }
               this.data.createdByName = 'Unknown'
@@ -7993,7 +7994,7 @@ function WMEURMPT_Injected () {
                   break
                 }
               }
-              if (PURs.venues.objects[i].hasOwnProperty('venueUpdateRequests') && PURs.venues.objects[i].venueUpdateRequests.length >> 0) {
+              if (Object.prototype.hasOwnProperty.call(PURs.venues.objects[i], 'venueUpdateRequests') && PURs.venues.objects[i].venueUpdateRequests.length >> 0) {
                 this.data.venueUpdateRequests = []
                 this.data.dateAddedMin = 0
                 this.data.dateAddedMax = 0
@@ -8124,7 +8125,7 @@ function WMEURMPT_Injected () {
       }
       for (let a = 0; a < filterArea.length; a++) {
         if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top) {
-          if (filterArea[a].hasOwnProperty('bintreeContainsPoint') === false) {
+          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
             if (filterArea[a].containsPoint(xy)) {
               return true
             }
@@ -8295,10 +8296,10 @@ function WMEURMPT_Injected () {
         WMEURMPT.URList[i].refreshFromWMEData = urtmp.refreshFromWMEData
         WMEURMPT.URList[i].clean = urtmp.clean
         WMEURMPT.URList[i].updateDistanceToMapCenter = urtmp.updateDistanceToMapCenter
-        if (WMEURMPT.URList[i].hasOwnProperty('lastVisitCommentsCount') === false) {
+        if (Object.prototype.hasOwnProperty.call(WMEURMPT.URList[i], 'lastVisitCommentsCount') === false) {
           WMEURMPT.URList[i].lastVisitCommentsCount = 0
         }
-        if (WMEURMPT.URList[i].data.hasOwnProperty('session') === false) {
+        if (Object.prototype.hasOwnProperty.call(WMEURMPT.URList[i].data, 'session') === false) {
           WMEURMPT.log('Bad UR record. Trying to fix it...', WMEURMPT.URList[i].data)
           WMEURMPT.URList[i].refreshFromServer()
           WMEURMPT.log('Bad UR record. should be fixed:', WMEURMPT.URList[i].data)
@@ -8326,7 +8327,7 @@ function WMEURMPT_Injected () {
       WMEURMPT.MCList = JSON.parse(data.data)
       for (let i = 0; i < WMEURMPT.MCList.length; i++) {
         const mctmp = new WMEURMPT.URT_MC(WMEURMPT.MCList[i].id, WMEURMPT.MCList[i].lonlat.lon, WMEURMPT.MCList[i].lonlat.lat)
-        if (WMEURMPT.MCList[i].hasOwnProperty('lastVisitCommentsCount') === false) {
+        if (Object.prototype.hasOwnProperty.call(WMEURMPT.MCList[i], 'lastVisitCommentsCount') === false) {
           WMEURMPT.MCList[i].lastVisitCommentsCount = 0
         }
         WMEURMPT.MCList[i].refreshFromServer = mctmp.refreshFromServer
@@ -8468,7 +8469,7 @@ function WMEURMPT_Injected () {
     str = str.replace(/,"descriptionOffset":-?\d*/g, '')
     str = str.replace(/(\d*\.\d{6})\d+/g, '$1')
     for (const word in dict) {
-      if (dict.hasOwnProperty(word)) {
+      if (Object.prototype.hasOwnProperty.call(dict, word)) {
         str = str.replace(new RegExp(word, 'g'), dict[word])
       }
     }

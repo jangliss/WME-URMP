@@ -34,6 +34,7 @@ module.exports = {
     unsafeWindow: 'writeable',
     trustedTypes: 'readonly',
     ActiveXObject: 'readonly',
-    cloneInto: 'readonly'
+    cloneInto: 'readonly',
+    $: 'readonly'
   }
 }
