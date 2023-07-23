@@ -1,10 +1,12 @@
 {
   "name": "wme-ur-mp",
-  "version": "1.0.0",
+  "displayName": "Track UR and MP in the Waze Map Editor",
+  "version": "4.0.0",
   "description": "",
-  "main": "WME-URMP.user.js",
+  "main": "wme-ur-mp.user.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "grunt"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^16.0.1",
     "eslint-plugin-promise": "^6.1.1",
+    "grunt-cli": "^1.4.3",
     "grunt-contrib-concat": "^2.1.0"
   }
 }

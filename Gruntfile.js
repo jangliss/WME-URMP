@@ -1,9 +1,10 @@
 module.exports = function (grunt) {
   grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
     concat: {
       dist: {
-        src: ['./header.js', './downloadHelper.js', './storageHelper.js', './dbHelper.js', './main.js'],
-        dest: 'WME-URMP.user.js'
+        src: ['./src/header.js', './src/downloadHelper.js', './src/storageHelper.js', './src/icons.js', './src/dbHelper.js', './src/main.js'],
+        dest: 'dist/<%= pkg.main %>'
       }
     }
   })
