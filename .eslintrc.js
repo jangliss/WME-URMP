@@ -30,6 +30,7 @@ module.exports = {
     GM_getValue: 'readonly',
     GM_setValue: 'readonly',
     GM_xmlhttpRequest: 'readonly',
+    GM_info: 'readonly',
     GMStorageHelper: 'readonly',
     unsafeWindow: 'writeable',
     trustedTypes: 'readonly',
