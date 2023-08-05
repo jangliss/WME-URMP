@@ -3,7 +3,7 @@
   "displayName": "Track UR and MP in the Waze Map Editor",
   "version": "4.0.0",
   "description": "",
-  "main": "wme-ur-mp.user.js",
+  "main": "wme-urmpt",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "grunt"
