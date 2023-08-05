@@ -1108,7 +1108,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.isURFiltered2 = function (ur) {
-    const userId = WMEURMPT.loginManager.user.id
+    const userId = WMEURMPT.loginManager.user.getID()
     let found = false
     let inside = false
     let filterArea = []
@@ -7565,8 +7565,8 @@ function WMEURMPT_Injected () {
                       break
                     }
                   }
-                  if (userID === WMEURMPT.loginManager.user.id) {
-                    userName = WMEURMPT.loginManager.user.userName
+                  if (userID === WMEURMPT.loginManager.user.getID()) {
+                    userName = WMEURMPT.loginManager.user.getUsername()
                   }
                 }
                 this.data.session.comments[c].userName = userName
@@ -8251,9 +8251,9 @@ function WMEURMPT_Injected () {
       WMEURMPT.currentMPFilter = typeof options.filterMP === 'undefined' ? WMEURMPT.MPFilterList.hideClosed + WMEURMPT.MPFilterList.hideBlacklisted : options.filterMP
       WMEURMPT.currentMCFilter = typeof options.filterMC === 'undefined' ? WMEURMPT.MCFilterList.hideBlacklisted : options.filterMC
       WMEURMPT.currentPURFilter = typeof options.filterPUR === 'undefined' ? WMEURMPT.PURFilterList.hideBlacklisted : options.filterPUR
-      WMEURMPT.currentURKeyWord = typeof options.filterURKeyword === 'undefined' ? WMEURMPT.loginManager.user.userName : options.filterURKeyword
-      WMEURMPT.currentMCKeyWord = typeof options.filterMCKeyword === 'undefined' ? WMEURMPT.loginManager.user.userName : options.filterMCKeyword
-      WMEURMPT.currentPURKeyWord = typeof options.filterPURKeyword === 'undefined' ? WMEURMPT.loginManager.user.userName : options.filterPURKeyword
+      WMEURMPT.currentURKeyWord = typeof options.filterURKeyword === 'undefined' ? WMEURMPT.loginManager.user.getUsername() : options.filterURKeyword
+      WMEURMPT.currentMCKeyWord = typeof options.filterMCKeyword === 'undefined' ? WMEURMPT.loginManager.user.getUsername() : options.filterMCKeyword
+      WMEURMPT.currentPURKeyWord = typeof options.filterPURKeyword === 'undefined' ? WMEURMPT.loginManager.user.getUsername() : options.filterPURKeyword
       WMEURMPT.currentURLimitTo = typeof options.filterURLimitTo === 'undefined' ? 100 : options.filterURLimitTo
       WMEURMPT.currentMPLimitTo = typeof options.filterMPLimitTo === 'undefined' ? 100 : options.filterMPLimitTo
       WMEURMPT.currentMCLimitTo = typeof options.filterMCLimitTo === 'undefined' ? 100 : options.filterMCLimitTo
