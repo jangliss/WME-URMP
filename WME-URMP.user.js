@@ -1,14 +1,12 @@
 // ==UserScript==
-// @name        WME UR-MP tracking
-// @version     3.9.7
+// @name        WME UR-MP tracking - Beta
+// @version     3.9.8
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
-// @match     https://www.waze.com/editor*
-// @match     https://www.waze.com/*/editor*
-// @match     https://beta.waze.com/editor*
-// @match     https://beta.waze.com/*/editor*
-// @exclude     https://www.waze.com/user/*
-// @exclude     https://www.waze.com/*/user/*
+// @match       https://beta.waze.com/editor*
+// @match       https://beta.waze.com/*/editor*
+// @exclude     https://beta.waze.com/*/user/*
+// @exclude     https://beta.waze.com/*/user/*
 // @icon        data:image/png;base64,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
 // @grant       GM_addElement
 // @grant       GM_getValue
@@ -188,7 +186,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.7'
+  WMEURMPT.urmpt_version = '3.9.8'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -557,7 +555,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.initializeWazeObjects = function () {
-    const objectToCheck = [{ o: 'W.map', s: 'wazeMap' }, { o: 'W.model', s: 'wazeModel' }, { o: 'W.loginManager', s: 'loginManager' }, { o: 'W.controller', s: 'wazeController' }, { o: 'W.Config.api_base', s: 'wazeConfigApiBase' }, { o: 'W.Config.paths.features', s: 'wazeConfigApiFeatures' }, { o: 'W.Config.paths.updateRequestSessions', s: 'wazeConfigApiUpdateRequestSessions' }, { o: 'OL', s: 'OpenLayers' }, { o: 'W.loginManager.user', s: 'me' }, { o: 'W.loginManager.user.rank', s: 'ul' }, { o: 'W.loginManager.user.isAreaManager', s: 'uam' }]
+    const objectToCheck = [{ o: 'W.map', s: 'wazeMap' }, { o: 'W.model', s: 'wazeModel' }, { o: 'W.loginManager', s: 'loginManager' }, { o: 'W.controller', s: 'wazeController' }, { o: 'W.Config.api_base', s: 'wazeConfigApiBase' }, { o: 'W.Config.paths.features', s: 'wazeConfigApiFeatures' }, { o: 'W.Config.paths.updateRequestSessions', s: 'wazeConfigApiUpdateRequestSessions' }, { o: 'OL', s: 'OpenLayers' }, { o: 'W.loginManager.user', s: 'me' }, { o: 'W.loginManager.user.attributes.rank', s: 'ul' }, { o: 'W.loginManager.user.attributes.isAreaManager', s: 'uam' }]
     for (let i = 0; i < objectToCheck.length; i++) {
       const path = objectToCheck[i].o.split('.')
       let object = window
@@ -625,17 +623,18 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.initManagedArea = function () {
-    for (let a = 0; a < WMEURMPT.loginManager.user.areas.length; a++) {
-      if (WMEURMPT.loginManager.user.areas[a].type === 'drive') {
-        for (let c = 0; c < WMEURMPT.loginManager.user.areas[a].geometry.components.length; c++) {
-          WMEURMPT.loginManager.user.areas[a].geometry.components[c].calculateBounds()
-          WMEURMPT.driveArea.push(WMEURMPT.loginManager.user.areas[a].geometry.components[c])
+    const userAreas = WMEURMPT.me.attributes.areas
+    for (let a = 0; a < userAreas.length; a++) {
+      if (userAreas[a].type === 'drive') {
+        for (let c = 0; c < userAreas[a].geometry.components.length; c++) {
+          userAreas[a].geometry.components[c].calculateBounds()
+          WMEURMPT.driveArea.push(userAreas[a].geometry.components[c])
         }
       }
-      if (WMEURMPT.loginManager.user.areas[a].type === 'managed') {
-        for (let c = 0; c < WMEURMPT.loginManager.user.areas[a].geometry.components.length; c++) {
-          WMEURMPT.loginManager.user.areas[a].geometry.components[c].calculateBounds()
-          WMEURMPT.managedAreas.push(WMEURMPT.loginManager.user.areas[a].geometry.components[c])
+      if (userAreas[a].type === 'managed') {
+        for (let c = 0; c < userAreas[a].geometry.components.length; c++) {
+          userAreas[a].geometry.components[c].calculateBounds()
+          WMEURMPT.managedAreas.push(userAreas[a].geometry.components[c])
         }
       }
     }
@@ -888,12 +887,12 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.inScreenUpdatableArea = function (xy) {
     if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.userAreas.objects, 'managed')) {
-      if (WMEURMPT.wazeModel.userAreas.objects.managed.geometry.containsPoint(xy)) {
+      if (WMEURMPT.wazeModel.userAreas.objects.managed.attributes.geometry.containsPoint(xy)) {
         return true
       }
     }
     if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.userAreas.objects, 'drives')) {
-      if (WMEURMPT.wazeModel.userAreas.objects.drives.geometry.containsPoint(xy)) {
+      if (WMEURMPT.wazeModel.userAreas.objects.drives.attributes.geometry.containsPoint(xy)) {
         return true
       }
     }
@@ -1037,8 +1036,8 @@ function WMEURMPT_Injected () {
             for (let c = 0; c < ur.data.session.comments.length; c++) {
               const userID = ur.data.session.comments[c].userID
               let userName = 'Unknown'
-              if (userID === WMEURMPT.me.id) {
-                userName = WMEURMPT.me.userName
+              if (userID === WMEURMPT.me.getID()) {
+                userName = WMEURMPT.me.getUsername()
                 if (c === ur.data.session.comments.length - 1) {
                   ur.lastVisitCommentsCount = ur.data.session.comments.length
                 }
@@ -2176,7 +2175,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.exportAllCAToJSON = function () {
-    this.setAttribute('download', 'URMPT_CustomAreas_' + WMEURMPT.me.userName + '.json')
+    this.setAttribute('download', 'URMPT_CustomAreas_' + WMEURMPT.me.getUsername() + '.json')
     this.href = 'data:application/octet-stream;charset=utf-8;base64,' + btoa(JSON.stringify(WMEURMPT.areaList.custom.map(function (e) {
       return { name: e.name, geometryWKT: e.geometryWKT }
     })))
@@ -2552,17 +2551,17 @@ function WMEURMPT_Injected () {
     div.innerHTML += WMEURMPT.convertHtml('<hr/>')
     div.innerHTML += WMEURMPT.convertHtml('You:<br/><br/>')
     const closedURbyMe = dateFilteredURList.filter(function (value) {
-      return value.data.resolvedBy === WMEURMPT.me.id
+      return value.data.resolvedBy === WMEURMPT.me.getID()
     }).length
     const closedMPbyMe = dateFilteredMPList.filter(function (value) {
-      return value.data.resolvedBy === WMEURMPT.me.id
+      return value.data.resolvedBy === WMEURMPT.me.getID()
     }).length
     const niURbyMe = dateFilteredURList.filter(function (value) {
-      return value.data.resolvedBy === WMEURMPT.me.id && value.data.open === false && value.data.resolution === 1
+      return value.data.resolvedBy === WMEURMPT.me.getID() && value.data.open === false && value.data.resolution === 1
     }).length
     const soURbyMe = closedURbyMe - niURbyMe
     const niMPbyMe = dateFilteredMPList.filter(function (value) {
-      return value.data.resolvedBy === WMEURMPT.me.id && value.data.open === false && value.data.resolution === 1
+      return value.data.resolvedBy === WMEURMPT.me.getID() && value.data.open === false && value.data.resolution === 1
     }).length
     const soMPbyMe = closedMPbyMe - niMPbyMe
     div.innerHTML += WMEURMPT.convertHtml('URs closed: ' + closedURbyMe + ' (' + Math.round(closedURbyMe * 100 / dateFilteredURList.length) + '%)<br/>')
@@ -2644,7 +2643,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.exportStatsToCSV = function () {
-    this.setAttribute('download', 'URMPT_Stats_' + (new Date()).toISOString().substr(0, 10) + '_' + WMEURMPT.me.userName + '.csv')
+    this.setAttribute('download', 'URMPT_Stats_' + (new Date()).toISOString().substr(0, 10) + '_' + WMEURMPT.me.getUsername() + '.csv')
     this.href = 'data:application/octet-stream;charset=utf-8;base64,' + btoa(WMEURMPT.statsCSV)
   }
 
@@ -4725,7 +4724,7 @@ function WMEURMPT_Injected () {
         comments += WMEURMPT.URList[i].data.session.comments[c].userName + ' (' + (new Date(WMEURMPT.URList[i].data.session.comments[c].createdOn)).toLocaleString() + '):' + NL
         comments += WMEURMPT.URList[i].data.session.comments[c].text + NL + NL
         lastCommentDays = WMEURMPT.getDuration(WMEURMPT.URList[i].data.session.comments[c].createdOn)
-        if (c === WMEURMPT.URList[i].data.session.comments.length - 1 && WMEURMPT.URList[i].data.session.comments[c].userName === WMEURMPT.me.userName) {
+        if (c === WMEURMPT.URList[i].data.session.comments.length - 1 && WMEURMPT.URList[i].data.session.comments[c].userName === WMEURMPT.me.getUsername()) {
           WMEURMPT.URList[i].lastVisitCommentsCount = WMEURMPT.URList[i].data.session.comments.length
         }
       }
@@ -5067,7 +5066,7 @@ function WMEURMPT_Injected () {
           let text = c.userName + ' (' + (new Date(c.createdOn)).toLocaleString() + '):' + NL
           text += c.text
           conversationArray.push(text)
-          if (j === WMEURMPT.MCList[i].data.conversation.length - 1 && c.userName === WMEURMPT.me.userName) {
+          if (j === WMEURMPT.MCList[i].data.conversation.length - 1 && c.userName === WMEURMPT.me.getUsername()) {
             WMEURMPT.MCList[i].lastVisitCommentsCount = WMEURMPT.MCList[i].data.conversation.length
           }
         })
@@ -5245,7 +5244,7 @@ function WMEURMPT_Injected () {
       }
       content += '<td><span id="purt-categoriespur-' + WMEURMPT.PURList[i].id + '" title="' + categoriesHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + categoriesHTMLNormalized + '</span></td>'
       let nameHTML = WMEURMPT.PURList[i].data.name
-      if (nameHTML === 'undefined') {
+      if (typeof nameHTML === 'undefined') {
         nameHTML = 'undefined'
       }
       let nameHTMLNormalized = (new Array(WMEURMPT.PURNameMaxLength - 3 + 1)).join('&nbsp')
@@ -5785,7 +5784,7 @@ function WMEURMPT_Injected () {
     if (mp != null) {
       const mpLayer = WMEURMPT.wazeMap.getLayerByName('mapProblems')
       if ((typeof mpLayer !== 'undefined') && (typeof mpLayer.markers !== 'undefined')) {
-        const markers = mpLayer.markers.filter(elem => parseInt(elem.element.getAttributes('data-id')) === MPId.MPId)
+        const markers = mpLayer.markers.filter(elem => elem.element.getAttribute('data-id') === MPId.MPId)
         if (markers.length !== 0) {
           markers[0].element.click()
         }
@@ -6130,7 +6129,7 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.clickPUR = function () {
     WMEURMPT.logDebug('PUR clicked: ', this)
-    WMEURMPT.currentPURID = this.getAttribute('data-id')
+    WMEURMPT.currentPURID = W.selectionManager.getSelectedFeatures()[0].attributes.wazeFeature.id
     WMEURMPT.selectedPURID = WMEURMPT.currentPURID
     WMEURMPT.PURVisited(WMEURMPT.currentPURID)
     WMEURMPT.log('PUR clicked: ' + WMEURMPT.currentPURID, this)
@@ -6346,8 +6345,8 @@ function WMEURMPT_Injected () {
       } else {
         const now = new Date()
         mp.data.resolvedOn = now.getTime()
-        mp.data.resolvedBy = WMEURMPT.me.id
-        mp.data.resolvedByName = WMEURMPT.me.userName
+        mp.data.resolvedBy = WMEURMPT.me.getID()
+        mp.data.resolvedByName = WMEURMPT.me.getUsername()
       }
       WMEURMPT.updateIHMFromMPList()
     }
@@ -6364,8 +6363,8 @@ function WMEURMPT_Injected () {
       } else {
         const now = new Date()
         ur.data.resolvedOn = now.getTime()
-        ur.data.resolvedBy = WMEURMPT.me.id
-        ur.data.resolvedByName = WMEURMPT.me.userName
+        ur.data.resolvedBy = WMEURMPT.me.getID()
+        ur.data.resolvedByName = WMEURMPT.me.getUsername()
       }
       WMEURMPT.updateIHMFromURList()
     }
@@ -6732,8 +6731,8 @@ function WMEURMPT_Injected () {
       for (let c = 0; c < ur.data.session.comments.length; c++) {
         const userID = ur.data.session.comments[c].userID
         let userName = 'Unknown'
-        if (userID === WMEURMPT.me.id) {
-          userName = WMEURMPT.me.userName
+        if (userID === WMEURMPT.me.getID()) {
+          userName = WMEURMPT.me.getUsername()
           if (c === ur.data.session.comments.length - 1) {
             ur.lastVisitCommentsCount = ur.data.session.comments.length
           }
@@ -6838,8 +6837,8 @@ function WMEURMPT_Injected () {
       }
       if (Object.prototype.hasOwnProperty.call(mc.data, 'conversation')) {
         mc.data.conversation.forEach(function (c, i) {
-          if (c.userID === WMEURMPT.me.id) {
-            c.userName = WMEURMPT.me.userName
+          if (c.userID === WMEURMPT.me.getID()) {
+            c.userName = WMEURMPT.me.getUsername()
             if (i === mc.data.conversation.length - 1) {
               mc.lastVisitCommentsCount = mc.data.conversation.length
             }
@@ -6942,9 +6941,10 @@ function WMEURMPT_Injected () {
     WMEURMPT.log('Setup tiles for manual scan: ', areaFilter)
     WMEURMPT.scanAreaBoundsList = []
     if (areaFilter.type === 'editableArea') {
-      for (let i = 0; i < WMEURMPT.loginManager.user.areas.length; i++) {
-        WMEURMPT.loginManager.user.areas[i].geometry.calculateBounds()
-        const bounds = WMEURMPT.loginManager.user.areas[i].geometry.bounds
+      const userAreas = WMEURMPT.me.attributes.areas
+      for (let i = 0; i < userAreas.length; i++) {
+        userAreas[i].geometry.calculateBounds()
+        const bounds = userAreas[i].geometry.bounds
         const lonlatFrom = OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.left, bounds.bottom)
         const lonlatTo = OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.right, bounds.top)
         for (let lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
@@ -7414,8 +7414,8 @@ function WMEURMPT_Injected () {
       if (!forceSession) {
         if (WMEURMPT.wazeModel.updateRequestSessions.objects[this.id] != null) {
           this.data.session = {}
-          this.data.session.comments = JSON.parse(JSON.stringify(WMEURMPT.wazeModel.updateRequestSessions.objects[this.id].comments))
-          this.data.session.isFollowing = WMEURMPT.wazeModel.updateRequestSessions.objects[this.id].isFollowing
+          this.data.session.comments = JSON.parse(JSON.stringify(WMEURMPT.wazeModel.updateRequestSessions.objects[this.id].attributes.comments))
+          this.data.session.isFollowing = WMEURMPT.wazeModel.updateRequestSessions.objects[this.id].attributes.isFollowing
         } else {
           this.data.session = {}
           this.data.session.comments = []
@@ -7466,8 +7466,8 @@ function WMEURMPT_Injected () {
               for (let c = 0; c < this.data.session.comments.length; c++) {
                 const userID = this.data.session.comments[c].userID
                 let userName = 'Unknown'
-                if (userID === WMEURMPT.me.id) {
-                  userName = WMEURMPT.me.userName
+                if (userID === WMEURMPT.me.getID()) {
+                  userName = WMEURMPT.me.getUsername()
                   if (c === this.data.session.comments.length - 1) {
                     this.lastVisitCommentsCount = this.data.session.comments.length
                   }
@@ -7503,8 +7503,8 @@ function WMEURMPT_Injected () {
         for (let c = 0; c < this.data.session.comments.length; c++) {
           const userID = this.data.session.comments[c].userID
           let userName = 'Unknown'
-          if (userID === WMEURMPT.me.id) {
-            userName = WMEURMPT.me.userName
+          if (userID === WMEURMPT.me.getID()) {
+            userName = WMEURMPT.me.getUsername()
             if (c === this.data.session.comments.length - 1) {
               this.lastVisitCommentsCount = this.data.session.comments.length
             }
@@ -7764,8 +7764,8 @@ function WMEURMPT_Injected () {
       this.data.conversation = []
       if (Object.prototype.hasOwnProperty.call(theMC, 'conversation')) {
         theMC.attributes.conversation.forEach(function (c, i) {
-          if (c.userID === WMEURMPT.me.id) {
-            c.userName = WMEURMPT.me.userName
+          if (c.userID === WMEURMPT.me.getID()) {
+            c.userName = WMEURMPT.me.getUsername()
             if (i === theMC.attributes.conversation.length - 1) {
               this.lastVisitCommentsCount = theMC.attributes.conversation.length
             }
@@ -7817,8 +7817,8 @@ function WMEURMPT_Injected () {
               }
               if (Object.prototype.hasOwnProperty.call(this.data, 'conversation')) {
                 this.data.conversation.forEach(function (c, j) {
-                  if (c.userID === WMEURMPT.me.id) {
-                    c.userName = WMEURMPT.me.userName
+                  if (c.userID === WMEURMPT.me.getID()) {
+                    c.userName = WMEURMPT.me.getUsername()
                     if (j === this.data.conversation.length - 1) {
                       this.lastVisitCommentsCount = this.data.conversation.length
                     }
@@ -8075,7 +8075,7 @@ function WMEURMPT_Injected () {
       }
       const url = WMEURMPT.servers[serverIndex].url + 'getArea.php?category=' + this.category + (this.subset === true ? '&subset=' + this.parent : '') + '&name=' + this.name
       const context = this
-      WMEURMPT.log('Try to donwload area from server ' + WMEURMPT.servers[serverIndex].name)
+      WMEURMPT.log('Try to download area from server ' + WMEURMPT.servers[serverIndex].name)
       // eslint-disable-next-line no-undef
       downloadHelper.add(url, function (data) {
         if (data.status === 'success') {
@@ -8102,7 +8102,7 @@ function WMEURMPT_Injected () {
       }
       const url = WMEURMPT.servers[serverIndex].url + 'getArea.php?category=' + this.category
       const context = this
-      WMEURMPT.log('Try to donwload area list from server ' + WMEURMPT.servers[serverIndex].name)
+      WMEURMPT.log('Try to download area list from server ' + WMEURMPT.servers[serverIndex].name)
       // eslint-disable-next-line no-undef
       downloadHelper.add(url, function (data) {
         if (data.status === 'success') {
@@ -8376,7 +8376,7 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.load = function () {
     try {
-      WMEURMPT.dictionary['"' + WMEURMPT.me.userName + '"'] = '~Z'
+      WMEURMPT.dictionary['"' + WMEURMPT.me.getUsername() + '"'] = '~Z'
 
       GMStorageHelper.load('WMEURMPTracking_options', WMEURMPT.optionsLoaded)
       GMStorageHelper.load('WMEURMPTracking_URList', WMEURMPT.urlistLoaded)
