@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.8
+// @version     3.9.9
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @match       https://www.waze.com/editor*
@@ -186,7 +186,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.8'
+  WMEURMPT.urmpt_version = '3.9.9'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -1969,7 +1969,7 @@ function WMEURMPT_Injected () {
   }
   WMEURMPT.handleFileSelectAddFromJSON = function (evt) {
     const files = evt.target.files
-    for (const f in files) {
+    Array.from(files).forEach( f => {
       const reader = new FileReader()
       reader.onload = (function (theFile) {
         return function (e) {
@@ -1978,7 +1978,7 @@ function WMEURMPT_Injected () {
         }
       }(f))
       reader.readAsText(f)
-    }
+    })
   }
   WMEURMPT.addCustomAreaFromJSONToFilterList = function () {
     if (WMEURMPT.lastUploadedJSON === null) {
@@ -3790,7 +3790,7 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.handleFileSelectAddFromWKT = function (evt) {
     const files = evt.target.files
-    for (const f in files) {
+    Array.from(files).forEach( f => {
       const reader = new FileReader()
       reader.onload = (function (theFile) {
         return function (e) {
@@ -3799,7 +3799,7 @@ function WMEURMPT_Injected () {
         }
       }(f))
       reader.readAsText(f)
-    }
+    })
   }
 
   WMEURMPT.showAreaInWKT = function (area) {
