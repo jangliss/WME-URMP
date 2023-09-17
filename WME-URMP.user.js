@@ -4671,7 +4671,7 @@ function WMEURMPT_Injected () {
       return
     }
     sortMode = typeof sortMode !== 'undefined' && sortMode != null ? sortMode : WMEURMPT.currentSortModeUR
-    if ((sortMode !== WMEURMPT.currentSortModeUR) || ((sortMode === WMEURMPT.sortModeListUR.distanceDSC || sortMode === WMEURMPT.sortModeListUR.distanceASC) && WMEURMPT.isComputeDistances === true)) {
+    if (sortMode !== WMEURMPT.currentSortModeUR) {
       WMEURMPT.URList.sort(WMEURMPT.compareUR)
       WMEURMPT.URMap = WMEURMPT.listToObject(WMEURMPT.URList)
     }
@@ -4871,7 +4871,7 @@ function WMEURMPT_Injected () {
       }
     }
     sortMode = typeof sortMode !== 'undefined' && sortMode != null ? sortMode : WMEURMPT.currentSortModeMP
-    if ((sortMode !== WMEURMPT.currentSortModeMP || (sortMode === WMEURMPT.sortModeListMP.distanceDSC || sortMode === WMEURMPT.sortModeListMP.distanceASC)) && WMEURMPT.isComputeDistances === true) {
+    if (sortMode !== WMEURMPT.currentSortModeMP) {
       WMEURMPT.MPList.sort(WMEURMPT.compareMP)
       WMEURMPT.MPMap = WMEURMPT.listToObject(WMEURMPT.MPList)
     }
@@ -5025,7 +5025,7 @@ function WMEURMPT_Injected () {
       return
     }
     sortMode = typeof sortMode !== 'undefined' && sortMode != null ? sortMode : WMEURMPT.currentSortModeMC
-    if ((sortMode !== WMEURMPT.currentSortModeMC || (sortMode === WMEURMPT.sortModeListMC.distanceDSC || sortMode === WMEURMPT.sortModeListMC.distanceASC)) && WMEURMPT.isComputeDistances === true) {
+    if (sortMode !== WMEURMPT.currentSortModeMC) {
       WMEURMPT.MCList.sort(WMEURMPT.compareMC)
       WMEURMPT.MCMap = WMEURMPT.listToObject(WMEURMPT.MCList)
     }
@@ -5175,7 +5175,7 @@ function WMEURMPT_Injected () {
       return
     }
     sortMode = typeof sortMode !== 'undefined' && sortMode !== null ? sortMode : WMEURMPT.currentSortModePUR
-    if ((sortMode !== WMEURMPT.currentSortModePUR || (sortMode === WMEURMPT.sortModeListPUR.distanceDSC || sortMode === WMEURMPT.sortModeListPUR.distanceASC)) && WMEURMPT.isComputeDistances === true) {
+    if (sortMode !== WMEURMPT.currentSortModePUR) {
       WMEURMPT.PURList.sort(WMEURMPT.comparePUR)
       WMEURMPT.PURMap = WMEURMPT.listToObject(WMEURMPT.PURList)
     }
