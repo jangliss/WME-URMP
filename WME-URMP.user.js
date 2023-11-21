@@ -183,7 +183,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.11'
+  WMEURMPT.urmpt_version = '3.9.12'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -624,15 +624,17 @@ function WMEURMPT_Injected () {
     const userAreas = WMEURMPT.me.attributes.areas
     for (let a = 0; a < userAreas.length; a++) {
       if (userAreas[a].type === 'drive') {
-        for (let c = 0; c < userAreas[a].geometry.components.length; c++) {
-          userAreas[a].geometry.components[c].calculateBounds()
-          WMEURMPT.driveArea.push(userAreas[a].geometry.components[c])
+        let tmpArea = W.userscripts.toOLGeometry(userAreas[a].geometry)
+        for (let c = 0; c < tmpArea.components.length; c++) {
+          tmpArea.components[c].calculateBounds()
+          WMEURMPT.driveArea.push(tmpArea.components[c])
         }
       }
       if (userAreas[a].type === 'managed') {
-        for (let c = 0; c < userAreas[a].geometry.components.length; c++) {
-          userAreas[a].geometry.components[c].calculateBounds()
-          WMEURMPT.managedAreas.push(userAreas[a].geometry.components[c])
+        let tmpArea = W.userscripts.toOLGeometry(userAreas[a].geometry)
+        for (let c = 0; c < tmpArea.components.length; c++) {
+          tmpArea.components[c].calculateBounds()
+          WMEURMPT.managedAreas.push(tmpArea.components[c])
         }
       }
     }
