@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.12
+// @version     3.9.13
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -183,7 +183,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.12'
+  WMEURMPT.urmpt_version = '3.9.13'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -2049,14 +2049,15 @@ function WMEURMPT_Injected () {
     ca.category = 'custom'
     ca.name = elName.value
     WMEURMPT.log('Add CA to scan list: ' + ca.name)
-    if (theVenue.geometry.components.length !== 1) {
+    const theVenueGeom = theVenue.getOLGeometry()
+    if (theVenueGeom.components.length !== 1) {
       alert("Can't parse the geometry")
       return
     }
     ca.geometryWKT = 'POLYGON (('
     const lonlats = []
-    for (let i = 0; i < theVenue.geometry.components[0].components.length; i++) {
-      const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theVenue.geometry.components[0].components[i].x, theVenue.geometry.components[0].components[i].y)
+    for (let i = 0; i < theVenueGeom.components[0].components.length; i++) {
+      const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theVenueGeom.components[0].components[i].x, theVenueGeom.components[0].components[i].y)
       lonlats.push(lonlat.lon + ' ' + lonlat.lat)
     }
     ca.geometryWKT += lonlats.join(',')
@@ -2121,16 +2122,16 @@ function WMEURMPT_Injected () {
         WMEURMPT.getId('urmpt-area-custom-save-' + WMEURMPT.areaList.custom[c].name).style.display = 'inline'
         const area = WMEURMPT.areaList.custom[c]
         const FeatureLandmark = require('Waze/Feature/Vector/Landmark')
-        const landmark = new FeatureLandmark()
+
+        const convProjection = area.geometryOL.geometry.transform(
+          new OpenLayers.Projection("EPSG:4326"),
+          WMEURMPT.wazeMap.getProjectionObject()
+        )
+
+        const landmark = new FeatureLandmark({geoJSONGeometry: W.userscripts.toGeoJSONGeometry(convProjection)})
         const center = area.geometryOL.geometry.getCentroid()
         const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(center.x, center.y)
         WMEURMPT.wazeMap.setCenter(xy)
-        const geo = []
-        area.geometryOL.geometry.components[0].components.forEach(function (c) {
-          const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(c.x, c.y)
-          geo.push(new OpenLayers.Geometry.Point(xy.lon, xy.lat))
-        })
-        landmark.geometry = new OpenLayers.Geometry.Polygon([new OpenLayers.Geometry.LinearRing(geo)])
         landmark.attributes.categories = ['OTHER']
         const AddLandmark = require('Waze/Action/AddLandmark')
         W.model.actionManager.add(new AddLandmark(landmark), _.defer(function () {
