@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.13
+// @version     3.9.14
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -183,7 +183,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.13'
+  WMEURMPT.urmpt_version = '3.9.14'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -246,6 +246,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.currentMPOnlyArea = ''
   WMEURMPT.currentPUROnlyArea = ''
   WMEURMPT.purInvertFilter = false
+  WMEURMPT.urtInvertFilter = false
   WMEURMPT.currentURCommentsCount = 0
   WMEURMPT.wazeServerWaitingTimeToRetry = 1
   WMEURMPT.mapCenterLonLat = null
@@ -1099,7 +1100,7 @@ function WMEURMPT_Injected () {
     let invert = function (a) {
       return a
     }
-    if (WMEURMPT.getId('urt-checkbox-filterInvert').checked === true) {
+    if (WMEURMPT.urtInvertFilter === true) {
       invert = function (a) {
         return !a
       }
@@ -1425,7 +1426,7 @@ function WMEURMPT_Injected () {
     let invert = function (a) {
       return a
     }
-    if (WMEURMPT.getId('pur-checkbox-filterInvert').checked === true) {
+    if (WMEURMPT.purInvertFilter === true) {
       invert = function (a) {
         return !a
       }
@@ -1523,6 +1524,12 @@ function WMEURMPT_Injected () {
     WMEURMPT.logDebug('current UR filter: ' + WMEURMPT.currentURFilter)
     WMEURMPT.saveOptions()
     WMEURMPT.updateIHMFromURList()
+  }
+  WMEURMPT.toggleURInvertFilter = function() {
+    WMEURMPT.log('Switch UR filter "invert filter"')
+    WMEURMPT.urtInvertFilter = this.value
+    WMEURMPT.updateIHMFromPURList()
+    WMEURMPT.saveOptions()
   }
   WMEURMPT.toggleURFilterHideClosed = function () {
     WMEURMPT.log('Switch UR filter "hide closed"')
@@ -1892,7 +1899,8 @@ function WMEURMPT_Injected () {
     }
     WMEURMPT.saveOptions()
   }
-  WMEURMPT.purInvertFilterChanged = function () {
+  WMEURMPT.togglePURInvertFilter = function () {
+    WMEURMPT.log('Change PUR filter "invert filter"')
     WMEURMPT.purInvertFilter = this.value
     WMEURMPT.updateIHMFromPURList()
     WMEURMPT.saveOptions()
@@ -2168,7 +2176,8 @@ function WMEURMPT_Injected () {
       WMEURMPT.updateScanGroup()
       return
     }
-    if (theVenue.geometry.components.length !== 1) {
+    const theVenueGeom = theVenue.getOLGeometry()
+    if (theVenueGeom.components.length !== 1) {
       alert("Can't parse the geometry")
       WMEURMPT.updateScanGroup()
       return
@@ -2179,8 +2188,8 @@ function WMEURMPT_Injected () {
     ca.name = areaName
     ca.geometryWKT = 'POLYGON (('
     const lonlats = []
-    for (let i = 0; i < theVenue.geometry.components[0].components.length; i++) {
-      const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theVenue.geometry.components[0].components[i].x, theVenue.geometry.components[0].components[i].y)
+    for (let i = 0; i < theVenueGeom.components[0].components.length; i++) {
+      const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theVenueGeom.components[0].components[i].x, theVenueGeom.components[0].components[i].y)
       lonlats.push(lonlat.lon + ' ' + lonlat.lat)
     }
     ca.geometryWKT += lonlats.join(',')
@@ -3398,7 +3407,8 @@ function WMEURMPT_Injected () {
     if (WMEURMPT.currentURFilter & WMEURMPT.URFilterList.hideTagged) {
       WMEURMPT.getId('urt-checkbox-filterHideTagged').checked = true
     }
-    WMEURMPT.getId('urt-checkbox-filterInvert').onclick = WMEURMPT.updateIHMFromURList
+    WMEURMPT.getId('urt-checkbox-filterInvert').onclick = WMEURMPT.toggleURInvertFilter
+    WMEURMPT.getId('urt-checkbox-filterInvert').checked = WMEURMPT.urtInvertFilter
     if (WMEURMPT.ul >= WMEURMPT.rl4cp) {
       WMEURMPT.getId('urt-checkbox-filterHideClosed').onclick = WMEURMPT.toggleURFilterHideClosed
     }
@@ -3516,7 +3526,6 @@ function WMEURMPT_Injected () {
     WMEURMPT.getId('mct-filterLimitTo').onpaste = WMEURMPT.MCLimitToChanged
     WMEURMPT.getId('mct-filterLimitTo').oninput = WMEURMPT.MCLimitToChanged
     WMEURMPT.getId('mct-filterOnlyArea').onchange = WMEURMPT.MCOnlyAreaChanged
-    WMEURMPT.getId('pur-checkbox-filterInvert').onclick = WMEURMPT.updateIHMFromPURList
     if (WMEURMPT.currentPURFilter & WMEURMPT.PURFilterList.hideOutOfMyDriveArea) {
       WMEURMPT.getId('purt-checkbox-filterHideOutOfMyDriveArea').checked = true
     }
@@ -3548,7 +3557,8 @@ function WMEURMPT_Injected () {
     if (WMEURMPT.uam) {
       WMEURMPT.getId('purt-checkbox-filterHideOutOfMyManagedArea').onclick = WMEURMPT.togglePURFilterHideOutOfMyManagedArea
     }
-    WMEURMPT.getId('pur-checkbox-filterInvert').onchange = WMEURMPT.purInvertFilterChanged
+    WMEURMPT.getId('pur-checkbox-filterInvert').onchange = WMEURMPT.togglePURInvertFilter
+    WMEURMPT.getId('pur-checkbox-filterInvert').checked = WMEURMPT.purInvertFilter
     WMEURMPT.getId('purt-checkbox-filterHideVisited').onclick = WMEURMPT.togglePURFilterHideVisited
     WMEURMPT.getId('purt-checkbox-filterHideBlacklisted').onclick = WMEURMPT.togglePURFilterHideBlacklisted
     WMEURMPT.getId('purt-checkbox-filterHideWhitelisted').onclick = WMEURMPT.togglePURFilterHideWhitelisted
@@ -8204,7 +8214,9 @@ function WMEURMPT_Injected () {
       PURNameMaxLength: WMEURMPT.PURNameMaxLength,
       taggedURList: WMEURMPT.taggedURList,
       URAgeColIsLastComment: WMEURMPT.URAgeColIsLastComment,
-      disableScrolling: WMEURMPT.disableScrolling
+      disableScrolling: WMEURMPT.disableScrolling,
+      purInvertFilter: WMEURMPT.purInvertFilter,
+      urtInvertFilter: WMEURMPT.urtInvertFilter
     }
     WMEURMPT.log('save options: ', options)
     // eslint-disable-next-line no-undef
@@ -8305,6 +8317,8 @@ function WMEURMPT_Injected () {
       WMEURMPT.taggedURList = typeof options.taggedURList === 'undefined' ? WMEURMPT.taggedURList : options.taggedURList
       WMEURMPT.URAgeColIsLastComment = typeof options.URAgeColIsLastComment === 'undefined' ? WMEURMPT.URAgeColIsLastComment : options.URAgeColIsLastComment
       WMEURMPT.disableScrolling = typeof options.disableScrolling === 'undefined' ? WMEURMPT.disableScrolling : options.disableScrolling
+      WMEURMPT.purInvertFilter = typeof options.purInvertFilter === 'undefined' ? WMEURMPT.purInvertFilter : options.purInvertFilter
+      WMEURMPT.urtInvertFilter = typeof options.urtInvertFilter === 'undefined' ? WMEURMPT.urtInvertFilter : options.urtInvertFilter
     }
   }
 
