@@ -1527,7 +1527,7 @@ function WMEURMPT_Injected () {
   }
   WMEURMPT.toggleURInvertFilter = function() {
     WMEURMPT.log('Switch UR filter "invert filter"')
-    WMEURMPT.urtInvertFilter = this.value
+    WMEURMPT.urtInvertFilter = this.checked
     WMEURMPT.updateIHMFromPURList()
     WMEURMPT.saveOptions()
   }
@@ -1901,7 +1901,7 @@ function WMEURMPT_Injected () {
   }
   WMEURMPT.togglePURInvertFilter = function () {
     WMEURMPT.log('Change PUR filter "invert filter"')
-    WMEURMPT.purInvertFilter = this.value
+    WMEURMPT.purInvertFilter = this.checked
     WMEURMPT.updateIHMFromPURList()
     WMEURMPT.saveOptions()
   }
