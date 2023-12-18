@@ -625,14 +625,14 @@ function WMEURMPT_Injected () {
     const userAreas = WMEURMPT.me.attributes.areas
     for (let a = 0; a < userAreas.length; a++) {
       if (userAreas[a].type === 'drive') {
-        let tmpArea = W.userscripts.toOLGeometry(userAreas[a].geometry)
+        const tmpArea = W.userscripts.toOLGeometry(userAreas[a].geometry)
         for (let c = 0; c < tmpArea.components.length; c++) {
           tmpArea.components[c].calculateBounds()
           WMEURMPT.driveArea.push(tmpArea.components[c])
         }
       }
       if (userAreas[a].type === 'managed') {
-        let tmpArea = W.userscripts.toOLGeometry(userAreas[a].geometry)
+        const tmpArea = W.userscripts.toOLGeometry(userAreas[a].geometry)
         for (let c = 0; c < tmpArea.components.length; c++) {
           tmpArea.components[c].calculateBounds()
           WMEURMPT.managedAreas.push(tmpArea.components[c])
@@ -1525,7 +1525,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.saveOptions()
     WMEURMPT.updateIHMFromURList()
   }
-  WMEURMPT.toggleURInvertFilter = function() {
+  WMEURMPT.toggleURInvertFilter = function () {
     WMEURMPT.log('Switch UR filter "invert filter"')
     WMEURMPT.urtInvertFilter = this.checked
     WMEURMPT.updateIHMFromPURList()
@@ -1994,7 +1994,7 @@ function WMEURMPT_Injected () {
   }
   WMEURMPT.handleFileSelectAddFromJSON = function (evt) {
     const files = evt.target.files
-    Array.from(files).forEach( f => {
+    Array.from(files).forEach(f => {
       const reader = new FileReader()
       reader.onload = (function (theFile) {
         return function (e) {
@@ -2132,11 +2132,11 @@ function WMEURMPT_Injected () {
         const FeatureLandmark = require('Waze/Feature/Vector/Landmark')
 
         const convProjection = area.geometryOL.geometry.transform(
-          new OpenLayers.Projection("EPSG:4326"),
+          new OpenLayers.Projection('EPSG:4326'),
           WMEURMPT.wazeMap.getProjectionObject()
         )
 
-        const landmark = new FeatureLandmark({geoJSONGeometry: W.userscripts.toGeoJSONGeometry(convProjection)})
+        const landmark = new FeatureLandmark({ geoJSONGeometry: W.userscripts.toGeoJSONGeometry(convProjection) })
         const center = area.geometryOL.geometry.getCentroid()
         const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(center.x, center.y)
         WMEURMPT.wazeMap.setCenter(xy)
@@ -3821,7 +3821,7 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.handleFileSelectAddFromWKT = function (evt) {
     const files = evt.target.files
-    Array.from(files).forEach( f => {
+    Array.from(files).forEach(f => {
       const reader = new FileReader()
       reader.onload = (function (theFile) {
         return function (e) {
