@@ -13,7 +13,8 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @grant       unsafeWindow
-// @copyright   2023, dummyd2, seb-d59, jangliss
+// @require     https://greasyfork.org/scripts/24851-wazewrap/code/WazeWrap.js
+// @copyright   2024, dummyd2, seb-d59, jangliss
 // @author      dummyd2, seb-d59, jangliss
 // @connect     waze.netdork.net
 // ==/UserScript==
