@@ -78,7 +78,8 @@ function lookFordownloadHelperJob () {
   for (let i = 0; i < unsafeWindow.downloadHelper.jobs.length; i++) {
     if (unsafeWindow.downloadHelper.jobs[i].status === 'added') {
       unsafeWindow.downloadHelper.jobs[i].status = cloneInto('downloading', unsafeWindow.downloadHelper.jobs[i])
-      let f = (function () {
+      // eslint-disable-next-line no-unused-vars
+      const f = (function () {
         const job = i
         GM_xmlhttpRequest({
           method: 'GET',
@@ -178,6 +179,7 @@ function lookForGMStorageHelperJob () {
 
 window.setTimeout(lookForGMStorageHelperJob)
 
+// eslint-disable-next-line camelcase
 function WMEURMPT_Injected () {
   // eslint-disable-next-line quotes
   const NL = "\n"
@@ -8564,6 +8566,6 @@ function WMEURMPT_Injected () {
 }
 
 GM_addElement('script', {
-  // eslint-disable-next-line quotes
+  // eslint-disable-next-line quotes, camelcase
   textContent: '' + WMEURMPT_Injected.toString() + "\nWMEURMPT_Injected();"
 })
