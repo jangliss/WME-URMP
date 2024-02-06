@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.14
+// @version     3.9.15
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -185,7 +185,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.14'
+  WMEURMPT.urmpt_version = '3.9.15'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -3688,17 +3688,16 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.getTLArea = function () {
     const xy = WMEURMPT.wazeMap.getLonLatFromPixel({ x: 0, y: 0 })
-    const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(xy.lon, xy.lat)
-    WMEURMPT.getId('urmpt-areas-tl-lon').value = lonlat.lon
-    WMEURMPT.getId('urmpt-areas-tl-lat').value = lonlat.lat
+    WMEURMPT.log('get TL', xy)
+    WMEURMPT.getId('urmpt-areas-tl-lon').value = xy.lon
+    WMEURMPT.getId('urmpt-areas-tl-lat').value = xy.lat
   }
 
   WMEURMPT.getBRArea = function () {
-    const xy = WMEURMPT.wazeMap.getLonLatFromPixel({ x: WMEURMPT.wazeMap.olMap.size.w, y: WMEURMPT.wazeMap.olMap.size.h })
-    const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(xy.lon, xy.lat)
-    WMEURMPT.log('get BR', lonlat)
-    WMEURMPT.getId('urmpt-areas-br-lon').value = lonlat.lon
-    WMEURMPT.getId('urmpt-areas-br-lat').value = lonlat.lat
+    const xy = WMEURMPT.wazeMap.getLonLatFromPixel({ x: WMEURMPT.wazeMap.getSize().w, y: WMEURMPT.wazeMap.getSize().h })
+    WMEURMPT.log('get BR', xy)
+    WMEURMPT.getId('urmpt-areas-br-lon').value = xy.lon
+    WMEURMPT.getId('urmpt-areas-br-lat').value = xy.lat
   }
 
   WMEURMPT.closeLegend = function () {
