@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.15
+// @version     3.9.17
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -185,7 +185,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.15'
+  WMEURMPT.urmpt_version = '3.9.17'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -928,9 +928,9 @@ function WMEURMPT_Injected () {
     try {
       const mpLayer = WMEURMPT.wazeMap.getLayerByName('mapProblems')
       if (typeof mpLayer !== 'undefined') {
-        for (const m of mpLayer.markers) {
-          if (m.element.classList.contains('marker-selected')) {
-            return m.element.attributes['data-id'].value
+        for (const m of mpLayer.features) {
+          if (m.attributes.wazeFeature.isSelected) {
+            return m.attributes.wazeFeature.id
           }
         }
       }
@@ -943,10 +943,10 @@ function WMEURMPT_Injected () {
   WMEURMPT.getSelectedUR = function () {
     try {
       const urLayer = WMEURMPT.wazeMap.getLayerByName('update_requests')
-      for (const m of urLayer.markers) {
-        if (m.element.classList.contains('marker-selected')) {
-          if (typeof m.element.attributes['data-id'] !== 'undefined') {
-            return m.element.attributes['data-id'].value
+      for (const m of urLayer.features) {
+        if (m.attributes.wazeFeature.isSelected) {
+          if (typeof m.attributes.wazeFeature.id !== 'undefined') {
+            return m.attributes.wazeFeature.wazeFeature.id
           }
           return null
         }
@@ -5703,7 +5703,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.wazeMap.setCenter(xy)
     URId = parseInt(URId)
     WMEURMPT.wazeMap.getLayerByName('update_requests').setVisibility(true)
-    window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectURById, [{ URId, attempts: 0 }]), 250)
+    // window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectURById, [{ URId, attempts: 0 }]), 250)
   }
 
   WMEURMPT.targetMapToMP = function (lon, lat, MPId) {
@@ -5713,7 +5713,7 @@ function WMEURMPT_Injected () {
     const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(lon, lat)
     WMEURMPT.wazeMap.setCenter(xy)
     WMEURMPT.wazeMap.getLayerByName('mapProblems').setVisibility(true)
-    window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMPById, [{ MPId, attempts: 0 }]), 250)
+    // window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMPById, [{ MPId, attempts: 0 }]), 250)
   }
 
   WMEURMPT.targetMapToMC = function (lon, lat, MCId) {
@@ -5723,7 +5723,7 @@ function WMEURMPT_Injected () {
     const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(lon, lat)
     WMEURMPT.wazeMap.setCenter(xy)
     WMEURMPT.wazeMap.getLayerByUniqueName('mapComments').setVisibility(true)
-    window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMCById, [{ MCId, attempts: 0 }]), 250)
+    // window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMCById, [{ MCId, attempts: 0 }]), 250)
   }
 
   WMEURMPT.targetMapToPUR = function (lon, lat, PURId) {
@@ -5756,8 +5756,8 @@ function WMEURMPT_Injected () {
       WMEURMPT.logDebug('Select UR by ID: ' + URId.URId)
       const urLayer = WMEURMPT.wazeMap.getLayerByName('update_requests')
 
-      if (typeof urLayer.markers !== 'undefined') {
-        const marker = urLayer.markers.filter(elem => elem.element.getAttribute('data-id') === URId.URId.toString())
+      if (typeof urLayer.features !== 'undefined') {
+        const marker = urLayer.features.filter(elem => elem.attributes.wazeFeature.id === URId.URId.toString())
         marker[0].element.click()
 
         const htmlSelectedUR = document.getElementsByClassName('marker-selected')[0]
