@@ -5757,8 +5757,11 @@ function WMEURMPT_Injected () {
       const urLayer = WMEURMPT.wazeMap.getLayerByName('update_requests')
 
       if (typeof urLayer.features !== 'undefined') {
-        const marker = urLayer.features.filter(elem => elem.attributes.wazeFeature.id === URId.URId.toString())
-        marker[0].element.click()
+         const urel = W.userscripts.getFeatureElementByDataModel(ur);
+         if (urel) {
+             var clickEvent = new Event( 'click', { bubbles: true } );
+             urel.dispatchEvent( clickEvent ); // not working
+         }
 
         const htmlSelectedUR = document.getElementsByClassName('marker-selected')[0]
         const htmlSelectedURID = parseInt(htmlSelectedUR.getAttribute('data-id'))
@@ -6102,10 +6105,16 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.setupListener = function () {
-    const urs = WMEURMPT.getElementsByClassName('map-problem')
+    const urs = W.map.getLayerByName('update_requests').features;
     for (let i = 0; i < urs.length; i++) {
-      const ur = urs[i]
-      ur.addEventListener('click', WMEURMPT.clickUR, false)
+      const urx = urs[i].attributes.wazeFeature.id;
+      const ur_model = W.model.mapUpdateRequests.getObjectById(urx);
+      if (ur_model) {
+        const urel = W.userscripts.getFeatureElementByDataModel(ur_model);
+        if (urel) {
+            urel.addEventListener('click', WMEURMPT.clickUR, false);
+        }
+      }
     }
     const purs = WMEURMPT.getElementsByClassName('place-update')
     for (let i = 0; i < purs.length; i++) {
@@ -6115,8 +6124,9 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.clickUR = function () {
-    if (typeof this.tagName !== 'undefined' && this.tagName === 'DIV') {
-      if (this.className.indexOf('user-generated') === -1 && this.className.indexOf('has-comments') === -1) {
+    if (typeof this.tagName !== 'undefined' && this.tagName === 'image') {
+      const mod = W.userscripts.getDataModelByFeatureElement(this);
+      /*if (this.className.indexOf('user-generated') === -1 && this.className.indexOf('has-comments') === -1) {
         WMEURMPT.currentMPID = this.getAttribute('data-id')
         WMEURMPT.selectedMPID = WMEURMPT.currentMPID
         WMEURMPT.MPVisited(WMEURMPT.currentMPID)
@@ -6126,8 +6136,9 @@ function WMEURMPT_Injected () {
           mp.refreshFromWMEData()
         }
         WMEURMPT.updateIHMFromMPList()
-      } else {
-        WMEURMPT.currentURID = parseInt(this.getAttribute('data-id'))
+      } else*/
+        {
+        WMEURMPT.currentURID = mod.attributes.id;
         WMEURMPT.URVisited(WMEURMPT.currentURID)
         WMEURMPT.logDebug('current UR ID: ' + WMEURMPT.currentURID)
         WMEURMPT.setupFollowAndSendListner()
@@ -6225,7 +6236,7 @@ function WMEURMPT_Injected () {
         sendPatched = true
       }
     }
-    if (!followPatched || !sendPatched) {
+    if (/*!followPatched ||*/ !sendPatched) {
       window.setTimeout(WMEURMPT.setupFollowAndSendListner, 200)
     }
   }
