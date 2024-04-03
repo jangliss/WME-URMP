@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.18
+// @version     3.9.17
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -185,7 +185,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.18'
+  WMEURMPT.urmpt_version = '3.9.17'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -6088,14 +6088,14 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.setupListener = function () {
-    const urs = W.map.getLayerByName('update_requests').features;
+    const urs = W.map.getLayerByName('update_requests').features
     for (let i = 0; i < urs.length; i++) {
-      const urx = urs[i].attributes.wazeFeature.id;
-      const ur_model = W.model.mapUpdateRequests.getObjectById(urx);
+      const urx = urs[i].attributes.wazeFeature.id
+      const ur_model = W.model.mapUpdateRequests.getObjectById(urx)
       if (ur_model) {
-        const urel = W.userscripts.getFeatureElementByDataModel(ur_model);
+        const urel = W.userscripts.getFeatureElementByDataModel(ur_model)
         if (urel) {
-            urel.addEventListener('click', WMEURMPT.clickUR, false);
+          urel.addEventListener('click', WMEURMPT.clickUR, false)
         }
       }
     }
@@ -6108,8 +6108,8 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.clickUR = function () {
     if (typeof this.tagName !== 'undefined' && this.tagName === 'image') {
-      const mod = W.userscripts.getDataModelByFeatureElement(this);
-      /*if (this.className.indexOf('user-generated') === -1 && this.className.indexOf('has-comments') === -1) {
+      const mod = W.userscripts.getDataModelByFeatureElement(this)
+      /* if (this.className.indexOf('user-generated') === -1 && this.className.indexOf('has-comments') === -1) {
         WMEURMPT.currentMPID = this.getAttribute('data-id')
         WMEURMPT.selectedMPID = WMEURMPT.currentMPID
         WMEURMPT.MPVisited(WMEURMPT.currentMPID)
@@ -6119,9 +6119,9 @@ function WMEURMPT_Injected () {
           mp.refreshFromWMEData()
         }
         WMEURMPT.updateIHMFromMPList()
-      } else*/
-        {
-        WMEURMPT.currentURID = mod.attributes.id;
+      } else */
+      {
+        WMEURMPT.currentURID = mod.attributes.id
         WMEURMPT.URVisited(WMEURMPT.currentURID)
         WMEURMPT.logDebug('current UR ID: ' + WMEURMPT.currentURID)
         WMEURMPT.setupFollowAndSendListner()
@@ -6219,7 +6219,7 @@ function WMEURMPT_Injected () {
         sendPatched = true
       }
     }
-    if (/*!followPatched ||*/ !sendPatched) {
+    if (/*! followPatched || */ !sendPatched) {
       window.setTimeout(WMEURMPT.setupFollowAndSendListner, 200)
     }
   }
