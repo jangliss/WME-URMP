@@ -960,7 +960,7 @@ function WMEURMPT_Injected () {
       for (const m of urLayer.features) {
         if (m.attributes.wazeFeature.isSelected) {
           if (typeof m.attributes.wazeFeature.id !== 'undefined') {
-            return m.attributes.wazeFeature.wazeFeature.id
+            return m.attributes.wazeFeature.id
           }
           return null
         }
@@ -5769,7 +5769,7 @@ function WMEURMPT_Injected () {
     if (ur != null && session != null) {
       WMEURMPT.logDebug('Select UR by ID: ' + URId.URId)
       WMEURMPT.wazePC.showProblem(ur, { showNext: false })
-      
+
       const selectedUR = WMEURMPT.wazeMap.getLayerByName('update_requests').features.filter(elem => elem.attributes.wazeFeature.id === URId.URId)[0]
       if (selectedUR.attributes.wazeFeature.isSelected === false) {
         URId.attempts++
