@@ -6228,6 +6228,9 @@ function WMEURMPT_Injected () {
         btnSend.urt_listener = true
         sendPatched = true
       }
+      else {
+        sendPatched = true
+      }
     }
     if (/*! followPatched || */ !sendPatched) {
       window.setTimeout(WMEURMPT.setupFollowAndSendListner, 200)
