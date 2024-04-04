@@ -611,6 +611,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.wazeModel.actionManager.events.register('afteraction', null, WMEURMPT.newActionAdded)
     WMEURMPT.wazeModel.actionManager.events.register('afterundoaction', null, WMEURMPT.newActionAdded)
     WMEURMPT.wazeModel.actionManager.events.register('afterclearaction', null, WMEURMPT.newActionAdded)
+    W.app.on('problems:shown', WMEURMPT.onProblemsShown)
     window.setTimeout(WMEURMPT.setupListener, 500)
   }
 
@@ -635,6 +636,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.wazeModel.actionManager.events.unregister('afteraction', null, WMEURMPT.newActionAdded)
     WMEURMPT.wazeModel.actionManager.events.unregister('afterundoaction', null, WMEURMPT.newActionAdded)
     WMEURMPT.wazeModel.actionManager.events.unregister('afterclearaction', null, WMEURMPT.newActionAdded)
+    W.app.off('problems:shown', WMEURMPT.onProblemsShown)
   }
 
   WMEURMPT.initManagedArea = function () {
@@ -4816,7 +4818,7 @@ function WMEURMPT_Injected () {
       content += '<td><span id="urt-descriptionur-' + WMEURMPT.URList[i].id + '" title="' + descriptionHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + descriptionHTMLNormalized + '</span></td>'
       content += '<td style="text-align: center"><span  id="urt-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(comments) + '">' + WMEURMPT.URList[i].data.session.comments.length + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
-      content += '<td style="width: 20px;" id="urt-targetur-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.URList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
+      content += '<td style="width: 20px;" id="urt-targetur-' + i + '" title="' + WMEURMPT.URList[i].id + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
       content += '</tr>'
     }
     content += '</table>'
@@ -5759,6 +5761,7 @@ function WMEURMPT_Injected () {
       return
     }
     if (URId.attempts === 0) {
+      URId.didShow = false
       if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
         WMEURMPT.wazeMap.panelRegion.currentView.destroy()
       }
@@ -5767,8 +5770,11 @@ function WMEURMPT_Injected () {
     const session = WMEURMPT.wazeModel.updateRequestSessions.objects[URId.URId]
     const ur = WMEURMPT.wazeModel.mapUpdateRequests.getObjectById(URId.URId)
     if (ur != null && session != null) {
-      WMEURMPT.logDebug('Select UR by ID: ' + URId.URId)
-      WMEURMPT.wazePC.showProblem(ur, { showNext: false })
+      if (!URId.didShow) {
+        WMEURMPT.logDebug('Select UR by ID: ' + URId.URId)
+        WMEURMPT.wazePC.showProblem(ur, { showNext: false })
+        URId.didShow = true
+      }
 
       const selectedUR = WMEURMPT.wazeMap.getLayerByName('update_requests').features.filter(elem => elem.attributes.wazeFeature.id === URId.URId)[0]
       if (selectedUR.attributes.wazeFeature.isSelected === false) {
@@ -5778,12 +5784,13 @@ function WMEURMPT_Injected () {
         return
       }
       if (!WMEURMPT.isAutoScan) {
-        const theUR = WMEURMPT.getURFromId(URId.URId)
-        theUR.refreshFromWMEData(true)
-        WMEURMPT.updateIHMFromURList()
-      } else {
-        WMEURMPT.newDataAvailableStarts()
+        WMEURMPT.URJustOpened(URId.URId)
+        //const theUR = WMEURMPT.getURFromId(URId.URId)
+        //theUR.refreshFromWMEData(true)
+        //WMEURMPT.updateIHMFromURList()
       }
+      WMEURMPT.newDataAvailableStarts()
+
       return
     }
     URId.attempts++
@@ -6087,6 +6094,11 @@ function WMEURMPT_Injected () {
     }
   }
 
+  WMEURMPT.onProblemsShown = function (e) {
+      WMEURMPT.logDebug('prob shown, type: ' + e.type)
+      WMEURMPT.clickUR(e)
+  }
+
   WMEURMPT.setupListener = function () {
     const urs = W.map.getLayerByName('update_requests').features
     for (let i = 0; i < urs.length; i++) {
@@ -6106,22 +6118,8 @@ function WMEURMPT_Injected () {
     }
   }
 
-  WMEURMPT.clickUR = function () {
-    if (typeof this.tagName !== 'undefined' && this.tagName === 'image') {
-      const mod = W.userscripts.getDataModelByFeatureElement(this)
-      /* if (this.className.indexOf('user-generated') === -1 && this.className.indexOf('has-comments') === -1) {
-        WMEURMPT.currentMPID = this.getAttribute('data-id')
-        WMEURMPT.selectedMPID = WMEURMPT.currentMPID
-        WMEURMPT.MPVisited(WMEURMPT.currentMPID)
-        WMEURMPT.log('MP clicked: ' + WMEURMPT.currentMPID)
-        const mp = WMEURMPT.getMPFromId(WMEURMPT.currentMPID)
-        if (mp) {
-          mp.refreshFromWMEData()
-        }
-        WMEURMPT.updateIHMFromMPList()
-      } else */
-      {
-        WMEURMPT.currentURID = mod.attributes.id
+  WMEURMPT.URJustOpened = function (ur_id) {
+        WMEURMPT.currentURID = ur_id
         WMEURMPT.URVisited(WMEURMPT.currentURID)
         WMEURMPT.logDebug('current UR ID: ' + WMEURMPT.currentURID)
         WMEURMPT.setupFollowAndSendListner()
@@ -6149,7 +6147,19 @@ function WMEURMPT_Injected () {
           }
         }
         WMEURMPT.updateIHMFromURList()
-      }
+  }
+
+  WMEURMPT.clickUR = function (e) {
+    let id = 0;
+    if (e.type == 'mapUpdateRequest') {
+        id = e.attributes.id;
+    }
+    else if (typeof this.tagName !== 'undefined' && this.tagName === 'image') {
+      const mod = W.userscripts.getDataModelByFeatureElement(this);
+      id = mod.attributes.id;
+    }
+    if (id > 0) {
+        WMEURMPT.URJustOpened(id)
     }
   }
 
