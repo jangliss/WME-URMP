@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.18
+// @version     3.9.19
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -185,7 +185,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.18'
+  WMEURMPT.urmpt_version = '3.9.19'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -5785,9 +5785,9 @@ function WMEURMPT_Injected () {
       }
       if (!WMEURMPT.isAutoScan) {
         WMEURMPT.URJustOpened(URId.URId)
-        //const theUR = WMEURMPT.getURFromId(URId.URId)
-        //theUR.refreshFromWMEData(true)
-        //WMEURMPT.updateIHMFromURList()
+        // const theUR = WMEURMPT.getURFromId(URId.URId)
+        // theUR.refreshFromWMEData(true)
+        // WMEURMPT.updateIHMFromURList()
       }
       WMEURMPT.newDataAvailableStarts()
 
@@ -6095,17 +6095,17 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.onProblemsShown = function (e) {
-      WMEURMPT.logDebug('prob shown, type: ' + e.type)
-      WMEURMPT.clickUR(e)
+    WMEURMPT.logDebug('prob shown, type: ' + e.type)
+    WMEURMPT.clickUR(e)
   }
 
   WMEURMPT.setupListener = function () {
     const urs = W.map.getLayerByName('update_requests').features
     for (let i = 0; i < urs.length; i++) {
       const urx = urs[i].attributes.wazeFeature.id
-      const ur_model = W.model.mapUpdateRequests.getObjectById(urx)
-      if (ur_model) {
-        const urel = W.userscripts.getFeatureElementByDataModel(ur_model)
+      const urModel = W.model.mapUpdateRequests.getObjectById(urx)
+      if (urModel) {
+        const urel = W.userscripts.getFeatureElementByDataModel(urModel)
         if (urel) {
           urel.addEventListener('click', WMEURMPT.clickUR, false)
         }
@@ -6118,48 +6118,47 @@ function WMEURMPT_Injected () {
     }
   }
 
-  WMEURMPT.URJustOpened = function (ur_id) {
-        WMEURMPT.currentURID = ur_id
-        WMEURMPT.URVisited(WMEURMPT.currentURID)
-        WMEURMPT.logDebug('current UR ID: ' + WMEURMPT.currentURID)
-        WMEURMPT.setupFollowAndSendListner()
-        WMEURMPT.selectedURID = WMEURMPT.currentURID
-        WMEURMPT.log('UR clicked: ' + WMEURMPT.currentURID)
-        let ur = WMEURMPT.getURFromId(WMEURMPT.currentURID)
-        WMEURMPT.logDebug('clickUR ur: ', ur)
-        if (ur) {
-          ur.refreshFromWMEData()
-        } else if (ur == null) {
-          const theUR = WMEURMPT.wazeModel.mapUpdateRequests.getObjectById(WMEURMPT.currentURID)
-          let URLonlat = null
-          WMEURMPT.logDebug('clickUR - theUR: ', theUR)
-          if (Object.prototype.hasOwnProperty.call(theUR.geometry, 'realX') && Object.prototype.hasOwnProperty.call(theUR.geometry, 'realY')) {
-            URLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theUR.geometry.realX, theUR.geometry.realY)
-          } else {
-            URLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theUR.geometry.x, theUR.geometry.y)
-          }
-          WMEURMPT.logDebug('clickUR - lonlat: ', URLonlat)
-          ur = new WMEURMPT.URT_UR(theUR.attributes.id, URLonlat.lon, URLonlat.lat)
-          WMEURMPT.logDebug('clickUR - ur: ', ur)
-          if (ur.refreshFromWMEData()) {
-            WMEURMPT.URList.push(ur)
-            WMEURMPT.URMap = WMEURMPT.listToObject(WMEURMPT.URList)
-          }
-        }
-        WMEURMPT.updateIHMFromURList()
+  WMEURMPT.URJustOpened = function (urId) {
+    WMEURMPT.currentURID = urId
+    WMEURMPT.URVisited(WMEURMPT.currentURID)
+    WMEURMPT.logDebug('current UR ID: ' + WMEURMPT.currentURID)
+    WMEURMPT.setupFollowAndSendListner()
+    WMEURMPT.selectedURID = WMEURMPT.currentURID
+    WMEURMPT.log('UR clicked: ' + WMEURMPT.currentURID)
+    let ur = WMEURMPT.getURFromId(WMEURMPT.currentURID)
+    WMEURMPT.logDebug('clickUR ur: ', ur)
+    if (ur) {
+      ur.refreshFromWMEData()
+    } else if (ur == null) {
+      const theUR = WMEURMPT.wazeModel.mapUpdateRequests.getObjectById(WMEURMPT.currentURID)
+      let URLonlat = null
+      WMEURMPT.logDebug('clickUR - theUR: ', theUR)
+      if (Object.prototype.hasOwnProperty.call(theUR.geometry, 'realX') && Object.prototype.hasOwnProperty.call(theUR.geometry, 'realY')) {
+        URLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theUR.geometry.realX, theUR.geometry.realY)
+      } else {
+        URLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theUR.geometry.x, theUR.geometry.y)
+      }
+      WMEURMPT.logDebug('clickUR - lonlat: ', URLonlat)
+      ur = new WMEURMPT.URT_UR(theUR.attributes.id, URLonlat.lon, URLonlat.lat)
+      WMEURMPT.logDebug('clickUR - ur: ', ur)
+      if (ur.refreshFromWMEData()) {
+        WMEURMPT.URList.push(ur)
+        WMEURMPT.URMap = WMEURMPT.listToObject(WMEURMPT.URList)
+      }
+    }
+    WMEURMPT.updateIHMFromURList()
   }
 
   WMEURMPT.clickUR = function (e) {
-    let id = 0;
-    if (e.type == 'mapUpdateRequest') {
-        id = e.attributes.id;
-    }
-    else if (typeof this.tagName !== 'undefined' && this.tagName === 'image') {
-      const mod = W.userscripts.getDataModelByFeatureElement(this);
-      id = mod.attributes.id;
+    let id = 0
+    if (e.type === 'mapUpdateRequest') {
+      id = e.attributes.id
+    } else if (typeof this.tagName !== 'undefined' && this.tagName === 'image') {
+      const mod = W.userscripts.getDataModelByFeatureElement(this)
+      id = mod.attributes.id
     }
     if (id > 0) {
-        WMEURMPT.URJustOpened(id)
+      WMEURMPT.URJustOpened(id)
     }
   }
 
@@ -6207,14 +6206,12 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.setupFollowAndSendListner = function () {
-    let followPatched = false
     let sendPatched = false
     const btnFollow = document.getElementsByName('follow')[0]
     if (btnFollow != null) {
       if (typeof btnFollow.urt_listener === 'undefined') {
         btnFollow.addEventListener('change', WMEURMPT.clickFollowUR, false)
         btnFollow.urt_listener = true
-        followPatched = true
       }
     }
     const commentForm = WMEURMPT.getElementsByClassName('new-comment-form')[0]
@@ -6227,12 +6224,11 @@ function WMEURMPT_Injected () {
         }, false)
         btnSend.urt_listener = true
         sendPatched = true
-      }
-      else {
+      } else {
         sendPatched = true
       }
     }
-    if (/*! followPatched || */ !sendPatched) {
+    if (!sendPatched) {
       window.setTimeout(WMEURMPT.setupFollowAndSendListner, 200)
     }
   }
