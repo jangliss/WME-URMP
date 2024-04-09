@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.16
+// @version     3.9.18
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -185,7 +185,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.16'
+  WMEURMPT.urmpt_version = '3.9.18'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -556,7 +556,21 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.initializeWazeObjects = function () {
-    const objectToCheck = [{ o: 'W.map', s: 'wazeMap' }, { o: 'W.model', s: 'wazeModel' }, { o: 'W.loginManager', s: 'loginManager' }, { o: 'W.controller', s: 'wazeController' }, { o: 'W.Config.api_base', s: 'wazeConfigApiBase' }, { o: 'W.Config.paths.features', s: 'wazeConfigApiFeatures' }, { o: 'W.Config.paths.updateRequestSessions', s: 'wazeConfigApiUpdateRequestSessions' }, { o: 'OL', s: 'OpenLayers' }, { o: 'W.loginManager.user', s: 'me' }, { o: 'W.loginManager.user.attributes.rank', s: 'ul' }, { o: 'W.loginManager.user.attributes.isAreaManager', s: 'uam' }]
+    const objectToCheck = [
+      { o: 'W.map', s: 'wazeMap' },
+      { o: 'W.model', s: 'wazeModel' },
+      { o: 'W.loginManager', s: 'loginManager' },
+      { o: 'W.controller', s: 'wazeController' },
+      { o: 'W.Config.api_base', s: 'wazeConfigApiBase' },
+      { o: 'W.Config.paths.features', s: 'wazeConfigApiFeatures' },
+      { o: 'W.Config.paths.updateRequestSessions', s: 'wazeConfigApiUpdateRequestSessions' },
+      { o: 'OL', s: 'OpenLayers' },
+      { o: 'W.loginManager.user', s: 'me' },
+      { o: 'W.loginManager.user.attributes.rank', s: 'ul' },
+      { o: 'W.loginManager.user.attributes.isAreaManager', s: 'uam' },
+      { o: 'W.problemsController', s: 'wazePC' },
+      { o: 'W.userscripts', s: 'wazeUS' }
+    ]
     for (let i = 0; i < objectToCheck.length; i++) {
       const path = objectToCheck[i].o.split('.')
       let object = window
@@ -597,6 +611,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.wazeModel.actionManager.events.register('afteraction', null, WMEURMPT.newActionAdded)
     WMEURMPT.wazeModel.actionManager.events.register('afterundoaction', null, WMEURMPT.newActionAdded)
     WMEURMPT.wazeModel.actionManager.events.register('afterclearaction', null, WMEURMPT.newActionAdded)
+    W.app.on('problems:shown', WMEURMPT.onProblemsShown)
     window.setTimeout(WMEURMPT.setupListener, 500)
   }
 
@@ -621,6 +636,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.wazeModel.actionManager.events.unregister('afteraction', null, WMEURMPT.newActionAdded)
     WMEURMPT.wazeModel.actionManager.events.unregister('afterundoaction', null, WMEURMPT.newActionAdded)
     WMEURMPT.wazeModel.actionManager.events.unregister('afterclearaction', null, WMEURMPT.newActionAdded)
+    W.app.off('problems:shown', WMEURMPT.onProblemsShown)
   }
 
   WMEURMPT.initManagedArea = function () {
@@ -946,7 +962,7 @@ function WMEURMPT_Injected () {
       for (const m of urLayer.features) {
         if (m.attributes.wazeFeature.isSelected) {
           if (typeof m.attributes.wazeFeature.id !== 'undefined') {
-            return m.attributes.wazeFeature.wazeFeature.id
+            return m.attributes.wazeFeature.id
           }
           return null
         }
@@ -4802,7 +4818,7 @@ function WMEURMPT_Injected () {
       content += '<td><span id="urt-descriptionur-' + WMEURMPT.URList[i].id + '" title="' + descriptionHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + descriptionHTMLNormalized + '</span></td>'
       content += '<td style="text-align: center"><span  id="urt-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(comments) + '">' + WMEURMPT.URList[i].data.session.comments.length + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
-      content += '<td style="width: 20px;" id="urt-targetur-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.URList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
+      content += '<td style="width: 20px;" id="urt-targetur-' + i + '" title="' + WMEURMPT.URList[i].id + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
       content += '</tr>'
     }
     content += '</table>'
@@ -5703,7 +5719,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.wazeMap.setCenter(xy)
     URId = parseInt(URId)
     WMEURMPT.wazeMap.getLayerByName('update_requests').setVisibility(true)
-    // window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectURById, [{ URId, attempts: 0 }]), 250)
+    window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectURById, [{ URId, attempts: 0 }]), 250)
   }
 
   WMEURMPT.targetMapToMP = function (lon, lat, MPId) {
@@ -5713,7 +5729,7 @@ function WMEURMPT_Injected () {
     const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(lon, lat)
     WMEURMPT.wazeMap.setCenter(xy)
     WMEURMPT.wazeMap.getLayerByName('mapProblems').setVisibility(true)
-    // window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMPById, [{ MPId, attempts: 0 }]), 250)
+    window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMPById, [{ MPId, attempts: 0 }]), 250)
   }
 
   WMEURMPT.targetMapToMC = function (lon, lat, MCId) {
@@ -5723,7 +5739,7 @@ function WMEURMPT_Injected () {
     const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(lon, lat)
     WMEURMPT.wazeMap.setCenter(xy)
     WMEURMPT.wazeMap.getLayerByUniqueName('mapComments').setVisibility(true)
-    // window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMCById, [{ MCId, attempts: 0 }]), 250)
+    window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMCById, [{ MCId, attempts: 0 }]), 250)
   }
 
   WMEURMPT.targetMapToPUR = function (lon, lat, PURId) {
@@ -5745,6 +5761,7 @@ function WMEURMPT_Injected () {
       return
     }
     if (URId.attempts === 0) {
+      URId.didShow = false
       if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
         WMEURMPT.wazeMap.panelRegion.currentView.destroy()
       }
@@ -5753,47 +5770,27 @@ function WMEURMPT_Injected () {
     const session = WMEURMPT.wazeModel.updateRequestSessions.objects[URId.URId]
     const ur = WMEURMPT.wazeModel.mapUpdateRequests.getObjectById(URId.URId)
     if (ur != null && session != null) {
-      WMEURMPT.logDebug('Select UR by ID: ' + URId.URId)
-      const urLayer = WMEURMPT.wazeMap.getLayerByName('update_requests')
+      if (!URId.didShow) {
+        WMEURMPT.logDebug('Select UR by ID: ' + URId.URId)
+        WMEURMPT.wazePC.showProblem(ur, { showNext: false })
+        URId.didShow = true
+      }
 
-      if (typeof urLayer.features !== 'undefined') {
-        const marker = urLayer.features.filter(elem => elem.attributes.wazeFeature.id === URId.URId.toString())
-        marker[0].element.click()
-
-        const htmlSelectedUR = document.getElementsByClassName('marker-selected')[0]
-        const htmlSelectedURID = parseInt(htmlSelectedUR.getAttribute('data-id'))
-        WMEURMPT.logDebug('selectURById htmlSelectedURID: ', htmlSelectedURID)
-        if (URId.URId !== htmlSelectedURID) {
-          WMEURMPT.log('URs ' + URId.URId + ' & ' + htmlSelectedURID + ' Stacked !: ')
-          let offset = 100000
-          const htmlSelectedURAtt = WMEURMPT.wazeModel.mapUpdateRequests.objects[htmlSelectedURID].attributes
-          if (htmlSelectedURAtt.geometry.oriX === 'undefined') {
-            WMEURMPT.stackedUR.id = htmlSelectedURID
-            WMEURMPT.stackedUR.oriX = htmlSelectedURAtt.geometry.x
-            WMEURMPT.stackedUR.oriY = htmlSelectedURAtt.geometry.y
-            WMEURMPT.stackedURList.push(WMEURMPT.stackedUR)
-            htmlSelectedURAtt.geometry.oriX = htmlSelectedURAtt.geometry.x
-            htmlSelectedURAtt.geometry.x += offset
-            htmlSelectedURAtt.geometry.oriY = htmlSelectedURAtt.geometry.y
-            htmlSelectedURAtt.geometry.y += offset
-            offset += 1000
-          }
-          if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
-            WMEURMPT.wazeMap.panelRegion.currentView.destroy()
-          }
-          URId.attempts++
-          WMEURMPT.log('Can not select UR ' + URId.URId + '. Trying again ' + URId.attempts + '/10...')
-          window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectURById, [URId]), 100)
-          return
-        }
+      const selectedUR = WMEURMPT.wazeMap.getLayerByName('update_requests').features.filter(elem => elem.attributes.wazeFeature.id === URId.URId)[0]
+      if (selectedUR.attributes.wazeFeature.isSelected === false) {
+        URId.attempts++
+        WMEURMPT.log('Can not select UR ' + URId.URId + '. Trying again ' + URId.attempts + '/10...')
+        window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectURById, [URId]), 100)
+        return
       }
       if (!WMEURMPT.isAutoScan) {
-        const theUR = WMEURMPT.getURFromId(URId.URId)
-        theUR.refreshFromWMEData(true)
-        WMEURMPT.updateIHMFromURList()
-      } else {
-        WMEURMPT.newDataAvailableStarts()
+        WMEURMPT.URJustOpened(URId.URId)
+        //const theUR = WMEURMPT.getURFromId(URId.URId)
+        //theUR.refreshFromWMEData(true)
+        //WMEURMPT.updateIHMFromURList()
       }
+      WMEURMPT.newDataAvailableStarts()
+
       return
     }
     URId.attempts++
@@ -5813,20 +5810,16 @@ function WMEURMPT_Injected () {
     }
     const mp = WMEURMPT.wazeModel.mapProblems.getObjectById(MPId.MPId)
     WMEURMPT.logDebug('mp :', mp)
-    if (mp != null) {
-      const mpLayer = WMEURMPT.wazeMap.getLayerByName('mapProblems')
-      if ((typeof mpLayer !== 'undefined') && (typeof mpLayer.markers !== 'undefined')) {
-        const markers = mpLayer.markers.filter(elem => elem.element.getAttribute('data-id') === MPId.MPId)
-        if (markers.length !== 0) {
-          markers[0].element.click()
-        }
+    if (mp !== 'undefined') {
+      WMEURMPT.wazePC.showProblem(mp, { showNext: false })
+
+      const selectedMP = WMEURMPT.wazeMap.getLayerByName('mapProblems').features.filter(elem => elem.attributes.wazeFeature.id === MPId.MPId)[0]
+      if (selectedMP.attributes.wazeFeature.isSelected === true) {
+        WMEURMPT.MPVisited(MPId.MPId)
+        WMEURMPT.currentMPID = MPId.MPId
+        WMEURMPT.newDataAvailableStarts()
+        return
       }
-    }
-    if (mp != null) {
-      WMEURMPT.MPVisited(MPId.MPId)
-      WMEURMPT.currentMPID = MPId.MPId
-      WMEURMPT.newDataAvailableStarts()
-      return
     }
     MPId.attempts++
     WMEURMPT.log('Can not select MP ' + MPId.MPId + '. Trying again ' + MPId.attempts + '/10...')
@@ -6101,11 +6094,22 @@ function WMEURMPT_Injected () {
     }
   }
 
+  WMEURMPT.onProblemsShown = function (e) {
+      WMEURMPT.logDebug('prob shown, type: ' + e.type)
+      WMEURMPT.clickUR(e)
+  }
+
   WMEURMPT.setupListener = function () {
-    const urs = WMEURMPT.getElementsByClassName('map-problem')
+    const urs = W.map.getLayerByName('update_requests').features
     for (let i = 0; i < urs.length; i++) {
-      const ur = urs[i]
-      ur.addEventListener('click', WMEURMPT.clickUR, false)
+      const urx = urs[i].attributes.wazeFeature.id
+      const ur_model = W.model.mapUpdateRequests.getObjectById(urx)
+      if (ur_model) {
+        const urel = W.userscripts.getFeatureElementByDataModel(ur_model)
+        if (urel) {
+          urel.addEventListener('click', WMEURMPT.clickUR, false)
+        }
+      }
     }
     const purs = WMEURMPT.getElementsByClassName('place-update')
     for (let i = 0; i < purs.length; i++) {
@@ -6114,20 +6118,8 @@ function WMEURMPT_Injected () {
     }
   }
 
-  WMEURMPT.clickUR = function () {
-    if (typeof this.tagName !== 'undefined' && this.tagName === 'DIV') {
-      if (this.className.indexOf('user-generated') === -1 && this.className.indexOf('has-comments') === -1) {
-        WMEURMPT.currentMPID = this.getAttribute('data-id')
-        WMEURMPT.selectedMPID = WMEURMPT.currentMPID
-        WMEURMPT.MPVisited(WMEURMPT.currentMPID)
-        WMEURMPT.log('MP clicked: ' + WMEURMPT.currentMPID)
-        const mp = WMEURMPT.getMPFromId(WMEURMPT.currentMPID)
-        if (mp) {
-          mp.refreshFromWMEData()
-        }
-        WMEURMPT.updateIHMFromMPList()
-      } else {
-        WMEURMPT.currentURID = parseInt(this.getAttribute('data-id'))
+  WMEURMPT.URJustOpened = function (ur_id) {
+        WMEURMPT.currentURID = ur_id
         WMEURMPT.URVisited(WMEURMPT.currentURID)
         WMEURMPT.logDebug('current UR ID: ' + WMEURMPT.currentURID)
         WMEURMPT.setupFollowAndSendListner()
@@ -6155,7 +6147,19 @@ function WMEURMPT_Injected () {
           }
         }
         WMEURMPT.updateIHMFromURList()
-      }
+  }
+
+  WMEURMPT.clickUR = function (e) {
+    let id = 0;
+    if (e.type == 'mapUpdateRequest') {
+        id = e.attributes.id;
+    }
+    else if (typeof this.tagName !== 'undefined' && this.tagName === 'image') {
+      const mod = W.userscripts.getDataModelByFeatureElement(this);
+      id = mod.attributes.id;
+    }
+    if (id > 0) {
+        WMEURMPT.URJustOpened(id)
     }
   }
 
@@ -6224,8 +6228,11 @@ function WMEURMPT_Injected () {
         btnSend.urt_listener = true
         sendPatched = true
       }
+      else {
+        sendPatched = true
+      }
     }
-    if (!followPatched || !sendPatched) {
+    if (/*! followPatched || */ !sendPatched) {
       window.setTimeout(WMEURMPT.setupFollowAndSendListner, 200)
     }
   }
