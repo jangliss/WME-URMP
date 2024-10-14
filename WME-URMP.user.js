@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.19
+// @version     3.9.20
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -185,7 +185,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.19'
+  WMEURMPT.urmpt_version = '3.9.20'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -974,16 +974,19 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getSelectedMC = function () {
-    const f = W.selectionManager.getSelectedFeatures()
-
-    if (f.length !== 1) {
+    let m = null
+    try {
+      m = W.selectionManager.getSelectedDataModelObjects()
+    } catch {
+      return null
+    }
+    let returnId = null
+    if ((Array.isArray(m) === false) || ((Array.isArray(m)) && (m.length !== 1))) {
       return null
     }
 
-    const m = W.selectionManager.getSelectedDataModelObjects()[0]
-
-    if ((typeof m.type !== 'undefined') && (m.type === 'mapComment') && (typeof m.attributes !== 'undefined') && (typeof m.attributes.id !== 'undefined')) {
-      return m.attributes.id
+    if ((typeof m[0].type !== 'undefined') && (m[0].type === 'mapComment') && ((returnId = m[0].getID()) !== null)) {
+      return returnId
     }
     return null
   }
@@ -5879,43 +5882,61 @@ function WMEURMPT_Injected () {
       return
     }
     if (!WMEURMPT.isAutoScan) {
-      const urID = WMEURMPT.getSelectedUR()
-      WMEURMPT.log('scan only selected: UR: ' + urID)
-      if (urID != null) {
-        const theUR = WMEURMPT.getURFromId(urID)
-        if (theUR != null) {
-          theUR.refreshFromWMEData(true)
-          WMEURMPT.updateIHMFromURList()
+      // this.name = type of object being changed
+      // this.objectType = type of object being changed
+      // this.trigger.arguments (0 = event type, 1 = objects changed)
+
+      switch (this.objectType) {
+        case 'venue': {
+          const purID = WMEURMPT.getSelectedPUR()
+          WMEURMPT.log('scan only selected: PUR: ' + purID)
+          if (purID != null) {
+            const thePUR = WMEURMPT.getPURFromId(purID)
+            if (thePUR != null) {
+              thePUR.refreshFromWMEData()
+            }
+          }
+          break
+        }
+        case 'mapComment': {
+          const mcID = WMEURMPT.getSelectedMC()
+          WMEURMPT.log('scan only selected: MC: ' + mcID)
+          if (mcID != null && typeof mcID === 'number' && mcID > 0) {
+            let theMC = WMEURMPT.getMCFromId(mcID)
+            if (theMC != null) {
+              theMC.refreshFromWMEData()
+              WMEURMPT.updateIHMFromMCList()
+            } else {
+              theMC = WMEURMPT.getNewMC(mcID)
+            }
+          }
+          break
+        }
+        case 'mapProblems': {
+          const mpID = WMEURMPT.getSelectedProblem()
+          WMEURMPT.log('scan only selected: MP: ' + mpID)
+          if (mpID != null) {
+            const theMP = WMEURMPT.getMPFromId(mpID)
+            if (theMP != null) {
+              theMP.refreshFromWMEData()
+              WMEURMPT.updateIHMFromMPList()
+            }
+          }
+          break
+        }
+        case 'mapUpdateRequets': {
+          const urID = WMEURMPT.getSelectedUR()
+          WMEURMPT.log('scan only selected: UR: ' + urID)
+          if (urID != null) {
+            const theUR = WMEURMPT.getURFromId(urID)
+            if (theUR != null) {
+              theUR.refreshFromWMEData(true)
+              WMEURMPT.updateIHMFromURList()
+            }
+          }
         }
       }
-      const mpID = WMEURMPT.getSelectedProblem()
-      WMEURMPT.log('scan only selected: MP: ' + mpID)
-      if (mpID != null) {
-        const theMP = WMEURMPT.getMPFromId(mpID)
-        if (theMP != null) {
-          theMP.refreshFromWMEData()
-          WMEURMPT.updateIHMFromMPList()
-        }
-      }
-      const mcID = WMEURMPT.getSelectedMC()
-      WMEURMPT.log('scan only selected: MC: ' + mcID)
-      if (mcID != null && typeof mcID === 'string') {
-        let theMC = WMEURMPT.getMCFromId(mcID)
-        if (theMC != null) {
-          theMC.refreshFromWMEData()
-          WMEURMPT.updateIHMFromMCList()
-        } else {
-          theMC = WMEURMPT.getNewMC(mcID)
-        }
-      }
-      const purID = WMEURMPT.getSelectedPUR()
-      WMEURMPT.log('scan only selected: PUR: ' + purID)
-      if (purID != null) {
-        const thePUR = WMEURMPT.getPURFromId(purID)
-        if (thePUR != null) {
-          thePUR.refreshFromWMEData()
-        }
-      }
+
       return
     }
     WMEURMPT.isScanningWME = true
@@ -6425,7 +6446,8 @@ function WMEURMPT_Injected () {
           mc.refreshFromWMEData()
         }
         if (mc === null) {
-          const xy = new OpenLayers.Geometry.Point(lastAction.object.attributes.geometry.bounds.getCenterLonLat().lon, lastAction.object.attributes.geometry.bounds.getCenterLonLat().lat)
+          const xyGeom = W.userscripts.toOLGeometry(lastAction.object.attributes.geometry)
+          const xy = new OpenLayers.Geometry.Point(xyGeom.getBounds().getCenterLonLat().lon, xyGeom.getBounds().getCenterLonLat().lat)
           const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(xy.x, xy.y)
           mc = new WMEURMPT.URT_MC(lastAction.object.attributes.id, lonlat.lon, lonlat.lat)
           if (mc.refreshFromWMEData()) {
@@ -7783,16 +7805,16 @@ function WMEURMPT_Injected () {
         this.data[p] = theMC.attributes[p]
       }, this)
       this.data.createdByName = 'Unknown'
-      for (const u in theMC.model.users.objects) {
-        if (theMC.model.users.objects[u].id === this.data.createdBy) {
-          this.data.createdByName = theMC.model.users.objects[u].userName
+      for (const u in W.model.users.objects) {
+        if (W.model.users.objects[u].id === this.data.createdBy) {
+          this.data.createdByName = W.model.users.objects[u].userName
           break
         }
       }
       this.data.updatedByName = 'Unknown'
-      for (const u in theMC.model.users.objects) {
-        if (theMC.model.users.objects[u].id === this.data.updatedBy) {
-          this.data.updatedByName = theMC.model.users.objects[u].userName
+      for (const u in W.model.users.objects) {
+        if (W.model.users.objects[u].id === this.data.updatedBy) {
+          this.data.updatedByName = W.model.users.objects[u].userName
           break
         }
       }
@@ -7806,7 +7828,7 @@ function WMEURMPT_Injected () {
             }
           }
           this.data.conversation.push(JSON.parse(JSON.stringify(c)))
-          this.data.conversation[this.data.conversation.length - 1].userName = theMC.model.users.objects[c.userID].userName
+          this.data.conversation[this.data.conversation.length - 1].userName = W.model.users.objects[c.userID].userName
         }, this)
       }
       if (Object.prototype.hasOwnProperty.call(theMC, 'state') && theMC.state === 'DELETE') {
