@@ -5142,20 +5142,19 @@ function WMEURMPT_Injected () {
       content += '<tr id="mct-tr-' + i + '" >'
       content += '<td class="urt-blacklist" id="mct-blacklist-' + i + '" style="cursor: pointer; ' + (WMEURMPT.MCList[i].blackListed ? 'background-color: #000; color: #FFF;' : 'background-color: #FFF; color: #000;') + '" title="' + (WMEURMPT.MCList[i].blackListed ? 'whitelist' : 'blacklist') + ' this MC" >&nbsp;</td>'
       content += '<td title="' + MCDays + ' days" style="text-align: center;"><span style="width: 100%; display: block;">' + MCDays + '</span></td>'
-      const subjectHTML = WMEURMPT.MCList[i].data.subject
-      let subjectHTMLNormalized = (new Array(WMEURMPT.MCSubjectMaxLength - 3 + 1)).join('&nbsp')
-      subjectHTMLNormalized = subjectHTML.substr(0, WMEURMPT.MCSubjectMaxLength)
-      if (subjectHTMLNormalized.length < WMEURMPT.MCSubjectMaxLength) {
-        subjectHTMLNormalized += (new Array(WMEURMPT.MCSubjectMaxLength - subjectHTMLNormalized.length + 1)).join('&nbsp')
+      let subjectHTML = ''
+      if (typeof WMEURMPT.MCList[i].data.subject !== 'undefined') {
+        subjectHTML = WMEURMPT.MCList[i].data.subject
       }
-      content += '<td><span id="mct-subjectmc-' + WMEURMPT.MCList[i].id + '" title="' + subjectHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + subjectHTMLNormalized + '</span></td>'
-      const bodyHTML = WMEURMPT.MCList[i].data.body
-      let bodyHTMLNormalized = (new Array(WMEURMPT.MCBodyMaxLength - 3 + 1)).join('&nbsp')
-      bodyHTMLNormalized = bodyHTML.substr(0, WMEURMPT.MCBodyMaxLength)
-      if (bodyHTMLNormalized.length < WMEURMPT.MCBodyMaxLength) {
-        bodyHTMLNormalized += (new Array(WMEURMPT.MCBodyMaxLength - bodyHTMLNormalized.length + 1)).join('&nbsp')
+
+      content += '<td><span id="mct-subjectmc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(subjectHTML) + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + WMEURMPT.escapeHtml(subjectHTML.substring(0, WMEURMPT.MCSubjectMaxLength)) + '</span></td>'
+
+      let bodyHTML = ''
+      if (typeof WMEURMPT.MCList[i].data.body !== 'undefined') {
+        bodyHTML = WMEURMPT.MCList[i].data.body
       }
-      content += '<td><span id="mct-bodymc-' + WMEURMPT.MCList[i].id + '" title="' + bodyHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + bodyHTMLNormalized + '</span></td>'
+
+      content += '<td><span id="mct-bodymc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(bodyHTML) + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + WMEURMPT.escapeHtml(bodyHTML.substring(0, WMEURMPT.MCBodyMaxLength)) + '</span></td>'
       content += '<td style="text-align: center"><span  id="mct-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(conversation) + '">' + (Object.prototype.hasOwnProperty.call(WMEURMPT.MCList[i].data, 'conversation') ? WMEURMPT.MCList[i].data.conversation.length : '0') + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="mct-targetmc-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.MCList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
