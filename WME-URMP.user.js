@@ -4812,14 +4812,12 @@ function WMEURMPT_Injected () {
         content += '<td title="' + HRURLCDays + ' days' + closedBy + '" style="text-align: center; background-color: ' + colorCode.bg + '; color: ' + colorCode.fc + ';"><span style="width: 100%; display: block;">' + HRURDays + '</span></td>'
       }
       content += '<td>' + WMEURMPT.getHRURTypeFromType(WMEURMPT.URList[i].data.type) + '</td>'
-      let descriptionHTML = 'Not Available'
-      let descriptionHTMLNormalized = 'N/A'
+      let descriptionHTML = ''
       if (WMEURMPT.URList[i].data.description != null) {
         descriptionHTML = WMEURMPT.escapeHtml(WMEURMPT.URList[i].data.description)
-        descriptionHTMLNormalized = WMEURMPT.escapeHtml(WMEURMPT.URList[i].data.description.substr(0, WMEURMPT.URDescriptionMaxLength))
       }
 
-      content += '<td><span id="urt-descriptionur-' + WMEURMPT.URList[i].id + '" title="' + descriptionHTML + '" style="max-width:' + WMEURMPT.URDescriptionMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + descriptionHTMLNormalized + '</span></td>'
+      content += '<td style="max-width:' + WMEURMPT.URDescriptionMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><span id="urt-descriptionur-' + WMEURMPT.URList[i].id + '" title="' + descriptionHTML + '">' + descriptionHTML + '</span></td>'
       content += '<td style="text-align: center"><span  id="urt-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(comments) + '">' + WMEURMPT.URList[i].data.session.comments.length + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="urt-targetur-' + i + '" title="' + WMEURMPT.URList[i].id + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
@@ -5001,9 +4999,8 @@ function WMEURMPT_Injected () {
       }
       content += '<td style="text-align: right; background-color: ' + colorCode.bg + '; color: ' + colorCode.fc + ';"><span ' + (WMEURMPT.MPList[i].data.open === true ? ttt !== '' ? 'title="' + ttt + '"' : '' : 'title="' + ttt + (ttt !== '' ? NL : '') + 'Closed as ' + WMEURMPT.getHRURResolutionFromType(WMEURMPT.MPList[i].data.resolution) + ' by: ' + WMEURMPT.MPList[i].data.resolvedByName + '" ') + ' style="width: 100%; display: block;">' + (isClosure ? closureDate : HRMPWeight) + '</span></td>'
       const descriptionHTML = WMEURMPT.MPList[i].type === 'turnProblem' ? 'Turn Problem' : WMEURMPT.getFullMPTypeFromType(WMEURMPT.MPList[i].data.subType)
-      const descriptionHTMLNormalized = descriptionHTML.substr(0, WMEURMPT.MPDescriptionMaxLength)
 
-      content += '<td><span style="max-width:' + WMEURMPT.MPDescriptionMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" id="mpt-descriptionmp-' + WMEURMPT.MPList[i].id + '" title="' + WMEURMPT.escapeHtml(descriptionHTML) + '">' + WMEURMPT.escapeHtml(descriptionHTMLNormalized) + '</span></td>'
+      content += '<td style="max-width:' + WMEURMPT.MPDescriptionMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><span id="mpt-descriptionmp-' + WMEURMPT.MPList[i].id + '" title="' + WMEURMPT.escapeHtml(descriptionHTML) + '">' + WMEURMPT.escapeHtml(descriptionHTML) + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="mpt-targetmp-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.MPList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
       content += '</tr>'
@@ -5146,14 +5143,14 @@ function WMEURMPT_Injected () {
         subjectHTML = WMEURMPT.MCList[i].data.subject
       }
 
-      content += '<td><span id="mct-subjectmc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(subjectHTML) + '" style="max-width:' + WMEURMPT.MCSubjectMaxLength + 'ch; overflow: hidden; white-space: nowrap;">' + WMEURMPT.escapeHtml(subjectHTML.substring(0, WMEURMPT.MCSubjectMaxLength)) + '</span></td>'
+      content += '<td style="max-width:' + WMEURMPT.MCSubjectMaxLength + 'ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span id="mct-subjectmc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(subjectHTML) + '">' + WMEURMPT.escapeHtml(subjectHTML) + '</span></td>'
 
       let bodyHTML = ''
       if (typeof WMEURMPT.MCList[i].data.body !== 'undefined') {
         bodyHTML = WMEURMPT.MCList[i].data.body
       }
 
-      content += '<td><span id="mct-bodymc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(bodyHTML) + '" style="max-width:' + WMEURMPT.MCBodyMaxLength + 'ch; overflow: hidden; white-space: nowrap;">' + WMEURMPT.escapeHtml(bodyHTML.substring(0, WMEURMPT.MCBodyMaxLength)) + '</span></td>'
+      content += '<td style="max-width:' + WMEURMPT.MCBodyMaxLength + 'ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span id="mct-bodymc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(bodyHTML) + '">' + WMEURMPT.escapeHtml(bodyHTML) + '</span></td>'
       content += '<td style="text-align: center"><span  id="mct-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(conversation) + '">' + (Object.prototype.hasOwnProperty.call(WMEURMPT.MCList[i].data, 'conversation') ? WMEURMPT.MCList[i].data.conversation.length : '0') + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="mct-targetmc-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.MCList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
@@ -5286,16 +5283,14 @@ function WMEURMPT_Injected () {
       for (let n = 0; n < WMEURMPT.PURList[i].data.categories.length; n++) {
         categoriesHTML += WMEURMPT.getPURCategoriesFromCategories(WMEURMPT.PURList[i].data.categories[n]) + ' '
       }
-      const categoriesHTMLNormalized = categoriesHTML.substr(0, WMEURMPT.PURCategoriesMaxLength)
 
-      content += '<td><span id="purt-categoriespur-' + WMEURMPT.PURList[i].id + '" title="' + WMEURMPT.escapeHtml(categoriesHTML) + '" style="max-width: ' + WMEURMPT.PURCategoriesMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + WMEURMPT.escapeHtml(categoriesHTMLNormalized) + '</span></td>'
+      content += '<td style="max-width: ' + WMEURMPT.PURCategoriesMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><span id="purt-categoriespur-' + WMEURMPT.PURList[i].id + '" title="' + WMEURMPT.escapeHtml(categoriesHTML) + '">' + WMEURMPT.escapeHtml(categoriesHTML) + '</span></td>'
       let nameHTML = WMEURMPT.PURList[i].data.name
       if (typeof nameHTML === 'undefined') {
         nameHTML = 'undefined'
       }
-      const nameHTMLNormalized = nameHTML.substr(0, WMEURMPT.PURNameMaxLength)
 
-      content += '<td><span id="purt-namepur-' + WMEURMPT.PURList[i].id + '" title="' + WMEURMPT.escapeHtml(nameHTML) + '" style="max-width:' + WMEURMPT.PURNameMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + WMEURMPT.escapeHtml(nameHTMLNormalized) + '</span></td>'
+      content += '<td style="max-width:' + WMEURMPT.PURNameMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><span id="purt-namepur-' + WMEURMPT.PURList[i].id + '" title="' + WMEURMPT.escapeHtml(nameHTML) + '">' + WMEURMPT.escapeHtml(nameHTML) + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="purt-targetpur-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.PURList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
       content += '</tr>'
