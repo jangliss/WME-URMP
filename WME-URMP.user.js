@@ -541,6 +541,7 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.waitForObject = function (varName, shortcutName) {
     let obj = null
+    // eslint-disable-next-line no-eval
     obj = eval('typeof ' + varName)
     if (obj === 'undefined') {
       WMEURMPT.log(varName + ' KO')
@@ -550,6 +551,7 @@ function WMEURMPT_Injected () {
 
     WMEURMPT.logDebug(varName + ' OK')
     if (shortcutName != null) {
+      // eslint-disable-next-line no-eval
       eval('WMEURMPT.' + shortcutName + '=' + varName)
     }
     return true
@@ -2163,6 +2165,7 @@ function WMEURMPT_Injected () {
         WMEURMPT.wazeMap.setCenter(xy)
         landmark.attributes.categories = ['OTHER']
         const AddLandmark = require('Waze/Action/AddLandmark')
+        // eslint-disable-next-line no-undef
         W.model.actionManager.add(new AddLandmark(landmark), _.defer(function () {
           W.selectionManager.setSelectedModels([landmark])
         }))
