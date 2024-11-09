@@ -4,7 +4,7 @@
   const _SCRIPT_VERSION = GM_info.script.version.toString()
   const _SETTINGS_PREFIX = 'URMPT_'
   const _RELEASE_HISTORY = ''
-  const _FORUM_URL = ''
+  const _FORUM_URL = 'https://www.waze.com/discuss/t/script-wme-ur-mp-tracking/146173'
   const _IS_BETA = /beta/.test(GM_info.script.name)
 
   const wmeURMPT = {}
@@ -27,6 +27,12 @@
     venueUpdateRequestsFilter: null
   }
   wmeURMPT.csrfCookie = null
+  wmeURMPT.mapIssues = {
+    mapProblems: {},
+    mapSuggestions: {},
+    mapUpdateRequests: {},
+    venueUpdateRequests: {}
+  }
 
   // #region Fetch code used to retrieve data from WME APIs
 
@@ -49,7 +55,8 @@
       'sec-fetch-dest': 'empty',
       'sec-fetch-mode': 'cors',
       'sec-fetch-site': 'same-origin',
-      'x-csrf-token': wmeURMPT.csrfCookie
+      'user-agent': 'WME URMP-T v' + _SCRIPT_VERSION,
+      'x-csrf-token': wmeURMPT.getCsrfCookie()
     }
     return obj
   }
@@ -102,11 +109,9 @@
       sources: null,
       types: null
     }
-
-    return JSON.stringify(wmeURMPT.requestParams)
   }
 
-  wmeURMPT.fetchIssues = function () {
+  wmeURMPT.fetchIssues = function (firstRun = false) {
     if (wmeURMPT.csrfCookie === null) {
       wmeURMPT.getCsrfCookie()
       if (wmeURMPT.csrfCookie === null) {
@@ -115,13 +120,17 @@
       }
     }
 
+    if (firstRun) {
+      wmeURMPT.getQueryBody()
+    }
+
     const appUrl = W.Config.paths.issueTrackerSearchList
     fetch(
       appUrl,
       {
         headers: wmeURMPT.getHeaders(),
         method: 'POST',
-        body: wmeURMPT.getQueryBody(),
+        body: (JSON.stringify(wmeURMPT.requestParams)),
         mode: 'cors',
         credentials: 'include'
       }
@@ -141,9 +150,78 @@
   // #region Process data from WME APIs
 
   wmeURMPT.processIssues = function (data) {
-    console.log(data)
+    console.log('running processIssues')
+    let fetchMore = false
+    if ((typeof data === 'object') && (data !== null) && (typeof data.mapIssues === 'object') && (data.mapIssues !== null)) {
+      const issueTypes = [
+        { n: 'mapProblems', f: 'mapProblemsFilter', c: 'processMP' },
+        { n: 'mapSuggestions', f: 'mapSuggestionsFilter', c: 'processMS' },
+        { n: 'mapUpdateRequests', f: 'mapUpdateRequestsFilter', c: 'processMUR' },
+        { n: 'venueUpdateRequests', f: 'venueUpdateRequestsFilter', c: 'processVUR' }
+      ]
+      // Loop through issue types from IssueTracker and call respective functions //
+      issueTypes.forEach((issue) => {
+        if ((typeof data.mapIssues[issue.n] !== 'undefined') && (data.mapIssues[issue.n] !== null) && (typeof data.mapIssues[issue.n].objects !== 'undefined')) {
+          if ((typeof data.mapIssues[issue.n].hasMore !== 'undefined') && (data.mapIssues[issue.n].hasMore === true)) {
+            fetchMore = true
+            wmeURMPT.requestParams[(issue.f)].page += 1
+          }
+          if (data.mapIssues[issue.n].objects.length > 0) {
+            wmeURMPT[issue.c](data)
+          }
+        }
+      })
+    }
+    if (fetchMore) {
+      wmeURMPT.fetchIssues()
+    }
   }
 
+  wmeURMPT.getUserData = function (userData, userId) {
+    let findRes = null
+    findRes = userData.filter(elem => elem.id === userId)
+    if (findRes.length !== 0) {
+      return findRes[0]
+    } else {
+      return null
+    }
+  }
+
+  wmeURMPT.processMP = function (data) {
+    console.log('running processMP')
+  }
+
+  wmeURMPT.processMS = function (data) {
+    console.log('running processMS')
+  }
+
+  wmeURMPT.processMUR = function (data) {
+    const fetchCommentList = []
+    data.mapIssues.mapUpdateRequests.objects.forEach((issue) => {
+      const murObj = data.mapUpdateRequests.objects.filter(elem => elem.mapIssueId === issue.mapIssueId)[0]
+      wmeURMPT.mapIssues.mapUpdateRequests[issue.mapIssueId] = {
+        id: murObj.id,
+        description: murObj.description,
+        hasComments: murObj.hasComments,
+        commentCount: 0,
+        lastComment: null,
+        lastCommentBy: -1,
+        isRead: murObj.isRead,
+        isStarred: murObj.isStarred,
+        isOpen: murObj.open,
+        driveDate: murObj.driveDate,
+        updatedOn: murObj.updatedOn,
+        updatedBy: wmeURMPT.getUserData(murObj.updatedBy)
+      }
+      if (murObj.hasComments) {
+        fetchCommentList.push(issue.mapIssueId)
+      }
+    })
+  }
+
+  wmeURMPT.processVUR = function (data) {
+    console.log('running processVUR')
+  }
   // #endregion
 
   // #region Display code for data
@@ -175,6 +253,10 @@
 
   // #region Settings Handling
   wmeURMPT.loadSettings = function () {
+
+  }
+
+  wmeURMPT.saveSettings = function () {
 
   }
 
