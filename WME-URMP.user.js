@@ -541,6 +541,7 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.waitForObject = function (varName, shortcutName) {
     let obj = null
+    // eslint-disable-next-line no-eval
     obj = eval('typeof ' + varName)
     if (obj === 'undefined') {
       WMEURMPT.log(varName + ' KO')
@@ -550,6 +551,7 @@ function WMEURMPT_Injected () {
 
     WMEURMPT.logDebug(varName + ' OK')
     if (shortcutName != null) {
+      // eslint-disable-next-line no-eval
       eval('WMEURMPT.' + shortcutName + '=' + varName)
     }
     return true
@@ -2163,6 +2165,7 @@ function WMEURMPT_Injected () {
         WMEURMPT.wazeMap.setCenter(xy)
         landmark.attributes.categories = ['OTHER']
         const AddLandmark = require('Waze/Action/AddLandmark')
+        // eslint-disable-next-line no-undef
         W.model.actionManager.add(new AddLandmark(landmark), _.defer(function () {
           W.selectionManager.setSelectedModels([landmark])
         }))
@@ -4733,7 +4736,7 @@ function WMEURMPT_Injected () {
     content += '<td><div class="urt-table-head-icon"><img style="width: 16px" title="Blacklist UR 1 by 1." src="data:image/png;base64,' + WMEURMPT.icon_blacklist + '" /></div></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="urt-table-sort-age"><img style="width: 16px" title="Age of the UR.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_age + '" /></a><a href="#" id="urt-table-sort-lastcomment" style="font-size: 1.5em;" class="w-icon w-icon-chat"></a></div></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="urt-table-sort-type"><img title="Type of the UR.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_type + '" /></a></div></td>'
-    content += '<td width="' + WMEURMPT.URDescriptionMaxLength + 'px;">Description</td>'
+    content += '<td title="Description" style="max-width:' + WMEURMPT.URDescriptionMaxLength + 'ch; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Description</td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="urt-table-sort-ccount" style="font-size: 1.5em;" class="w-icon w-icon-chat"></a></div></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="urt-table-sort-distance"><img title="Distance to the center of the map.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_distance + '" /></a></div></td>'
     content += '<td style="width: 20px; display: inline-block; border: none;"><center><div class="urt-table-head-icon"><i class="fa fa-crosshairs crosshair icon-screenshot"></i></div></center></td>'
@@ -4810,15 +4813,13 @@ function WMEURMPT_Injected () {
       }
       content += '<td>' + WMEURMPT.getHRURTypeFromType(WMEURMPT.URList[i].data.type) + '</td>'
       let descriptionHTML = 'Not Available'
-      let descriptionHTMLNormalized = 'N/A' + (new Array(WMEURMPT.URDescriptionMaxLength - 3 + 1)).join('&nbsp')
+      let descriptionHTMLNormalized = 'N/A'
       if (WMEURMPT.URList[i].data.description != null) {
         descriptionHTML = WMEURMPT.escapeHtml(WMEURMPT.URList[i].data.description)
-        descriptionHTMLNormalized = descriptionHTML.toString().substr(0, WMEURMPT.URDescriptionMaxLength)
+        descriptionHTMLNormalized = WMEURMPT.escapeHtml(WMEURMPT.URList[i].data.description.substr(0, WMEURMPT.URDescriptionMaxLength))
       }
-      if (descriptionHTMLNormalized.length < WMEURMPT.URDescriptionMaxLength) {
-        descriptionHTMLNormalized += (new Array(WMEURMPT.URDescriptionMaxLength - descriptionHTMLNormalized.length + 1)).join('&nbsp')
-      }
-      content += '<td><span id="urt-descriptionur-' + WMEURMPT.URList[i].id + '" title="' + descriptionHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + descriptionHTMLNormalized + '</span></td>'
+
+      content += '<td><span id="urt-descriptionur-' + WMEURMPT.URList[i].id + '" title="' + descriptionHTML + '" style="max-width:' + WMEURMPT.URDescriptionMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + descriptionHTMLNormalized + '</span></td>'
       content += '<td style="text-align: center"><span  id="urt-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(comments) + '">' + WMEURMPT.URList[i].data.session.comments.length + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="urt-targetur-' + i + '" title="' + WMEURMPT.URList[i].id + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
@@ -4932,7 +4933,7 @@ function WMEURMPT_Injected () {
     content += '<thead><tr>'
     content += '<td><div class="urt-table-head-icon"><img style="width: 16px" title="Blacklist UR 1 by 1." src="data:image/png;base64,' + WMEURMPT.icon_blacklist + '" /></div></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="mpt-table-sort-priority"><img style="width: 16px" title="Priority.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_priority + '" /></a></div></td>'
-    content += '<td width="' + WMEURMPT.MPDescriptionMaxLength + 'px;""><a href="#" id="mpt-table-sort-type" title="Type of the MP.' + NL + 'lick to sort.">Description</a></td>'
+    content += '<td style="max-width:' + WMEURMPT.MPDescriptionMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><a href="#" id="mpt-table-sort-type" title="Type of the MP.' + NL + 'Click to sort.">Description</a></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="mpt-table-sort-distance"><img title="Distance to the center of the map.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_distance + '" /></a></div></td>'
     content += '<td style="width: 20px; display: inline-block; border: none;"><center><div class="urt-table-head-icon"><i class="fa fa-crosshairs crosshair icon-screenshot"></i></div></center></td>'
     content += '</tr></thead>'
@@ -5000,12 +5001,9 @@ function WMEURMPT_Injected () {
       }
       content += '<td style="text-align: right; background-color: ' + colorCode.bg + '; color: ' + colorCode.fc + ';"><span ' + (WMEURMPT.MPList[i].data.open === true ? ttt !== '' ? 'title="' + ttt + '"' : '' : 'title="' + ttt + (ttt !== '' ? NL : '') + 'Closed as ' + WMEURMPT.getHRURResolutionFromType(WMEURMPT.MPList[i].data.resolution) + ' by: ' + WMEURMPT.MPList[i].data.resolvedByName + '" ') + ' style="width: 100%; display: block;">' + (isClosure ? closureDate : HRMPWeight) + '</span></td>'
       const descriptionHTML = WMEURMPT.MPList[i].type === 'turnProblem' ? 'Turn Problem' : WMEURMPT.getFullMPTypeFromType(WMEURMPT.MPList[i].data.subType)
-      let descriptionHTMLNormalized = (new Array(WMEURMPT.MPDescriptionMaxLength - 3 + 1)).join('&nbsp')
-      descriptionHTMLNormalized = descriptionHTML.substr(0, WMEURMPT.MPDescriptionMaxLength)
-      if (descriptionHTMLNormalized.length < WMEURMPT.MPDescriptionMaxLength) {
-        descriptionHTMLNormalized += (new Array(WMEURMPT.MPDescriptionMaxLength - descriptionHTMLNormalized.length + 1)).join('&nbsp')
-      }
-      content += '<td><span id="mpt-descriptionmp-' + WMEURMPT.MPList[i].id + '" title="' + descriptionHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + descriptionHTMLNormalized + '</span></td>'
+      const descriptionHTMLNormalized = descriptionHTML.substr(0, WMEURMPT.MPDescriptionMaxLength)
+
+      content += '<td><span style="max-width:' + WMEURMPT.MPDescriptionMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" id="mpt-descriptionmp-' + WMEURMPT.MPList[i].id + '" title="' + WMEURMPT.escapeHtml(descriptionHTML) + '">' + WMEURMPT.escapeHtml(descriptionHTMLNormalized) + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="mpt-targetmp-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.MPList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
       content += '</tr>'
@@ -5082,12 +5080,13 @@ function WMEURMPT_Injected () {
     }
     WMEURMPT.currentSortModeMC = sortMode
     let content = ''
+
     content += '<table id="urmpt-mc-table" class="urt-table">'
     content += '<thead><tr>'
     content += '<td><div class="urt-table-head-icon"><img style="width: 16px" title="Blacklist MC 1 by 1." src="data:image/png;base64,' + WMEURMPT.icon_blacklist + '" /></div></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="mct-table-sort-age"><img style="width: 16px" title="Age of the MC.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_age + '" /></a></div></td>'
-    content += '<td width="' + WMEURMPT.MCSubjectMaxLength + 'px;">Subject</td>'
-    content += '<td width="' + WMEURMPT.MCBodyMaxLength + 'px;">Body</td>'
+    content += '<td style="max-width:' + WMEURMPT.MCSubjectMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Subject</td>'
+    content += '<td style="max-width:' + WMEURMPT.MCBodyMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Body</td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="mct-table-sort-ccount"><img style="width: 16px" title="Comments count' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_comments + '" /></a></div></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="mct-table-sort-distance"><img title="Distance to the center of the map.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_distance + '" /></a></div></td>'
     content += '<td style="width: 20px; display: inline-block; border: none;"><center><div class="urt-table-head-icon"><i class="fa fa-crosshairs crosshair icon-screenshot"></i></div></center></td>'
@@ -5147,14 +5146,14 @@ function WMEURMPT_Injected () {
         subjectHTML = WMEURMPT.MCList[i].data.subject
       }
 
-      content += '<td><span id="mct-subjectmc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(subjectHTML) + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + WMEURMPT.escapeHtml(subjectHTML.substring(0, WMEURMPT.MCSubjectMaxLength)) + '</span></td>'
+      content += '<td><span id="mct-subjectmc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(subjectHTML) + '" style="max-width:' + WMEURMPT.MCSubjectMaxLength + 'ch; overflow: hidden; white-space: nowrap;">' + WMEURMPT.escapeHtml(subjectHTML.substring(0, WMEURMPT.MCSubjectMaxLength)) + '</span></td>'
 
       let bodyHTML = ''
       if (typeof WMEURMPT.MCList[i].data.body !== 'undefined') {
         bodyHTML = WMEURMPT.MCList[i].data.body
       }
 
-      content += '<td><span id="mct-bodymc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(bodyHTML) + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + WMEURMPT.escapeHtml(bodyHTML.substring(0, WMEURMPT.MCBodyMaxLength)) + '</span></td>'
+      content += '<td><span id="mct-bodymc-' + WMEURMPT.MCList[i].id + '" title="' + WMEURMPT.escapeHtml(bodyHTML) + '" style="max-width:' + WMEURMPT.MCBodyMaxLength + 'ch; overflow: hidden; white-space: nowrap;">' + WMEURMPT.escapeHtml(bodyHTML.substring(0, WMEURMPT.MCBodyMaxLength)) + '</span></td>'
       content += '<td style="text-align: center"><span  id="mct-commentscount-' + i + '" style="width: 100%; display: block;" title="' + WMEURMPT.escapeHtml(conversation) + '">' + (Object.prototype.hasOwnProperty.call(WMEURMPT.MCList[i].data, 'conversation') ? WMEURMPT.MCList[i].data.conversation.length : '0') + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="mct-targetmc-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.MCList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
@@ -5236,8 +5235,8 @@ function WMEURMPT_Injected () {
     content += '<td><div class="urt-table-head-icon"><img style="width: 16px" title="Blacklist PUR 1 by 1." src="data:image/png;base64,' + WMEURMPT.icon_blacklist + '" /></div></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="purt-table-sort-age"><img style="width: 16px" title="Age of the PUR.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_age + '" /></a></div></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="purt-table-sort-nbpur"><img style="width: 16px" title="Number of PUR on the Poi.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_pur + '" /></a></div></td>'
-    content += '<td width="' + WMEURMPT.PURCategoriesMaxLength + 'px;"><a href="#" id="purt-table-sort-categories"  title="Categories of the POI.' + NL + 'Click to sort.">Categories</a></td>'
-    content += '<td width="' + WMEURMPT.PURNameMaxLength + '"><a href="#" id="purt-table-sort-name"  title="Name of the POI.' + NL + 'Click to sort.">Name</a></td>'
+    content += '<td style="max-width:' + WMEURMPT.PURCategoriesMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><a href="#" id="purt-table-sort-categories"  title="Categories of the POI.' + NL + 'Click to sort.">Categories</a></td>'
+    content += '<td style="max-width:' + WMEURMPT.PURNameMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><a href="#" id="purt-table-sort-name"  title="Name of the POI.' + NL + 'Click to sort.">Name</a></td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="purt-table-sort-distance"><img title="Distance to the center of the map.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_distance + '" /></a></div></td>'
     content += '<td style="width: 20px; display: inline-block; border: none;"><center><div class="urt-table-head-icon"><i class="fa fa-crosshairs crosshair icon-screenshot"></i></div></center></td>'
     content += '</tr></thead>'
@@ -5287,22 +5286,16 @@ function WMEURMPT_Injected () {
       for (let n = 0; n < WMEURMPT.PURList[i].data.categories.length; n++) {
         categoriesHTML += WMEURMPT.getPURCategoriesFromCategories(WMEURMPT.PURList[i].data.categories[n]) + ' '
       }
-      let categoriesHTMLNormalized = (new Array(WMEURMPT.PURCategoriesMaxLength - 3 + 1)).join('&nbsp')
-      categoriesHTMLNormalized = categoriesHTML.substr(0, WMEURMPT.PURCategoriesMaxLength)
-      if (categoriesHTMLNormalized.length < WMEURMPT.PURCategoriesMaxLength) {
-        categoriesHTMLNormalized += (new Array(WMEURMPT.PURCategoriesMaxLength - categoriesHTMLNormalized.length + 1)).join('&nbsp')
-      }
-      content += '<td><span id="purt-categoriespur-' + WMEURMPT.PURList[i].id + '" title="' + categoriesHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + categoriesHTMLNormalized + '</span></td>'
+      const categoriesHTMLNormalized = categoriesHTML.substr(0, WMEURMPT.PURCategoriesMaxLength)
+
+      content += '<td><span id="purt-categoriespur-' + WMEURMPT.PURList[i].id + '" title="' + WMEURMPT.escapeHtml(categoriesHTML) + '" style="max-width: ' + WMEURMPT.PURCategoriesMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + WMEURMPT.escapeHtml(categoriesHTMLNormalized) + '</span></td>'
       let nameHTML = WMEURMPT.PURList[i].data.name
       if (typeof nameHTML === 'undefined') {
         nameHTML = 'undefined'
       }
-      let nameHTMLNormalized = (new Array(WMEURMPT.PURNameMaxLength - 3 + 1)).join('&nbsp')
-      nameHTMLNormalized = nameHTML.substr(0, WMEURMPT.PURNameMaxLength)
-      if (nameHTMLNormalized.length < WMEURMPT.PURNameMaxLength) {
-        nameHTMLNormalized += (new Array(WMEURMPT.PURNameMaxLength - nameHTMLNormalized.length + 1)).join('&nbsp')
-      }
-      content += '<td><span id="purt-namepur-' + WMEURMPT.PURList[i].id + '" title="' + nameHTML + '" style="display: block; height: 20px; overflow: hidden; white-space: nowrap; font-family: \'Courier New\', monospace;">' + nameHTMLNormalized + '</span></td>'
+      const nameHTMLNormalized = nameHTML.substr(0, WMEURMPT.PURNameMaxLength)
+
+      content += '<td><span id="purt-namepur-' + WMEURMPT.PURList[i].id + '" title="' + WMEURMPT.escapeHtml(nameHTML) + '" style="max-width:' + WMEURMPT.PURNameMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">' + WMEURMPT.escapeHtml(nameHTMLNormalized) + '</span></td>'
       content += '<td style="text-align: right">' + distanceStr + '</td>'
       content += '<td style="width: 20px;" id="purt-targetpur-' + i + (WMEURMPT.isDebug ? '" title="' + WMEURMPT.PURList[i].id : '') + '"><a href="#"><center><i class="fa fa-crosshairs crosshair icon-screenshot"></i></center></a></td>'
       content += '</tr>'
