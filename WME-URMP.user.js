@@ -5752,9 +5752,6 @@ function WMEURMPT_Injected () {
     }
     if (URId.attempts === 0) {
       URId.didShow = false
-      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
-        WMEURMPT.wazeMap.panelRegion.currentView.destroy()
-      }
     }
     WMEURMPT.wazeModel.updateRequestSessions.getAsync([URId.URId])
     const session = WMEURMPT.wazeModel.updateRequestSessions.objects[URId.URId]
@@ -5793,11 +5790,6 @@ function WMEURMPT_Injected () {
       WMEURMPT.log("Can't select MP " + MPId.MPId)
       return
     }
-    if (MPId.attempts === 0) {
-      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
-        WMEURMPT.wazeMap.panelRegion.currentView.destroy()
-      }
-    }
     const mp = WMEURMPT.wazeModel.mapProblems.getObjectById(MPId.MPId)
     WMEURMPT.logDebug('mp :', mp)
     if (mp !== 'undefined') {
@@ -5821,11 +5813,6 @@ function WMEURMPT_Injected () {
       WMEURMPT.log("Can't select MC " + MCId.MCId)
       return
     }
-    if (MCId.attempts === 0) {
-      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
-        WMEURMPT.wazeMap.panelRegion.currentView.destroy()
-      }
-    }
     const mc = WMEURMPT.wazeModel.mapComments.getObjectById(MCId.MCId)
     WMEURMPT.logDebug('mc :', mc)
     if (mc != null) {
@@ -5844,11 +5831,6 @@ function WMEURMPT_Injected () {
     if (PURId.attempts > 10) {
       WMEURMPT.log("Can't select PUR " + PURId.PURId)
       return
-    }
-    if (PURId.attempts === 0) {
-      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeMap.panelRegion, 'currentView')) {
-        WMEURMPT.wazeMap.panelRegion.currentView.destroy()
-      }
     }
     const pur = WMEURMPT.wazeModel.venues.getObjectById(PURId.PURId)
     WMEURMPT.logDebug('pur :', pur)
