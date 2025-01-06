@@ -24,7 +24,8 @@
     userPropertiesFilter: null,
     mapUpdateRequestsFilter: null,
     mapProblemsFilter: null,
-    venueUpdateRequestsFilter: null
+    venueUpdateRequestsFilter: null,
+    mapSuggestionsFilter: null
   }
   wmeURMPT.csrfCookie = null
   wmeURMPT.mapIssues = {
@@ -49,9 +50,9 @@
       accept: '*/*',
       'accept-language': 'en-US,en;q=0.9',
       'content-type': 'application/json; charset=utf-8',
-      'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
-      'sec-ch-ua-mobile': '?0',
-      'sec-ch-ua-platform': 'Windows',
+      // 'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
+      // 'sec-ch-ua-mobile': '?0',
+      // 'sec-ch-ua-platform': 'Windows',
       'sec-fetch-dest': 'empty',
       'sec-fetch-mode': 'cors',
       'sec-fetch-site': 'same-origin',
@@ -165,6 +166,8 @@
           if ((typeof data.mapIssues[issue.n].hasMore !== 'undefined') && (data.mapIssues[issue.n].hasMore === true)) {
             fetchMore = true
             wmeURMPT.requestParams[(issue.f)].page += 1
+          } else {
+            wmeURMPT.requestParams[(issue.f)] = null
           }
           if (data.mapIssues[issue.n].objects.length > 0) {
             wmeURMPT[issue.c](data)
@@ -193,9 +196,25 @@
 
   wmeURMPT.processMS = function (data) {
     console.log('running processMS')
+    data.mapIssues.mapProblems.objects.forEach(problem => {
+      const nativeProblemId = problem.nativeId
+      if (typeof data[nativeProblemId.type] === 'object' && data[nativeProblemId.type] !== null) {
+        const nativeProblem = data[nativeProblemId.type].objects.filter(elem => elem.id === nativeProblemId.id)
+        if (typeof nativeProblem === 'object' && nativeProblem !== null) {
+          wmeURMPT.mapIssues.mapSuggestions[nativeProblemId.id] = {
+            problemType: nativeProblemId.type,
+            id: nativeProblemId.id,
+            createdOn: nativeProblem.createdOn,
+            createdBy: nativeProblem.createdBy,
+            edits: nativeProblem.edits.length
+          }
+        }
+      }
+    })
   }
 
   wmeURMPT.processMUR = function (data) {
+    console.log('running processMUR')
     const fetchCommentList = []
     data.mapIssues.mapUpdateRequests.objects.forEach((issue) => {
       const murObj = data.mapUpdateRequests.objects.filter(elem => elem.mapIssueId === issue.mapIssueId)[0]
