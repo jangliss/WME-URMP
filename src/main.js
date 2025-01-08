@@ -110,6 +110,31 @@
       sources: null,
       types: null
     }
+
+    wmeURMPT.requestParams.mapSuggestionsFilter = {
+      createdByUser: false,
+      editorRanks: null,
+      lockRanks: [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      mapChangeTypes: null,
+      page: 1,
+      resolvedByUser: false,
+      segmentSuggestionsFilter: {
+        roadTypes: null,
+        unpaved: null
+      },
+      sources: null,
+      status: [
+        'OPEN'
+      ]
+    }
   }
 
   wmeURMPT.fetchIssues = function (firstRun = false) {
@@ -154,6 +179,7 @@
     console.log('running processIssues')
     let fetchMore = false
     if ((typeof data === 'object') && (data !== null) && (typeof data.mapIssues === 'object') && (data.mapIssues !== null)) {
+      // n: name, f: filter c: function to process //
       const issueTypes = [
         { n: 'mapProblems', f: 'mapProblemsFilter', c: 'processMP' },
         { n: 'mapSuggestions', f: 'mapSuggestionsFilter', c: 'processMS' },
@@ -240,6 +266,15 @@
 
   wmeURMPT.processVUR = function (data) {
     console.log('running processVUR')
+    data.mapIssues.venueUpdateRequests.objects.forEach((issue) => {
+      const venueDetails = data.venues.objects.filter((elem) => elem.id === issue.venueId)
+      wmeURMPT.mapIssues.venueUpdateRequests[issue.venueUpdateRequestId] = {
+        id: issue.venueUpdateRequestId,
+        updateTime: issue.updateTime,
+        venueName: venueDetails[0].name,
+        venueCategories: venueDetails[0].categories
+      }
+    })
   }
   // #endregion
 
