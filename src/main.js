@@ -218,14 +218,20 @@
 
   wmeURMPT.processMP = function (data) {
     console.log('running processMP')
+    data.mapIssues.mapProblems.objects.forEach((problem) => {
+      const mpEntry = data.mapProblems.objects.find((elem) => elem.id === problem.nativeId)
+      if (typeof mpEntry === 'object' && mpEntry !== null) {
+        wmeURMPT.mapIssues.mapProblems[problem.nativeId] = mpEntry
+      }
+    })
   }
 
   wmeURMPT.processMS = function (data) {
     console.log('running processMS')
-    data.mapIssues.mapProblems.objects.forEach(problem => {
+    data.mapIssues.mapProblems.objects.forEach((problem) => {
       const nativeProblemId = problem.nativeId
       if (typeof data[nativeProblemId.type] === 'object' && data[nativeProblemId.type] !== null) {
-        const nativeProblem = data[nativeProblemId.type].objects.filter(elem => elem.id === nativeProblemId.id)
+        const nativeProblem = data[nativeProblemId.type].objects.find(elem => elem.id === nativeProblemId.id)
         if (typeof nativeProblem === 'object' && nativeProblem !== null) {
           wmeURMPT.mapIssues.mapSuggestions[nativeProblemId.id] = {
             problemType: nativeProblemId.type,
@@ -243,23 +249,17 @@
     console.log('running processMUR')
     const fetchCommentList = []
     data.mapIssues.mapUpdateRequests.objects.forEach((issue) => {
-      const murObj = data.mapUpdateRequests.objects.filter(elem => elem.mapIssueId === issue.mapIssueId)[0]
-      wmeURMPT.mapIssues.mapUpdateRequests[issue.mapIssueId] = {
-        id: murObj.id,
-        description: murObj.description,
-        hasComments: murObj.hasComments,
-        commentCount: 0,
-        lastComment: null,
-        lastCommentBy: -1,
-        isRead: murObj.isRead,
-        isStarred: murObj.isStarred,
-        isOpen: murObj.open,
-        driveDate: murObj.driveDate,
-        updatedOn: murObj.updatedOn,
-        updatedBy: wmeURMPT.getUserData(murObj.updatedBy)
-      }
-      if (murObj.hasComments) {
-        fetchCommentList.push(issue.mapIssueId)
+      const murObj = data.mapUpdateRequests.objects.find(elem => elem.mapIssueId === issue.mapIssueId)
+      if (typeof murObj === 'object' && murObj !== null) {
+        wmeURMPT.mapIssues.mapUpdateRequests[issue.mapIssueId] = murObj
+        wmeURMPT.mapIssues.mapUpdateRequests[issue.mapIssueId].commentCount = 0
+        wmeURMPT.mapIssues.mapUpdateRequests[issue.mapIssueId].lastComment = null
+        wmeURMPT.mapIssues.mapUpdateRequests[issue.mapIssueId].lastCommentBy = -1
+        wmeURMPT.mapIssues.mapUpdateRequests[issue.mapIssueId].updatedBy = wmeURMPT.getUserData(murObj.updatedBy)
+
+        if (murObj.hasComments) {
+          fetchCommentList.push(issue.mapIssueId)
+        }
       }
     })
   }
@@ -267,12 +267,9 @@
   wmeURMPT.processVUR = function (data) {
     console.log('running processVUR')
     data.mapIssues.venueUpdateRequests.objects.forEach((issue) => {
-      const venueDetails = data.venues.objects.filter((elem) => elem.id === issue.venueId)
-      wmeURMPT.mapIssues.venueUpdateRequests[issue.venueUpdateRequestId] = {
-        id: issue.venueUpdateRequestId,
-        updateTime: issue.updateTime,
-        venueName: venueDetails[0].name,
-        venueCategories: venueDetails[0].categories
+      const venueDetails = data.venues.objects.find((elem) => elem.id === issue.venueId)
+      if (typeof venueDetails === 'object' && venueDetails !== null) {
+        wmeURMPT.mapIssues.venueUpdateRequests[issue.venueUpdateRequestId] = { ...issue, ...venueDetails }
       }
     })
   }
