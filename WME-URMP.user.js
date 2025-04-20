@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.22
+// @version     3.9.23
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -185,7 +185,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.22'
+  WMEURMPT.urmpt_version = '3.9.23'
   WMEURMPT.URList = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
@@ -995,13 +995,14 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.getSelectedPUR = function () {
     try {
-      const placeUpdates = WMEURMPT.wazeMap.getLayers().filter(elem => elem.className === 'place-updates')
+      const placeUpdates = WMEURMPT.wazeMap.getLayerByName('place_updates')
 
-      for (const purLayer of placeUpdates) {
-        for (const m of purLayer.markers) {
-          if (m.element.classList.contains('marker-selected')) {
-            return m.element.attributes['data-id'].value
+      for (const m of placeUpdates.features) {
+        if (m.attributes.wazeFeature.isSelected) {
+          if (typeof m.attributes.wazeFeature.id !== 'undefined') {
+            return m.attributes.wazeFeature.id
           }
+          return null
         }
       }
     } catch (e) {
@@ -2311,6 +2312,12 @@ function WMEURMPT_Injected () {
     }
     for (let c = 0; c < WMEURMPT.areaList.custom.length; c++) {
       if (WMEURMPT.areaList.custom[c].geometryOL == null) {
+        if (WMEURMPT.areaList.custom[c].geometryWKT == null) {
+          WMEURMPT.log('Invalid area. Removing it... :(')
+          WMEURMPT.areaList.custom.splice(c, 1)
+          c--
+          continue
+        }
         WMEURMPT.areaList.custom[c].geometryOL = (new OpenLayers.Format.WKT()).read(WMEURMPT.areaList.custom[c].geometryWKT)
         if (WMEURMPT.areaList.custom[c].geometryOL == null || Object.prototype.hasOwnProperty.call(WMEURMPT.areaList.custom[c].geometryOL, 'geometry') === false) {
           WMEURMPT.log('Error on area ' + WMEURMPT.areaList.custom[c].name + '. Removing it... :(')
@@ -5763,7 +5770,7 @@ function WMEURMPT_Injected () {
         URId.didShow = true
       }
 
-      const selectedUR = WMEURMPT.wazeMap.getLayerByName('update_requests').features.filter(elem => elem.attributes.wazeFeature.id === URId.URId)[0]
+      const selectedUR = WMEURMPT.wazeMap.getLayerByName('update_requests').features.filter(elem => (typeof elem.attributes.cluster === 'undefined') && (typeof elem.attributes.wazeFeature !== 'undefined') && (elem.attributes.wazeFeature.id === URId.URId))[0]
       if (selectedUR.attributes.wazeFeature.isSelected === false) {
         URId.attempts++
         WMEURMPT.log('Can not select UR ' + URId.URId + '. Trying again ' + URId.attempts + '/10...')
@@ -6154,7 +6161,7 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.clickPUR = function () {
     WMEURMPT.logDebug('PUR clicked: ', this)
-    WMEURMPT.currentPURID = W.selectionManager.getSelectedFeatures()[0].attributes.wazeFeature.id
+    WMEURMPT.currentPURID = W.selectionManager.getSelectedWMEFeatures()[0].id
     WMEURMPT.selectedPURID = WMEURMPT.currentPURID
     WMEURMPT.PURVisited(WMEURMPT.currentPURID)
     WMEURMPT.log('PUR clicked: ' + WMEURMPT.currentPURID, this)
@@ -6358,7 +6365,7 @@ function WMEURMPT_Injected () {
     lastAction = lastAction.action
     WMEURMPT.logDebug('Action added lastAction :', lastAction)
     if (Object.prototype.hasOwnProperty.call(lastAction, 'object') && Object.prototype.hasOwnProperty.call(lastAction.object, 'type') && lastAction.object.type === 'mapProblem') {
-      const mp = WMEURMPT.getMPFromId(lastAction.attributes.id)
+      const mp = WMEURMPT.getMPFromId(lastAction.object.attributes.id)
       if (mp == null) {
         return
       }
@@ -6376,7 +6383,7 @@ function WMEURMPT_Injected () {
       WMEURMPT.updateIHMFromMPList()
     }
     if (Object.prototype.hasOwnProperty.call(lastAction, 'object') && Object.prototype.hasOwnProperty.call(lastAction.object, 'type') && lastAction.object.type === 'mapUpdateRequest') {
-      const ur = WMEURMPT.getURFromId(lastAction.attributes.id)
+      const ur = WMEURMPT.getURFromId(lastAction.object.attributes.id)
       if (ur == null) {
         return
       }
