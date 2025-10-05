@@ -1,16 +1,20 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.23
+// @version     3.9.24
 // @description Track UR and MP in the Waze Map Editor
-// @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
+// @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
+// @updateURL   https://github.com/jangliss/WME-URMP/raw/refs/heads/main/WME-URMP.user.js
+// @downloadURL https://github.com/jangliss/WME-URMP/raw/refs/heads/main/WME-URMP.user.js
+// @require     https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js
 // @icon        data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB94DDwolKCvyQLIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAGcElEQVRYw82Xf1BU1xXHv/e9t7DsLiy6uwYEZBVYNGi7gwnYNpk6kx9TrcZJGe0v/cOONkPTJuMYJk5NGxUcp9ohOqZDU5wxk+CMQrEZneIv0Pwgmk6LElJKRECJbBaVZdld2F/33Xv6h0JqY/ghGSdn5s67950z53zeOWfuvQ+YhvT399/1/EZIVVXVlOzZZA07OjqwYMGCsfWKFSsKvF7vHCmlQVEU3eFw/PvkyZOfjepramqwdu3ar+erjh49OjZft25dmsvl+lOey3Uj1zV/OCd//kiOK38kNy/v8/z8/LqlS5cWjtpu2rTp68sAACxZsqTE5/O9ZdRU05wkBQ8nq7AlKBTUCe1Bwa6FBcJCxpItlt0bN24sLy0t5bW1tVizZs30AOrq6lhFefnPQpHoG3kWzfzTzEQqmqHBqDIm6bYTnYDWgE6H+2KsLaBzi8n40vPP/2r/9u07yOPxfKVvdTIAfX193/KHRt6Ya1Yf2ppvooctCuOxGOO6hFQ0xONxCB7HbHMCW5yq0fWIVK+GYoU93d0ftLe3exoaGnDo0KGpA1y8eBE9PT0JwyMjv4tFo0+9Ot+MLJPCyGxF2s83Q5s5C+ErbUhd8hTsqzZguONfSJAc6YkKuxjQLcFIPOvmzRs1LpfrK2Mo4wEUFhbC7XY7wrH4skdmGJBlUkgSwTAzDcmLv4+MDa9g9i9+i4zSCsx4/IdQLakAgeVYNMy3aIjz+BO7du3KHi+GMlH6A4FAciQay15k1aAxMIAh2nsZA8ffhIxHYXv6x2Cqhv7D+8EH+kGMIUkBnCaVVAatpaXl2WkBhMNhIiKYVQZltGUZA8VjANGdF/RFS9+ZmlUGBQyBQIBNC8DhcJBB06QnIqHfcW6ckwfHsxuhJCZhsLEOJHSk/eQ3SLClASAQAG9MMJ0ITqezf1oAnZ2dfcYEw4kPBzkicQJJID5wA6GPP0Tfn7fDU12B669vhf/9v4MH/IAEbkUlXRkWAGPe6urqvwEAjWVrCgDd3d0oKCiIWkxJZzxRIc/74oAuER0cxNV9W3Hz1F8hYMBg82n07NmMWCAEziV9MsTZtbCAyWTaxRiL3q4amzpATk4Odu/eLU0m07FEVf24tp9jKKaTlAQyGCFVDboQEIoGSkyCLiXCXODULY6IoE8cdvsRAGhtbb3/EgDA2bNnrzLIPwzEZfjIDc5UIaHr9KUhBeGfQ5xdCukwJxn/smjhwlsA4Ha77x/g4MGDAIBPOz49ojK0vTsk0RYURLqAzr8YggsEozod8AokGbTWWQ5HQ+Vrr9FE/icEWL9+PUZrmO10vhoXMlTrE8wflaRzCc4ldC4R45Kq+gWLEIWtKSl7m5qaeiaT3QkBfD4f9uzZAwA4ferUaavVWnk5LNAUEIwLASEEpBA4MyTxnwjBwNjbFy5cqJnsCTshgM1mQ1lZ2dj6xRdfOJCSktJ5IgR0hwmSS3SFJZpGiEkiWVFR8RZjTIzat7S03N99oL6+HiUlJaivr1cqKyuX+gf9z2mqmkKAFo1G3JIpdpuB4YUUicPDDB2cQcbiItVqfVfXdZ3r+vn02el7z507F7xzoiIzM3NyAI1NjXjyiScBAO5vuwu8Xm9TmnPuQ9YZqSACNIMGHgmTt8/D7BowoBPSMzNJMyYxoQsQEXo7L0NyXr169eqyvfv2BkbLabPZxgc4fvw4Vq5ceXsfmJeTPTAwcMj9ne9+b/3LLyPZaiWAGJiC4cAQDpSXw9N7DelZWVi7+SXMmp0BgMAUhdrOn2dVO3YARLWlvy59btvvtw1N6R5YXFScbU2xXlq18hnyDQ5STBcyyjmNDi4ldXZ2UnFxMZ1pbCQuJd2lF0L+46OPaJ5zXtxus5cT0fj91tvbOzYverTIaZtpa3Y/8ij13BqQfYEAfeb3f2l4gkG6dKWLPIHgPfWfB0N04v0PKCMjU8x1zt1W8qMSAwCsembV3SXo6upCbm4uAGDZD5altrS0HDGazU9v2PoKrA4HhJC411ZOBKiqAinlPT+KCFAU0HvvvMPeO3ZsKDEx8Zfefm8dACxfvhwNDQ1390BxUfGC9vb2PyqKstxsscBosYAkYTrCGCClRNDvh9D1GBGVhYZD+0f12v8aP/b4Y4sXLlrYBWDfeEfo/YEwAGCapjnsdnvWzp07r48pm5ubH/gv3JYtW/6/XvTAgj/IWN98+S9tiGRBMpU45gAAAABJRU5ErkJggg==
 // @grant       GM_addElement
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
+// @grant       GM_info
 // @grant       unsafeWindow
-// @copyright   2023, dummyd2, seb-d59, jangliss
+// @copyright   2025, dummyd2, seb-d59, jangliss
 // @author      dummyd2, seb-d59, jangliss
 // @connect     waze.netdork.net
 // ==/UserScript==
@@ -31,6 +35,11 @@
  *  You are invited to contact the author: jangliss on waze forum for more details.
  *
 ********/
+
+/* global W */
+/* global turf */
+// import type { KeyboardShortcut, Selection, UserSession, WmeSDK } from "wme-sdk-typings";
+// import { Polygon, FeatureCollection } from 'geojson'
 
 function downloadHelperInjected () {
   window.downloadHelper = {
@@ -184,15 +193,19 @@ function WMEURMPT_Injected () {
   // eslint-disable-next-line quotes
   const NL = "\n"
   const WMEURMPT = {}
-  WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.23'
+  WMEURMPT.isDebug = true
+  WMEURMPT.urmpt_version = '3.9.24'
   WMEURMPT.URList = []
+  WMEURMPT.URBlacklist = []
   WMEURMPT.URMap = {}
   WMEURMPT.MPList = []
+  WMEURMPT.MPBlacklist = []
   WMEURMPT.MPMap = {}
   WMEURMPT.MCList = []
+  WMEURMPT.MCBlacklist = []
   WMEURMPT.MCMap = {}
   WMEURMPT.PURList = []
+  WMEURMPT.PURBlacklist = []
   WMEURMPT.PURMap = {}
   WMEURMPT.stackedURList = []
   WMEURMPT.stackedUR = { id: 0, oriX: 0, oriY: 0 }
@@ -209,6 +222,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.PURFilterList = { hideOutOfMyManagedArea: 1, hideVisited: 2, hideBlacklisted: 4, hideWhitelisted: 8, hideLimitTo: 16, hideArea: 32, hideNotKW: 64, hideCategorie: 128, hideOutOfMyDriveArea: 256 }
   WMEURMPT.taggedURList = ['[NOTE]', '[CONSTRUCTION]', '[ROADWORKS]', '[CLOSURE]', '[EVENT]', '[WSLM]']
   WMEURMPT.URAgeColIsLastComment = false
+  WMEURMPT.MCAgeColIsLastComment = false
   WMEURMPT.disableScrolling = false
   WMEURMPT.currentSortModeUR = WMEURMPT.sortModeListUR.ageDSC
   WMEURMPT.currentSortModeMP = WMEURMPT.sortModeListMP.priorityDSC
@@ -265,6 +279,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.MCBodyMaxLength = 12
   WMEURMPT.PURCategoriesMaxLength = 9
   WMEURMPT.PURNameMaxLength = 12
+  WMEURMPT.keepBlacklist = true
   WMEURMPT.visitedURBeforeActionsSaved = []
   WMEURMPT.visitedMPBeforeActionsSaved = []
   WMEURMPT.visitedTPBeforeActionsSaved = []
@@ -566,7 +581,6 @@ function WMEURMPT_Injected () {
       { o: 'W.Config.api_base', s: 'wazeConfigApiBase' },
       { o: 'W.Config.paths.features', s: 'wazeConfigApiFeatures' },
       { o: 'W.Config.paths.updateRequestSessions', s: 'wazeConfigApiUpdateRequestSessions' },
-      { o: 'OL', s: 'OpenLayers' },
       { o: 'W.loginManager.user', s: 'me' },
       { o: 'W.loginManager.user.attributes.rank', s: 'ul' },
       { o: 'W.loginManager.user.attributes.isAreaManager', s: 'uam' },
@@ -575,7 +589,7 @@ function WMEURMPT_Injected () {
     ]
     for (let i = 0; i < objectToCheck.length; i++) {
       const path = objectToCheck[i].o.split('.')
-      let object = window
+      let object = unsafeWindow
       for (let j = 0; j < path.length; j++) {
         object = object[path[j]]
         if (typeof object === 'undefined' || object == null) {
@@ -591,72 +605,151 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.registerEvents = function () {
-    WMEURMPT.wazeMap.olMap.events.register('moveend', null, WMEURMPT.mapMoveEnd)
-    WMEURMPT.wazeMap.olMap.events.register('zoomend', null, WMEURMPT.mapZoomEnd)
-    WMEURMPT.wazeModel.events.register('mergeend', null, WMEURMPT.setupListener)
-    WMEURMPT.wazeController.events.register('savestart', null, WMEURMPT.saveStarted)
-    WMEURMPT.wazeController.events.register('saveend', null, WMEURMPT.saveEnded)
-    WMEURMPT.wazeModel.mapUpdateRequests.on('objectschanged', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapUpdateRequests.on('objectsadded', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapUpdateRequests.on('objectsremoved', WMEURMPT.newDataAvailableStarts)
+    wmeSDK.Events.on({
+      eventName: 'wme-map-move-end',
+      eventHandler: WMEURMPT.mapMoveEnd
+    });
 
-    WMEURMPT.wazeModel.mapProblems.on('objectschanged', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapProblems.on('objectsadded', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapProblems.on('objectsremoved', WMEURMPT.newDataAvailableStarts)
+    wmeSDK.Events.on({
+      eventName: 'wme-map-zoom-changed',
+      eventHandler: WMEURMPT.mapZoomEnd
+    })
 
-    WMEURMPT.wazeModel.mapComments.on('objectschanged', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapComments.on('objectsadded', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapComments.on('objectsremoved', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.venues.on('objectschanged', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.venues.on('objectsadded', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.venues.on('objectsremoved', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.actionManager.events.register('afteraction', null, WMEURMPT.newActionAdded)
-    WMEURMPT.wazeModel.actionManager.events.register('afterundoaction', null, WMEURMPT.newActionAdded)
-    WMEURMPT.wazeModel.actionManager.events.register('afterclearaction', null, WMEURMPT.newActionAdded)
-    W.app.on('problems:shown', WMEURMPT.onProblemsShown)
-    window.setTimeout(WMEURMPT.setupListener, 500)
+    wmeSDK.Events.on({
+      eventName: 'wme-save-finished',
+      eventHandler: WMEURMPT.saveEnded
+    })
+
+    wmeSDK.Events.trackDataModelEvents({
+      dataModelName: 'venues'
+    })
+
+    wmeSDK.Events.trackDataModelEvents({
+      dataModelName: 'mapComments'
+    })
+
+    wmeSDK.Events.trackDataModelEvents({
+      dataModelName: 'mapUpdateRequests'
+    })
+    
+    wmeSDK.Events.trackDataModelEvents({
+      dataModelName: 'mapProblems'
+    })
+    wmeSDK.Events.on({
+      eventName: 'wme-data-model-objects-changed',
+      eventHandler: WMEURMPT.newDataAvailableStarts
+    })
+
+    wmeSDK.Events.trackLayerEvents({
+      layerName: 'venues'
+    })
+    wmeSDK.Events.trackLayerEvents({
+      layerName: 'mapProblems'
+    })
+    wmeSDK.Events.trackLayerEvents({
+      layerName: 'mapComments'
+    })
+    wmeSDK.Events.trackLayerEvents({
+      layerName: 'update_requests'
+    })
+    wmeSDK.Events.trackLayerEvents({
+      layerName: 'RESIDENTIAL_PLACE_UPDATES'
+    })
+    wmeSDK.Events.trackLayerEvents({
+      layerName: 'PARKING_PLACE_UPDATES'
+    })
+    wmeSDK.Events.trackLayerEvents({
+      layerName: 'place_updates'
+    })
+
+    wmeSDK.Events.on({
+      eventName: 'wme-layer-feature-clicked',
+      eventHandler: WMEURMPT.clickFeature
+    })
+
   }
 
   WMEURMPT.unregisterEvents = function () {
-    WMEURMPT.wazeMap.olMap.events.unregister('moveend', null, WMEURMPT.mapMoveEnd)
-    WMEURMPT.wazeMap.olMap.events.unregister('zoomend', null, WMEURMPT.mapZoomEnd)
-    WMEURMPT.wazeModel.events.unregister('mergeend', null, WMEURMPT.setupListener)
-    WMEURMPT.wazeController.events.unregister('savestart', null, WMEURMPT.saveStarted)
-    WMEURMPT.wazeController.events.unregister('saveend', null, WMEURMPT.saveEnded)
-    WMEURMPT.wazeModel.mapUpdateRequests.off('objectschanged', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapUpdateRequests.off('objectsadded', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapUpdateRequests.off('objectsremoved', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapProblems.off('objectschanged', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapProblems.off('objectsadded', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapProblems.off('objectsremoved', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapComments.off('objectschanged', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapComments.off('objectsadded', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.mapComments.off('objectsremoved', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.venues.off('objectschanged', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.venues.off('objectsadded', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.venues.off('objectsremoved', WMEURMPT.newDataAvailableStarts)
-    WMEURMPT.wazeModel.actionManager.events.unregister('afteraction', null, WMEURMPT.newActionAdded)
-    WMEURMPT.wazeModel.actionManager.events.unregister('afterundoaction', null, WMEURMPT.newActionAdded)
-    WMEURMPT.wazeModel.actionManager.events.unregister('afterclearaction', null, WMEURMPT.newActionAdded)
-    W.app.off('problems:shown', WMEURMPT.onProblemsShown)
+
+    wmeSDK.Events.off({
+      eventName: 'wme-map-move-end',
+      eventHandler: WMEURMPT.mapMoveEnd
+    });
+
+    wmeSDK.Events.off({
+      eventName: 'wme-map-zoom-changed',
+      eventHandler: WMEURMPT.mapZoomEnd
+    })
+
+    wmeSDK.Events.off({
+      eventName: 'wme-map-data-loaded',
+      eventHandler: WMEURMPT.setupListener
+    })
+
+    wmeSDK.Events.off({
+      eventName: 'wme-save-finished',
+      eventHandler: WMEURMPT.saveEnded
+    })
+
+    wmeSDK.Events.stopDataModelEventsTracking({
+      dataModelName: 'mapUpdateRequests'
+    })
+
+    wmeSDK.Events.stopDataModelEventsTracking({
+      dataModelName: 'mapProblems'
+    })
+
+    wmeSDK.Events.stopDataModelEventsTracking({
+      dataModelName: 'mapComments'
+    })
+
+    wmeSDK.Events.stopDataModelEventsTracking({
+      dataModelName: 'venues'
+    })
+
+    wmeSDK.Events.off({
+      eventName: 'wme-data-model-objects-changed',
+      eventHandler: WMEURMPT.newDataAvailableStarts
+    })
+
+    wmeSDK.Events.stopLayerEventsTracking({
+      layerName: 'venues'
+    })
+    wmeSDK.Events.stopLayerEventsTracking({
+      layerName: 'mapProblems'
+    })
+    wmeSDK.Events.stopLayerEventsTracking({
+      layerName: 'mapComments'
+    })
+    wmeSDK.Events.stopLayerEventsTracking({
+      layerName: 'update_requests'
+    })
+    wmeSDK.Events.stopLayerEventsTracking({
+      layerName: 'RESIDENTIAL_PLACE_UPDATES'
+    })
+    wmeSDK.Events.stopLayerEventsTracking({
+      layerName: 'PARKING_PLACE_UPDATES'
+    })
+    wmeSDK.Events.stopLayerEventsTracking({
+      layerName: 'place_updates'
+    })
+
+    wmeSDK.Events.off({
+      eventName: 'wme-layer-feature-clicked',
+      eventHandler: WMEURMPT.clickFeature
+    })
+
   }
 
   WMEURMPT.initManagedArea = function () {
     const userAreas = WMEURMPT.me.attributes.areas
     for (let a = 0; a < userAreas.length; a++) {
+      const tmpArea = turf.bbox(userAreas[a].geometry)
       if (userAreas[a].type === 'drive') {
-        const tmpArea = W.userscripts.toOLGeometry(userAreas[a].geometry)
-        for (let c = 0; c < tmpArea.components.length; c++) {
-          tmpArea.components[c].calculateBounds()
-          WMEURMPT.driveArea.push(tmpArea.components[c])
-        }
+        WMEURMPT.driveArea.push(tmpArea)
       }
       if (userAreas[a].type === 'managed') {
-        const tmpArea = W.userscripts.toOLGeometry(userAreas[a].geometry)
-        for (let c = 0; c < tmpArea.components.length; c++) {
-          tmpArea.components[c].calculateBounds()
-          WMEURMPT.managedAreas.push(tmpArea.components[c])
-        }
+         WMEURMPT.managedAreas.push(tmpArea)
       }
     }
     WMEURMPT.logDebug('WMEURMPT.driveArea', WMEURMPT.driveArea)
@@ -703,195 +796,6 @@ function WMEURMPT_Injected () {
     countryListSelect.parentNode.parentNode.replaceChild(errorMessage, countryListSelect.parentNode)
   }
 
-  WMEURMPT.wazeMapAreaToOLPolygons = function (geometry) {
-    const polygons = []
-    if (geometry.type === 'Polygon') {
-      polygons.push(WMEURMPT.lonlatArrayToxyOpenLayersPolygons(geometry.coordinates))
-      polygons[polygons.length - 1].calculateBounds()
-    }
-    if (geometry.type === 'MultiPolygon') {
-      for (let p = 0; p < geometry.coordinates.length; p++) {
-        polygons.push(WMEURMPT.lonlatArrayToxyOpenLayersPolygons(geometry.coordinates[p]))
-        polygons[polygons.length - 1].calculateBounds()
-      }
-    }
-    return polygons
-  }
-
-  WMEURMPT.bintreeGeometry = function (poly) {
-    let pointList = null
-    if (poly.CLASS_NAME === 'OpenLayers.Geometry.LinearRing') {
-      pointList = poly.components
-    } else {
-      pointList = poly.components[0].components
-    }
-    if (pointList.length <= 15) {
-      return
-    }
-    let split = 'x'
-    let notSplit = 'y'
-    let splitValue = (poly.bounds.right + poly.bounds.left) / 2.0
-    if (poly.bounds.right - poly.bounds.left < poly.bounds.top - poly.bounds.bottom) {
-      split = 'y'
-      notSplit = 'x'
-      splitValue = (poly.bounds.top + poly.bounds.bottom) / 2.0
-    }
-    const intersection = []
-    for (let p = 0; p < pointList.length - 1; p++) {
-      const point = pointList[p]
-      const next = pointList[p + 1]
-      if ((point[split] <= splitValue && next[split] > splitValue) || (point[split] > splitValue && next[split] <= splitValue)) {
-        intersection.push(p)
-      }
-    }
-    for (let j = 0; j < intersection.length; j++) {
-      const olPoint = new OpenLayers.Geometry.Point(0, 0)
-      const p1 = pointList[intersection[j]]
-      const p2 = pointList[intersection[j] + 1]
-      olPoint[split] = splitValue
-      if (p2[split] - p1[split] === 0) {
-        olPoint[notSplit] = p1[notSplit]
-      } else {
-        const ratio = (splitValue - p1[split]) / (p2[split] - p1[split])
-        olPoint[notSplit] = ratio * (p2[notSplit] - p1[notSplit]) + p1[notSplit]
-      }
-      intersection[j] = { index: intersection[j], point: olPoint }
-    }
-    intersection.sort(function (a, b) {
-      return a.point[notSplit] > b.point[notSplit]
-    })
-
-    const bintree = [[], []]
-    let currentL = -1
-    let currentR = -1
-    let intersectionIndex = -1
-    let found = false
-    const intersectionIndices = intersection.map(function (e) {
-      return e.index
-    })
-
-    for (let p = 0; p < pointList.length - 1; p++) {
-      const i = (p + intersection[0].index) % (pointList.length - 1)
-      if (pointList[i][split] <= splitValue) {
-        if (currentL === -1) {
-          bintree[0].push({ i: [], c: false })
-          currentL = 0
-        }
-        bintree[0][currentL].i.push(i)
-        intersectionIndex = intersectionIndices.indexOf(i)
-        if (intersectionIndex !== -1) {
-          bintree[0][currentL].i.push(intersectionIndex * -1 - 1)
-          found = false
-          for (let b = 0; b < bintree[1].length; b++) {
-            if ((intersectionIndex % 2 === 0 && (bintree[1][b].i[bintree[1][b].i.length - 1] + 1) * -1 === intersectionIndex + 1) || (intersectionIndex % 2 === 1 && (bintree[1][b].i[bintree[1][b].i.length - 1] + 1) * -1 === intersectionIndex - 1)) {
-              found = true
-              currentR = b
-              break
-            }
-          }
-          if (!found) {
-            bintree[1].push({ i: [], c: false })
-            currentR = bintree[1].length - 1
-          }
-          bintree[1][currentR].i.push(intersectionIndex * -1 - 1)
-        }
-      } else {
-        if (currentR === -1) {
-          bintree[1].push({ i: [], c: false })
-          currentR = 0
-        }
-        bintree[1][currentR].i.push(i)
-        intersectionIndex = intersectionIndices.indexOf(i)
-        if (intersectionIndex !== -1) {
-          bintree[1][currentR].i.push(intersectionIndex * -1 - 1)
-          found = false
-          for (let b = 0; b < bintree[0].length; b++) {
-            if ((intersectionIndex % 2 === 0 && (bintree[0][b].i[bintree[0][b].i.length - 1] + 1) * -1 === intersectionIndex + 1) || (intersectionIndex % 2 === 1 && (bintree[0][b].i[bintree[0][b].i.length - 1] + 1) * -1 === intersectionIndex - 1)) {
-              found = true
-              currentL = b
-              break
-            }
-          }
-          if (!found) {
-            bintree[0].push({ i: [], c: false })
-            currentL = bintree[0].length - 1
-          }
-          bintree[0][currentL].i.push(intersectionIndex * -1 - 1)
-        }
-      }
-    }
-    const bintree2 = [[], []]
-    poly.bintree = { left: null, right: null }
-    for (let t = 0; t < 2; t++) {
-      const olPolyList = []
-      for (let i = 0; i < bintree[t].length; i++) {
-        bintree2[t].push([])
-        for (let j = 0; j < bintree[t][i].i.length; j++) {
-          if (bintree[t][i].i[j] < 0) {
-            intersectionIndex = (bintree[t][i].i[j] + 1) * -1
-            const olPoint = intersection[intersectionIndex].point
-            bintree2[t][i].push(olPoint)
-          } else {
-            bintree2[t][i].push(pointList[bintree[t][i].i[j]])
-          }
-        }
-        bintree2[t][i].push(bintree2[t][i][0])
-        olPolyList.push(new OpenLayers.Geometry.Polygon(new OpenLayers.Geometry.LinearRing(bintree2[t][i])))
-        olPolyList[olPolyList.length - 1].calculateBounds()
-        WMEURMPT.bintreeGeometry(olPolyList[olPolyList.length - 1])
-      }
-      if (t === 0) {
-        poly.bintree.left = new OpenLayers.Geometry.MultiPolygon(olPolyList)
-      } else {
-        poly.bintree.right = new OpenLayers.Geometry.MultiPolygon(olPolyList)
-      }
-    }
-    poly.bintreeContainsPoint = function (point) {
-      if (point.x < this.bounds.left || point.x > this.bounds.right || point.y < this.bounds.bottom || point.y > this.bounds.top) {
-        return false
-      }
-      if (Object.prototype.hasOwnProperty.call(this, 'bintree') === true) {
-        for (let i = 0; i < this.bintree.left.components.length; i++) {
-          if (Object.prototype.hasOwnProperty.call(this.bintree.left.components[i], 'bintree') === true) {
-            if (this.bintree.left.components[i].bintreeContainsPoint(point) === true) {
-              return true
-            }
-          } else if (this.bintree.left.components[i].containsPoint(point) === true) {
-            return true
-          }
-        }
-        for (let i = 0; i < this.bintree.right.components.length; i++) {
-          if (Object.prototype.hasOwnProperty.call(this.bintree.right.components[i], 'bintree') === true) {
-            if (this.bintree.right.components[i].bintreeContainsPoint(point) === true) {
-              return true
-            }
-          } else if (this.bintree.right.components[i].containsPoint(point) === true) {
-            return true
-          }
-        }
-        return false
-      }
-      return this.containsPoint(point)
-    }
-  }
-
-  WMEURMPT.lonlatArrayToxyOpenLayersPolygons = function (lontalArray) {
-    const olPolygons = []
-    for (let p = 0; p < lontalArray.length; p++) {
-      const olPoints = []
-      for (let pt = 0; pt < lontalArray[p].length - 1; pt++) {
-        const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(lontalArray[p][pt][0], lontalArray[p][pt][1])
-        olPoints.push(new OpenLayers.Geometry.Point(xy.lon, xy.lat))
-      }
-      olPolygons.push(new OpenLayers.Geometry.LinearRing(olPoints))
-    }
-    if (olPolygons.length >= 1) {
-      const olLinearRing = olPolygons[0]
-      return new OpenLayers.Geometry.Polygon([olLinearRing])
-    }
-    return null
-  }
-
   WMEURMPT.isInAreas = function (lonlat) {
     for (let c = 0; c < WMEURMPT.areaList.country.length; c++) {
       if (WMEURMPT.areaList.country[c].isInside(lonlat)) {
@@ -908,36 +812,26 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.inScreenUpdatableArea = function (xy) {
     if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.userAreas.objects, 'managed')) {
-      if (WMEURMPT.wazeModel.userAreas.objects.managed.attributes.geometry.containsPoint(xy)) {
-        return true
-      }
+      return turf.booleanPointInPolygon(xy, WMEURMPT.wazeModel.userAreas.objects.managed.attributes.geoJSONGeometry)
     }
     if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.userAreas.objects, 'drives')) {
-      if (WMEURMPT.wazeModel.userAreas.objects.drives.attributes.geometry.containsPoint(xy)) {
-        return true
-      }
+      return turf.booleanPointInPolygon(xy, WMEURMPT.wazeModel.userAreas.objects.drives.attributes.geoJSONGeometry)
     }
     return false
   }
 
   WMEURMPT.isInsideDriveArea = function (lon, lat) {
-    const lonlat = OpenLayers.Layer.SphericalMercator.forwardMercator(lon, lat)
-    const xy = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat)
+    const pointObj = turf.point([lon, lat])
     for (let a = 0; a < WMEURMPT.driveArea.length; a++) {
-      if (xy.x >= WMEURMPT.driveArea[a].bounds.left && xy.x <= WMEURMPT.driveArea[a].bounds.right && xy.y >= WMEURMPT.driveArea[a].bounds.bottom && xy.y <= WMEURMPT.driveArea[a].bounds.top && WMEURMPT.driveArea[a].containsPoint(xy)) {
-        return true
-      }
+      return turf.booleanPointInPolygon(pointObj, WMEURMPT.driveArea[a])
     }
     return false
   }
 
   WMEURMPT.isInsideManagedArea = function (lon, lat) {
-    const lonlat = OpenLayers.Layer.SphericalMercator.forwardMercator(lon, lat)
-    const xy = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat)
+    const pointObj = turf.point([lon, lat])
     for (let a = 0; a < WMEURMPT.managedAreas.length; a++) {
-      if (xy.x >= WMEURMPT.managedAreas[a].bounds.left && xy.x <= WMEURMPT.managedAreas[a].bounds.right && xy.y >= WMEURMPT.managedAreas[a].bounds.bottom && xy.y <= WMEURMPT.managedAreas[a].bounds.top && WMEURMPT.managedAreas[a].containsPoint(xy)) {
-        return true
-      }
+      return turf.booleanPointInPolygon(pointObj, WMEURMPT.managedAreas[a])
     }
     return false
   }
@@ -994,21 +888,15 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getSelectedPUR = function () {
-    try {
-      const placeUpdates = WMEURMPT.wazeMap.getLayerByName('place_updates')
-
-      for (const m of placeUpdates.features) {
-        if (m.attributes.wazeFeature.isSelected) {
-          if (typeof m.attributes.wazeFeature.id !== 'undefined') {
-            return m.attributes.wazeFeature.id
-          }
-          return null
-        }
-      }
-    } catch (e) {
-      WMEURMPT.log('error while getting selected PUR: ', e)
+    const selObjs = wmeSDK.Editing.getSelection()
+    if (null === selObjs) {
+      return null
     }
-    return null
+    if (selObjs.objectType !== 'venue') {
+      WMEURMPT.log('error while getting selected PUR: ', e)
+      return null
+    }
+    return selObjs.ids[0]
   }
 
   WMEURMPT.updateRequestSessions = function () {
@@ -1239,22 +1127,25 @@ function WMEURMPT_Injected () {
       }
     }
     if (WMEURMPT.currentURFilter & WMEURMPT.URFilterList.hideArea) {
-      const xy = new OpenLayers.Geometry.Point(ur.lonlat.lon, ur.lonlat.lat)
+      const xy = turf.point([ur.lonlat.lon, ur.lonlat.lat])
       for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
         if (WMEURMPT.areaList.custom[i].name === WMEURMPT.currentUROnlyArea) {
           inside = false
-          filterArea = WMEURMPT.areaList.custom[i].geometryOL.geometry.components
+          const objArea = WMEURMPT.areaList.custom[i]
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          }
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea =filterArea.concat( W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
+          }
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (inside === false) {
@@ -1265,18 +1156,21 @@ function WMEURMPT_Injected () {
       for (let i = 0; i < WMEURMPT.areaList.country.length; i++) {
         if (WMEURMPT.areaList.country[i].name === WMEURMPT.currentUROnlyArea) {
           inside = false
-          filterArea = WMEURMPT.areaList.country[i].geometryOL.geometry.components
+          const objArea = WMEURMPT.areaList.country[i]
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          }
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea =filterArea.concat( W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
+          }
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (inside === false) {
@@ -1324,22 +1218,25 @@ function WMEURMPT_Injected () {
       }
     }
     if (WMEURMPT.currentMPFilter & WMEURMPT.MPFilterList.hideArea) {
-      const xy = new OpenLayers.Geometry.Point(mp.lonlat.lon, mp.lonlat.lat)
+      const xy = turf.point([mp.lonlat.lon, mp.lonlat.lat])
       for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
         if (WMEURMPT.areaList.custom[i].name === WMEURMPT.currentMPOnlyArea) {
           inside = false
-          filterArea = WMEURMPT.areaList.custom[i].geometryOL.geometry.components
+          const objArea = WMEURMPT.areaList.custom[i]
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          }
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
+          }
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (inside === false) {
@@ -1350,18 +1247,21 @@ function WMEURMPT_Injected () {
       for (let i = 0; i < WMEURMPT.areaList.country.length; i++) {
         if (WMEURMPT.areaList.country[i].name === WMEURMPT.currentMPOnlyArea) {
           inside = false
-          filterArea = WMEURMPT.areaList.country[i].geometryOL.geometry.components
+          const objArea = WMEURMPT.areaList.country[i]
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          }
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
+          }
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (inside === false) {
@@ -1398,44 +1298,47 @@ function WMEURMPT_Injected () {
       return true
     }
     if (WMEURMPT.currentMCFilter & WMEURMPT.MCFilterList.hideArea) {
-      const xy = new OpenLayers.Geometry.Point(mc.lonlat.lon, mc.lonlat.lat)
+      const xy = turf.point([mc.lonlat.lon, mc.lonlat.lat])
       for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
         if (WMEURMPT.areaList.custom[i].name === WMEURMPT.currentMCOnlyArea) {
           inside = false
-          filterArea = WMEURMPT.areaList.custom[i].geometryOL.geometry.components
-          for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
-            }
+          const objArea = WMEURMPT.areaList.custom[i]
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
           }
-          if (inside === false) {
-            return true
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
+          }
+          for (let a = 0; a < filterArea.length; a++) {
+            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+              inside = true
+              break
+            }
           }
         }
       }
       for (let i = 0; i < WMEURMPT.areaList.country.length; i++) {
         if (WMEURMPT.areaList.country[i].name === WMEURMPT.currentMCOnlyArea) {
           inside = false
-          filterArea = WMEURMPT.areaList.country[i].geometryOL.geometry.components
+          const objArea = WMEURMPT.areaList.country[i]
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          }
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
+          }
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (inside === false) {
@@ -1487,22 +1390,25 @@ function WMEURMPT_Injected () {
       return true
     }
     if (WMEURMPT.currentPURFilter & WMEURMPT.PURFilterList.hideArea) {
-      const xy = new OpenLayers.Geometry.Point(pur.lonlat.lon, pur.lonlat.lat)
+      const xy = turf.point([pur.lonlat.lon, pur.lonlat.lat])
       for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
         if (WMEURMPT.areaList.custom[i].name === WMEURMPT.currentPUROnlyArea) {
           inside = false
-          filterArea = WMEURMPT.areaList.custom[i].geometryOL.geometry.components
+          const objArea = WMEURMPT.areaList.custom[i]
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          }
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
+          }
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (inside === false) {
@@ -1513,18 +1419,21 @@ function WMEURMPT_Injected () {
       for (let i = 0; i < WMEURMPT.areaList.country.length; i++) {
         if (WMEURMPT.areaList.country[i].name === WMEURMPT.currentPUROnlyArea) {
           inside = false
-          filterArea = WMEURMPT.areaList.country[i].geometryOL.geometry.components
+          const objArea = WMEURMPT.areaList.country[i]
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          }
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
+          }
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (inside === false) {
@@ -2056,15 +1965,13 @@ function WMEURMPT_Injected () {
     }
     let theVenue = null
     let count = 0
-    for (const v in WMEURMPT.wazeModel.venues.objects) {
-      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.venues.objects, v) === false) {
+    const curVenues = wmeSDK.DataModel.Venues.getAll()
+    for (const v in curVenues) {
+      const venue = curVenues[v]
+      if (venue.geometry.type === 'Point') {
         continue
       }
-      const venue = WMEURMPT.wazeModel.venues.objects[v]
-      if (venue.isPoint() === true) {
-        continue
-      }
-      if (venue.attributes.id <= 0) {
+      if (venue.id <= 0) {
         theVenue = venue
         count++
       }
@@ -2081,24 +1988,14 @@ function WMEURMPT_Injected () {
     ca.category = 'custom'
     ca.name = elName.value
     WMEURMPT.log('Add CA to scan list: ' + ca.name)
-    const theVenueGeom = theVenue.getOLGeometry()
-    if (theVenueGeom.components.length !== 1) {
-      alert("Can't parse the geometry")
-      return
-    }
-    ca.geometryWKT = 'POLYGON (('
-    const lonlats = []
-    for (let i = 0; i < theVenueGeom.components[0].components.length; i++) {
-      const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theVenueGeom.components[0].components[i].x, theVenueGeom.components[0].components[i].y)
-      lonlats.push(lonlat.lon + ' ' + lonlat.lat)
-    }
-    ca.geometryWKT += lonlats.join(',')
-    ca.geometryWKT += '))'
+    ca.geometryGeoJSON = theVenue.geometry
     WMEURMPT.removeCustomNameFromAreaList(ca.name)
     WMEURMPT.areaList.custom.push(ca)
     elName.value = ''
     if (confirm('Undo all edits?')) {
-      WMEURMPT.wazeModel.actionManager.undoAll()
+      if (wmeSDK.Editing.getUnsavedChangesCount() > 0) {
+        wmeSDK.Editing.undoAll()
+      }
     }
     WMEURMPT.updateScanGroup()
   }
@@ -2153,23 +2050,36 @@ function WMEURMPT_Injected () {
       if (WMEURMPT.areaList.custom[c].name === areaName) {
         WMEURMPT.getId('urmpt-area-custom-save-' + WMEURMPT.areaList.custom[c].name).style.display = 'inline'
         const area = WMEURMPT.areaList.custom[c]
-        const FeatureLandmark = require('Waze/Feature/Vector/Landmark')
+        let objArea = null
+        let center = null
+        if (typeof area.geometryGeoJSON !== 'undefined' && area.geometryGeoJSON !== null) {
+          center = turf.centroid(area.geometryGeoJSON)
+          objArea = area.geometryGeoJSON
+        }
+        else if (typeof area.geometryWKT !== 'undefined' && area.geometryWKT !== null) {
+          area.geometryGeoJSON = W.userscripts.convertWktToGeoJSON(area.geometryWKT)
+          objArea = area.geometryGeoJSON
+          center = turf.centroid(area.geometryGeoJSON)
+        }
+        else if (typeof area.geometryOL !== 'undefined' && area.geometryOL !== null) {
+          area.geometryGeoJSON = W.userscripts.toGeoJSONGeometry(area.geometryOL)
+          objArea = area.geometryGeoJSON
+          center = turf.centroid(area.geometryGeoJSON)          
+        }
 
-        const convProjection = area.geometryOL.geometry.transform(
-          new OpenLayers.Projection('EPSG:4326'),
-          WMEURMPT.wazeMap.getProjectionObject()
+        wmeSDK.Map.setMapCenter( {
+          lonLat: {
+            lat: center.geometry.coordinates[1],
+            lon: center.geometry.coordinates[0]
+          }
+        })
+
+        wmeSDK.DataModel.Venues.addVenue(
+          {
+            category: 'OTHER',
+            geometry: objArea.geometry
+          }
         )
-
-        const landmark = new FeatureLandmark({ geoJSONGeometry: W.userscripts.toGeoJSONGeometry(convProjection) })
-        const center = area.geometryOL.geometry.getCentroid()
-        const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(center.x, center.y)
-        WMEURMPT.wazeMap.setCenter(xy)
-        landmark.attributes.categories = ['OTHER']
-        const AddLandmark = require('Waze/Action/AddLandmark')
-        // eslint-disable-next-line no-undef
-        W.model.actionManager.add(new AddLandmark(landmark), _.defer(function () {
-          W.selectionManager.setSelectedModels([landmark])
-        }))
       }
     }
   }
@@ -2177,15 +2087,11 @@ function WMEURMPT_Injected () {
   WMEURMPT.saveEditedCustomArea = function (areaName) {
     let theVenue = null
     let count = 0
-    for (const v in WMEURMPT.wazeModel.venues.objects) {
-      if (Object.prototype.hasOwnProperty.call(WMEURMPT.wazeModel.venues.objects, v) === false) {
+    for (let venue of wmeSDK.DataModel.Venues.getAll()) {
+      if (venue.geometry.type === 'Point' ) {
         continue
       }
-      const venue = WMEURMPT.wazeModel.venues.objects[v]
-      if (venue.isPoint() === true) {
-        continue
-      }
-      if (venue.attributes.id <= 0) {
+      if (venue.id <= 0) {
         theVenue = venue
         count++
       }
@@ -2201,27 +2107,16 @@ function WMEURMPT_Injected () {
       WMEURMPT.updateScanGroup()
       return
     }
-    const theVenueGeom = theVenue.getOLGeometry()
-    if (theVenueGeom.components.length !== 1) {
-      alert("Can't parse the geometry")
-      WMEURMPT.updateScanGroup()
-      return
-    }
     WMEURMPT.removeCustomNameFromAreaList(areaName)
     const ca = new WMEURMPT.URT_AREA()
     ca.category = 'custom'
     ca.name = areaName
-    ca.geometryWKT = 'POLYGON (('
-    const lonlats = []
-    for (let i = 0; i < theVenueGeom.components[0].components.length; i++) {
-      const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theVenueGeom.components[0].components[i].x, theVenueGeom.components[0].components[i].y)
-      lonlats.push(lonlat.lon + ' ' + lonlat.lat)
-    }
-    ca.geometryWKT += lonlats.join(',')
-    ca.geometryWKT += '))'
+    ca.geometryGeoJSON = theVenue.geometry
     WMEURMPT.areaList.custom.push(ca)
     if (confirm('Undo all edits?')) {
-      WMEURMPT.wazeModel.actionManager.undoAll()
+      if (wmeSDK.Editing.getUnsavedChangesCount() > 0) {
+        wmeSDK.Editing.undoAll()
+      }
     }
     WMEURMPT.updateScanGroup()
   }
@@ -2264,19 +2159,6 @@ function WMEURMPT_Injected () {
       scanGroup.insertAdjacentHTML('beforeend', WMEURMPT.convertHtml('<br/><font color="#C00000">You are a rank 4+ editor. In the areas tab, you can select a country or a subset for state managers in the list and add it to your scan list!'))
     }
     for (let c = 0; c < WMEURMPT.areaList.country.length; c++) {
-      if (WMEURMPT.areaList.country[c].geometryOL == null) {
-        WMEURMPT.areaList.country[c].geometryOL = (new OpenLayers.Format.WKT()).read(WMEURMPT.areaList.country[c].geometryWKT)
-        if (WMEURMPT.areaList.country[c].geometryOL == null || Object.prototype.hasOwnProperty.call(WMEURMPT.areaList.country[c].geometryOL, 'geometry') === false) {
-          WMEURMPT.log('Error on area ' + WMEURMPT.areaList.country[c].name + '. Removing it... :(')
-          WMEURMPT.areaList.country.splice(c, 1)
-          c--
-          continue
-        }
-        for (let j = 0; j < WMEURMPT.areaList.country[c].geometryOL.geometry.components.length; j++) {
-          WMEURMPT.areaList.country[c].geometryOL.geometry.components[j].calculateBounds()
-          WMEURMPT.bintreeGeometry(WMEURMPT.areaList.country[c].geometryOL.geometry.components[j])
-        }
-      }
       elt = WMEURMPT.createElement('span')
       elt.innerHTML = WMEURMPT.convertHtml(' | ')
       scanGroup.appendChild(elt)
@@ -2311,25 +2193,7 @@ function WMEURMPT_Injected () {
       }
     }
     for (let c = 0; c < WMEURMPT.areaList.custom.length; c++) {
-      if (WMEURMPT.areaList.custom[c].geometryOL == null) {
-        if (WMEURMPT.areaList.custom[c].geometryWKT == null) {
-          WMEURMPT.log('Invalid area. Removing it... :(')
-          WMEURMPT.areaList.custom.splice(c, 1)
-          c--
-          continue
-        }
-        WMEURMPT.areaList.custom[c].geometryOL = (new OpenLayers.Format.WKT()).read(WMEURMPT.areaList.custom[c].geometryWKT)
-        if (WMEURMPT.areaList.custom[c].geometryOL == null || Object.prototype.hasOwnProperty.call(WMEURMPT.areaList.custom[c].geometryOL, 'geometry') === false) {
-          WMEURMPT.log('Error on area ' + WMEURMPT.areaList.custom[c].name + '. Removing it... :(')
-          WMEURMPT.areaList.custom.splice(c, 1)
-          c--
-          continue
-        }
-        for (let j = 0; j < WMEURMPT.areaList.custom[c].geometryOL.geometry.components.length; j++) {
-          WMEURMPT.areaList.custom[c].geometryOL.geometry.components[j].calculateBounds()
-          WMEURMPT.bintreeGeometry(WMEURMPT.areaList.custom[c].geometryOL.geometry.components[j])
-        }
-      }
+
       elt = WMEURMPT.createElement('span')
       elt.innerHTML = WMEURMPT.convertHtml(' | ')
       scanGroup.appendChild(elt)
@@ -2403,8 +2267,15 @@ function WMEURMPT_Injected () {
       let output = ''
       for (let i = 0; i < geom.length; i++) {
         output += '<Polygon><outerBoundaryIs><LinearRing><coordinates>'
-        for (let p = 0; p < geom[i].components.length; p++) {
-          output += geom[i].components[p].x + ',' + geom[i].components[p].y + ' '
+        for (let p = 0; p < geom[i].length; p++) {
+          if (Array.isArray(geom[i][p]) && geom[i][p].length > 2) {
+            for (let k = 0; k < geom[i][p].length; k++) {
+              output += geom[i][p][k][0] + ',' + geom[i][p][k][1] + ' '
+            }
+          } else {
+            output += geom[i][p][0] + ',' + geom[i][p][1] + ' '
+          }
+          
         }
         output += '</coordinates></LinearRing></outerBoundaryIs></Polygon>'
       }
@@ -2412,20 +2283,21 @@ function WMEURMPT_Injected () {
     }
     for (let i = 0; i < WMEURMPT.areaList[area.type].length; i++) {
       if (WMEURMPT.areaList[area.type][i].name === area.name) {
-        geometry = WMEURMPT.areaList[area.type][i].geometryOL.geometry
+        const objArea = WMEURMPT.areaList[area.type][i]
+        if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+          geometry = WMEURMPT.areaList[area.type][i].geometryGeoJSON.geometry
+        }
+        else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+          geometry = W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)
+        }
+        else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+          geometry = W.userscripts.toGeoJSONGeometry(objArea.geometryOL)
+        }
         break
       }
     }
     if (geometry) {
-      if (geometry.CLASS_NAME === 'OpenLayers.Geometry.MultiPolygon') {
-        kmlGeometry += '<MultiGeometry>'
-        for (let p = 0; p < geometry.components.length; p++) {
-          kmlGeometry += geomToKML(geometry.components[p].components)
-        }
-        kmlGeometry += '</MultiGeometry>'
-      } else {
-        kmlGeometry += geomToKML(geometry.components)
-      }
+      kmlGeometry += geomToKML(geometry.coordinates)
       template = template.replace(/#AREANAME#/g, area.name)
       template = template.replace('#GEOMETRY#', kmlGeometry)
       this.setAttribute('download', area.name + '.kml')
@@ -3374,6 +3246,9 @@ function WMEURMPT_Injected () {
     const urAgeColumnSpan = WMEURMPT.createElement('span')
     urAgeColumnSpan.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-uragecolislastcomment" ' + (WMEURMPT.URAgeColIsLastComment ? 'checked ' : '') + '/> UR age column is last comment age<br>')
     settingsTabPane.appendChild(urAgeColumnSpan)
+    const mcAgeColumnSpan = WMEURMPT.createElement('span')
+    mcAgeColumnSpan.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-mcagecolislastcomment"' + (WMEURMPT.MCAgeColIsLastComment ? 'checked ' : '') + '/> MC age column is last comment age<br>')
+    settingsTabPane.appendChild(mcAgeColumnSpan)
     const disableScrollingSpan = WMEURMPT.createElement('span')
     disableScrollingSpan.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-disablescrolling" ' + (WMEURMPT.disableScrolling ? 'checked ' : '') + '/> Disable text scrolling in tables')
     settingsTabPane.appendChild(disableScrollingSpan)
@@ -3640,6 +3515,10 @@ function WMEURMPT_Injected () {
       WMEURMPT.URAgeColIsLastComment = e.target.checked
       WMEURMPT.saveOptions()
     })
+    WMEURMPT.getId('urmpt-setting-mcagecolislastcomment').addEventListener('change', function (e) {
+      WMEURMPT.MCAgeColIsLastComment = e.target.checked
+      WMEURMPT.saveOptions()
+    })
     WMEURMPT.getId('urmpt-setting-disablescrolling').addEventListener('change', function (e) {
       WMEURMPT.disableScrolling = e.target.checked
       WMEURMPT.saveOptions()
@@ -3799,6 +3678,23 @@ function WMEURMPT_Injected () {
     }
   }
 
+  WMEURMPT.toggleAutoScanEvents = function() {
+    // Enable events to monitor DataModel objects added when auto-scan is enabled //
+    if (WMEURMPT.isAutoScan) {
+      wmeSDK.Events.on({
+        eventName: 'wme-data-model-objects-added',
+        eventHandler: WMEURMPT.newDataAvailableStarts
+      })
+    } else {
+      if (wmeSDK.Events.eventBus.handlers.has('wme-data-model-objects-added')) {
+        wmeSDK.Events.off({
+          eventName: 'wme-data-model-objects-added',
+          eventHandler: WMEURMPT.newDataAvailableStarts
+        })
+      }
+    }
+  }
+
   WMEURMPT.enableOrDisableAutoScan = function () {
     if (WMEURMPT.isAutoScan) {
       WMEURMPT.getId('urmpt-asonoff').innerHTML = WMEURMPT.convertHtml('<img class="urt-chkbox" src="data:image/png;base64,' + WMEURMPT.icon_unchecked + '" />')
@@ -3806,6 +3702,7 @@ function WMEURMPT_Injected () {
       WMEURMPT.getId('urmpt-asonoff').innerHTML = WMEURMPT.convertHtml('<img class="urt-chkbox" src="data:image/png;base64,' + WMEURMPT.icon_checked + '" />')
     }
     WMEURMPT.isAutoScan = !WMEURMPT.isAutoScan
+    WMEURMPT.toggleAutoScanEvents()
     WMEURMPT.saveOptions()
   }
 
@@ -3879,7 +3776,8 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.mapMoveEnd = function () {
     if (WMEURMPT.isComputeDistances) {
-      WMEURMPT.mapCenterLonLat = OpenLayers.Layer.SphericalMercator.inverseMercator(WMEURMPT.wazeMap.olMap.center.lon, WMEURMPT.wazeMap.olMap.center.lat)
+      const mCenter = wmeSDK.Map.getMapCenter()
+      WMEURMPT.mapCenterLonLat = turf.point( [ mCenter.lon, mCenter.lat] )
       for (let i = 0; i < WMEURMPT.URList.length; i++) {
         WMEURMPT.URList[i].updateDistanceToMapCenter()
       }
@@ -4083,10 +3981,13 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getMCFromId = function (id) {
-    if (typeof WMEURMPT.MCMap[id] === 'undefined') {
-      return null
+    if (WMEURMPT.MCList.length > 0) {
+      const mcMatch = WMEURMPT.MCList.find( elem => elem.id == id)
+      if (typeof mcMatch !== 'undefined') {
+        return mcMatch
+      }
     }
-    return WMEURMPT.MCList[WMEURMPT.MCMap[id]]
+    return null
   }
 
   WMEURMPT.clearAllPUR = function () {
@@ -5110,6 +5011,7 @@ function WMEURMPT_Injected () {
       }
       displayedMCCount++
       let MCDays = 0
+      let mcLastCommentAge = -1
       if (WMEURMPT.MCList[i].data.createdOn !== null) {
         MCDays = WMEURMPT.getDuration(WMEURMPT.MCList[i].data.createdOn)
       }
@@ -5117,6 +5019,11 @@ function WMEURMPT_Injected () {
       if (Object.prototype.hasOwnProperty.call(WMEURMPT.MCList[i].data, 'conversation')) {
         const conversationArray = []
         WMEURMPT.MCList[i].data.conversation.forEach(function (c, j) {
+          if (mcLastCommentAge === -1) {
+            mcLastCommentAge = WMEURMPT.getDuration(c.createdOn)
+          } else if (mcLastCommentAge > WMEURMPT.getDuration(c.createdOn)) {
+            mcLastCommentAge = WMEURMPT.getDuration(c.createdOn)
+          }
           let text = c.userName + ' (' + (new Date(c.createdOn)).toLocaleString() + '):' + NL
           text += c.text
           conversationArray.push(text)
@@ -5144,7 +5051,12 @@ function WMEURMPT_Injected () {
       }
       content += '<tr id="mct-tr-' + i + '" >'
       content += '<td class="urt-blacklist" id="mct-blacklist-' + i + '" style="cursor: pointer; ' + (WMEURMPT.MCList[i].blackListed ? 'background-color: #000; color: #FFF;' : 'background-color: #FFF; color: #000;') + '" title="' + (WMEURMPT.MCList[i].blackListed ? 'whitelist' : 'blacklist') + ' this MC" >&nbsp;</td>'
-      content += '<td title="' + MCDays + ' days" style="text-align: center;"><span style="width: 100%; display: block;">' + MCDays + '</span></td>'
+      mcLastCommentAge = (mcLastCommentAge > -1 ? mcLastCommentAge : MCDays )
+      if (WMEURMPT.MCAgeColIsLastComment) {
+        content += '<td title="MC Created: ' + MCDays + ' days" style="text-align: center;"><span style="width: 100%; display: block;">' + mcLastCommentAge + '</span></td>'
+      } else {
+        content += '<td title="Last Comment: ' + mcLastCommentAge + ' days" style="text-align: center;"><span style="width: 100%; display: block;">' + MCDays + '</span></td>'
+      }
       let subjectHTML = ''
       if (typeof WMEURMPT.MCList[i].data.subject !== 'undefined') {
         subjectHTML = WMEURMPT.MCList[i].data.subject
@@ -5374,9 +5286,13 @@ function WMEURMPT_Injected () {
       const cellTarget = row.childNodes[row.childNodes.length - 1]
       const indexInList = cellTarget.id.split('-')[2]
       cellBlackList.onclick = WMEURMPT.getFunctionWithArgs(WMEURMPT.blacklistPUR, [indexInList])
-      const lonlat = WMEURMPT.PURList[parseInt(indexInList)].lonlat
+      let lonlat = []
+      if (Object.hasOwn(WMEURMPT.PURList[parseInt(indexInList)].lonlat, 'lon')) {
+        lonlat = [WMEURMPT.PURList[parseInt(indexInList)].lonlat.lon, WMEURMPT.PURList[parseInt(indexInList)].lonlat.lat]
+      }
+      WMEURMPT.PURList[parseInt(indexInList)].lonlat
       const PURId = WMEURMPT.PURList[parseInt(indexInList)].id
-      cellTarget.onclick = WMEURMPT.getFunctionWithArgs(WMEURMPT.targetMapToPUR, [lonlat.lon, lonlat.lat, PURId])
+      cellTarget.onclick = WMEURMPT.getFunctionWithArgs(WMEURMPT.targetMapToPUR, [lonlat[0], lonlat[1], PURId])
     }
   }
 
@@ -5712,10 +5628,9 @@ function WMEURMPT_Injected () {
     WMEURMPT.log('Target map to UR: ' + URId)
     WMEURMPT.selectedURID = URId
     WMEURMPT.updateFlashingURs()
-    const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(parseFloat(lon), parseFloat(lat))
-    WMEURMPT.wazeMap.setCenter(xy)
+    wmeSDK.Map.setMapCenter( { lonLat: {lat: lat, lon: lon}})
+    wmeSDK.Map.setLayerVisibility( { layerName: 'update_requests', visibility: true})
     URId = parseInt(URId)
-    WMEURMPT.wazeMap.getLayerByName('update_requests').setVisibility(true)
     window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectURById, [{ URId, attempts: 0 }]), 250)
   }
 
@@ -5723,9 +5638,8 @@ function WMEURMPT_Injected () {
     WMEURMPT.log('Target map to MP: ' + MPId)
     WMEURMPT.selectedMPID = MPId
     WMEURMPT.updateFlashingMPs()
-    const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(lon, lat)
-    WMEURMPT.wazeMap.setCenter(xy)
-    WMEURMPT.wazeMap.getLayerByName('mapProblems').setVisibility(true)
+    wmeSDK.Map.setMapCenter( { lonLat: {lat: lat, lon: lon}})
+    wmeSDK.Map.setLayerVisibility( { layerName: 'mapProblems', visibility: true})
     window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMPById, [{ MPId, attempts: 0 }]), 250)
   }
 
@@ -5733,9 +5647,8 @@ function WMEURMPT_Injected () {
     WMEURMPT.log('Target map to MC: ' + MCId)
     WMEURMPT.selectedMCID = MCId
     WMEURMPT.updateFlashingMCs()
-    const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(lon, lat)
-    WMEURMPT.wazeMap.setCenter(xy)
-    WMEURMPT.wazeMap.getLayerByUniqueName('mapComments').setVisibility(true)
+    wmeSDK.Map.setMapCenter( { lonLat: {lat: lat, lon: lon}})
+    wmeSDK.Map.setLayerVisibility( { layerName: 'mapComments', visibility: true})
     window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMCById, [{ MCId, attempts: 0 }]), 250)
   }
 
@@ -5743,12 +5656,12 @@ function WMEURMPT_Injected () {
     WMEURMPT.log('Target map to PUR: ' + PURId)
     WMEURMPT.selectedPURID = PURId
     WMEURMPT.updateFlashingPURs()
-    const xy = OpenLayers.Layer.SphericalMercator.forwardMercator(lon, lat)
-    WMEURMPT.wazeMap.setCenter(xy)
-    WMEURMPT.wazeMap.getLayerByUniqueName('place_updates').setVisibility(true)
-    WMEURMPT.wazeMap.getLayerByUniqueName('venues').setVisibility(true)
-    WMEURMPT.wazeMap.getLayerByUniqueName('PARKING_PLACE_UPDATES').setVisibility(true)
-    WMEURMPT.wazeMap.getLayerByUniqueName('RESIDENTIAL_PLACE_UPDATES').setVisibility(true)
+
+    wmeSDK.Map.setMapCenter( { lonLat: {lat: lat, lon: lon}})
+    wmeSDK.Map.setLayerVisibility( { layerName: 'place_updates', visibility: true })
+    wmeSDK.Map.setLayerVisibility( { layerName: 'venues', visibility: true })
+    wmeSDK.Map.setLayerVisibility( { layerName: 'PARKING_PLACE_UPDATES', visibility: true })
+    wmeSDK.Map.setLayerVisibility( { layerName: 'RESIDENTIAL_PLACE_UPDATES', visibility: true })
     window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectPURById, [{ PURId, attempts: 0 }]), 250)
   }
 
@@ -5779,9 +5692,6 @@ function WMEURMPT_Injected () {
       }
       if (!WMEURMPT.isAutoScan) {
         WMEURMPT.URJustOpened(URId.URId)
-        // const theUR = WMEURMPT.getURFromId(URId.URId)
-        // theUR.refreshFromWMEData(true)
-        // WMEURMPT.updateIHMFromURList()
       }
       WMEURMPT.newDataAvailableStarts()
 
@@ -5797,18 +5707,19 @@ function WMEURMPT_Injected () {
       WMEURMPT.log("Can't select MP " + MPId.MPId)
       return
     }
-    const mp = WMEURMPT.wazeModel.mapProblems.getObjectById(MPId.MPId)
+    const mp = wmeSDK.DataModel.MapProblems.getById({ mapProblemId: MPId.MPId })
     WMEURMPT.logDebug('mp :', mp)
-    if (mp !== 'undefined') {
-      WMEURMPT.wazePC.showProblem(mp, { showNext: false })
-
-      const selectedMP = WMEURMPT.wazeMap.getLayerByName('mapProblems').features.filter(elem => elem.attributes.wazeFeature.id === MPId.MPId)[0]
-      if (selectedMP.attributes.wazeFeature.isSelected === true) {
+    if (mp !== null) {
         WMEURMPT.MPVisited(MPId.MPId)
         WMEURMPT.currentMPID = MPId.MPId
         WMEURMPT.newDataAvailableStarts()
+        wmeSDK.Editing.setSelection({
+          selection: {
+            ids: [MPId.MPId],
+            objectType: "mapProblem"
+          }
+        })
         return
-      }
     }
     MPId.attempts++
     WMEURMPT.log('Can not select MP ' + MPId.MPId + '. Trying again ' + MPId.attempts + '/10...')
@@ -5820,13 +5731,18 @@ function WMEURMPT_Injected () {
       WMEURMPT.log("Can't select MC " + MCId.MCId)
       return
     }
-    const mc = WMEURMPT.wazeModel.mapComments.getObjectById(MCId.MCId)
+    const mc = wmeSDK.DataModel.MapComments.getById({ mapCommentId: MCId.MCId })
     WMEURMPT.logDebug('mc :', mc)
     if (mc != null) {
       WMEURMPT.MCVisited(MCId.MCId)
       WMEURMPT.currentMCID = MCId.MCId
       WMEURMPT.newDataAvailableStarts()
-      W.selectionManager.setSelectedModels([WMEURMPT.wazeModel.mapComments.getObjectById(MCId.MCId)])
+      wmeSDK.Editing.setSelection({
+        selection: {
+          ids: [MCId.MCId],
+          objectType: "mapComment"
+        }
+      })
       return
     }
     MCId.attempts++
@@ -5839,13 +5755,23 @@ function WMEURMPT_Injected () {
       WMEURMPT.log("Can't select PUR " + PURId.PURId)
       return
     }
-    const pur = WMEURMPT.wazeModel.venues.getObjectById(PURId.PURId)
+    const pur = wmeSDK.DataModel.Venues.getById({ venueId: PURId.PURId})
     WMEURMPT.logDebug('pur :', pur)
     if (pur != null) {
       WMEURMPT.PURVisited(PURId.PURId)
       WMEURMPT.currentPURID = PURId.PURId
-      WMEURMPT.newDataAvailableStarts()
-      W.selectionManager.setSelectedModels([WMEURMPT.wazeModel.venues.getObjectById(PURId.PURId)])
+      WMEURMPT.newDataAvailableStarts(
+        {dataModelname: 'venues', objectIds: [PURId.PURId]}
+      )
+      wmeSDK.DataModel.Venues.showVenueUpdateRequestDialog({ venueId: PURId.PURId})
+/*
+      wmeSDK.Editing.setSelection({
+        selection: {
+          ids: [PURId.PURId],
+          objectType: "venue"
+        }
+      })
+*/
       return
     }
     PURId.attempts++
@@ -5853,7 +5779,11 @@ function WMEURMPT_Injected () {
     window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectPURById, [PURId]), 100)
   }
 
-  WMEURMPT.newDataAvailableStarts = function () {
+  WMEURMPT.newDataAvailableStarts = function (dataObj) {
+    if (typeof dataObj === 'undefined') {
+      return;
+    }
+    WMEURMPT.logDebug('changed object:', dataObj)
     if (WMEURMPT.isScanningWME) {
       return
     }
@@ -5862,9 +5792,9 @@ function WMEURMPT_Injected () {
       // this.objectType = type of object being changed
       // this.trigger.arguments (0 = event type, 1 = objects changed)
 
-      switch (this.objectType) {
-        case 'venue': {
-          const purID = WMEURMPT.getSelectedPUR()
+      switch (dataObj.dataModelName) {
+        case 'venues': {
+          const purID = dataObj.objectIds[0]
           WMEURMPT.log('scan only selected: PUR: ' + purID)
           if (purID != null) {
             const thePUR = WMEURMPT.getPURFromId(purID)
@@ -5874,7 +5804,7 @@ function WMEURMPT_Injected () {
           }
           break
         }
-        case 'mapComment': {
+        case 'mapComments': {
           const mcID = WMEURMPT.getSelectedMC()
           WMEURMPT.log('scan only selected: MC: ' + mcID)
           if (mcID != null && typeof mcID === 'number' && mcID > 0) {
@@ -5922,16 +5852,12 @@ function WMEURMPT_Injected () {
   WMEURMPT.newDataAvailable = function (i) {
     const pb = new WMEURMPT.ProgressBar(WMEURMPT.getId('urt-progressBar'))
     try {
-      const URs = WMEURMPT.wazeModel.mapUpdateRequests.getObjectArray()
-      const MPs = WMEURMPT.wazeModel.mapProblems.getObjectArray()
-      const MCs = WMEURMPT.wazeModel.mapComments.getObjectArray()
-      const POIs = WMEURMPT.wazeModel.venues.getObjectArray()
-      const PURs = []
-      for (let n = 0; n < POIs.length; n++) {
-        if (Object.prototype.hasOwnProperty.call(POIs[n].attributes, 'venueUpdateRequests') && POIs[n].attributes.venueUpdateRequests.length >> 0) {
-          PURs.push(POIs[n].attributes)
-        }
-      }
+      const URs = (WMEURMPT.scanUR ? wmeSDK.DataModel.MapUpdateRequests.getAll() : [])
+      const MPs = (WMEURMPT.scanMP ? wmeSDK.DataModel.MapProblems.getAll() : [])
+      const MCs = (WMEURMPT.scanMC ? wmeSDK.DataModel.MapComments.getAll() : [])
+      const POIs = (WMEURMPT.scanPUR ? wmeSDK.DataModel.Venues.getAll() : [])
+      const PURs = POIs.filter( place => place.venueUpdateRequests.length > 0)
+
       const urcount = URs.length
       const mpcount = MPs.length
       const mccount = MCs.length
@@ -5963,9 +5889,9 @@ function WMEURMPT_Injected () {
       pb.update(Math.round(i / count * 100))
       if (i < urcount) {
         const index = i
-        const URId = URs[index].attributes.id
+        const URId = URs[index].id
         let theUR = WMEURMPT.getURFromId(URId)
-        if (WMEURMPT.ul < WMEURMPT.rl4cp && URs[index].attributes.open === false) {
+        if (WMEURMPT.ul < WMEURMPT.rl4cp && URs[index].isOpen === false) {
           if (theUR != null) {
             WMEURMPT.URList.splice(WMEURMPT.URMap[URId], 1)
             WMEURMPT.URMap = WMEURMPT.listToObject(WMEURMPT.URList)
@@ -5973,12 +5899,11 @@ function WMEURMPT_Injected () {
         } else {
           WMEURMPT.logDebug('scan WME: the ur: ', theUR)
           WMEURMPT.logDebug('scan WME: the ur index: ', URs[index])
-          const URxy = new OpenLayers.Geometry.Point(URs[index].geometry.x, URs[index].geometry.y)
-          const URLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(URs[index].geometry.x, URs[index].geometry.y)
-          if (WMEURMPT.inScreenUpdatableArea(URxy) || WMEURMPT.isInAreas(URLonlat)) {
+          const URxy = turf.point(URs[index].geometry.coordinates)
+          if (WMEURMPT.inScreenUpdatableArea(URxy) || WMEURMPT.isInAreas(URxy)) {
             WMEURMPT.logDebug('scan WME: in screen')
             if (theUR == null) {
-              theUR = new WMEURMPT.URT_UR(URs[index].attributes.id, URLonlat.lon, URLonlat.lat)
+              theUR = new WMEURMPT.URT_UR(URs[index].id, URs[index].geometry.coordinates[0], URs[index].geometry.coordinates[1])
               if (theUR.refreshFromWMEData(false)) {
                 WMEURMPT.logDebug('scan WME: added')
                 WMEURMPT.URList.push(theUR)
@@ -5999,19 +5924,18 @@ function WMEURMPT_Injected () {
       } else {
         if (i - urcount < mpcount) {
           const index = i - urcount
-          const MPId = MPs[index].attributes.id
+          const MPId = MPs[index].id
           let theMP = WMEURMPT.getMPFromId(MPId)
-          if (WMEURMPT.ul < WMEURMPT.rl4cp && MPs[index].attributes.open === false) {
+          if (WMEURMPT.ul < WMEURMPT.rl4cp && MPs[index].isOpen === false) {
             if (theMP != null) {
               WMEURMPT.MPList.splice(WMEURMPT.MPMap[MPId], 1)
               WMEURMPT.MPMap = WMEURMPT.listToObject(WMEURMPT.MPList)
             }
           } else {
-            const MPxy = new OpenLayers.Geometry.Point(MPs[index].geometry.x, MPs[index].geometry.y)
-            const MPLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(MPs[index].geometry.x, MPs[index].geometry.y)
-            if (WMEURMPT.inScreenUpdatableArea(MPxy) || WMEURMPT.isInAreas(MPLonlat)) {
+            const MPLonlat = MPs[index].geometry
+            if (WMEURMPT.inScreenUpdatableArea(MPLonlat) || WMEURMPT.isInAreas(MPLonlat)) {
               if (theMP == null) {
-                theMP = new WMEURMPT.URT_MP(MPs[index].attributes.id, MPLonlat.lon, MPLonlat.lat)
+                theMP = new WMEURMPT.URT_MP(MPs[index].id, MPLonlat.coordinates[0], MPLonlat.coordinates[1])
                 if (theMP.refreshFromWMEData()) {
                   WMEURMPT.MPList.push(theMP)
                   WMEURMPT.MPMap = WMEURMPT.listToObject(WMEURMPT.MPList)
@@ -6029,14 +5953,21 @@ function WMEURMPT_Injected () {
         } else {
           if (i - urcount - mpcount < mccount) {
             const index = i - urcount - mpcount
-            const MCId = MCs[index].attributes.id
+            const MCId = MCs[index].id
             let theMC = WMEURMPT.getMCFromId(MCId)
-            const MCxy = new OpenLayers.Geometry.Point(MCs[index].geometry.getCentroid().x, MCs[index].geometry.getCentroid().y)
-            const MCLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(MCs[index].geometry.getCentroid().x, MCs[index].geometry.getCentroid().y)
-            if (WMEURMPT.inScreenUpdatableArea(MCxy) || WMEURMPT.isInAreas(MCLonlat)) {
+            let MCxy = null
+            if (MCs[index].isPoint) {
+              MCxy = turf.point(MCs[index].geometry.coordinates)
+            } else {
+              const MCpoly = turf.polygon(MCs[index].geometry.coordinates)
+              MCxy = turf.centroid(MCpoly)
+            }
+            
+            
+            if (WMEURMPT.inScreenUpdatableArea(MCxy) || WMEURMPT.isInAreas(MCxy)) {
               WMEURMPT.log('in area')
               if (theMC == null) {
-                theMC = new WMEURMPT.URT_MC(MCs[index].attributes.id, MCLonlat.lon, MCLonlat.lat)
+                theMC = new WMEURMPT.URT_MC(MCs[index].id, MCxy.geometry.coordinates[0],MCxy.geometry.coordinates[1])
                 if (theMC.refreshFromWMEData()) {
                   WMEURMPT.MCList.push(theMC)
                   WMEURMPT.MCMap = WMEURMPT.listToObject(WMEURMPT.MPList)
@@ -6055,12 +5986,17 @@ function WMEURMPT_Injected () {
             const index = i - urcount - mpcount - mccount
             const PURId = PURs[index].id
             let thePUR = WMEURMPT.getPURFromId(PURId)
-            const PURxy = new OpenLayers.Geometry.Point(PURs[index].geometry.getCentroid().x, PURs[index].geometry.getCentroid().y)
-            const PURLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(PURs[index].geometry.getCentroid().x, PURs[index].geometry.getCentroid().y)
-            if (WMEURMPT.inScreenUpdatableArea(PURxy) || WMEURMPT.isInAreas(PURLonlat)) {
+            let PURxy = null
+            if (PURs[index].geometry.type == 'Point') {
+              PURxy = turf.point(PURs[index].geometry.coordinates)
+            } else {
+              const purPoly = turf.polygon(PURs[index].geometry.coordinates)
+              PURxy = turf.centroid(purPoly)
+            }
+            if (WMEURMPT.inScreenUpdatableArea(PURxy) || WMEURMPT.isInAreas(PURxy)) {
               WMEURMPT.log('in area')
               if (thePUR == null) {
-                thePUR = new WMEURMPT.URT_PUR(PURs[index].id, PURLonlat.lon, PURLonlat.lat)
+                thePUR = new WMEURMPT.URT_PUR(PURs[index].id, PURxy.geometry.coordinates[0], PURxy.geometry.coordinates[0])
                 if (thePUR.refreshFromWMEData()) {
                   WMEURMPT.PURList.push(thePUR)
                   WMEURMPT.PURMap = WMEURMPT.listToObject(WMEURMPT.PURList)
@@ -6127,16 +6063,9 @@ function WMEURMPT_Injected () {
     if (ur) {
       ur.refreshFromWMEData()
     } else if (ur == null) {
-      const theUR = WMEURMPT.wazeModel.mapUpdateRequests.getObjectById(WMEURMPT.currentURID)
-      let URLonlat = null
+      const theUR = wmeSDK.DataModel.MapUpdateRequests.getById( {mapUpdateRequestId: WMEURMPT.currentURID} )
       WMEURMPT.logDebug('clickUR - theUR: ', theUR)
-      if (Object.prototype.hasOwnProperty.call(theUR.geometry, 'realX') && Object.prototype.hasOwnProperty.call(theUR.geometry, 'realY')) {
-        URLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theUR.geometry.realX, theUR.geometry.realY)
-      } else {
-        URLonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theUR.geometry.x, theUR.geometry.y)
-      }
-      WMEURMPT.logDebug('clickUR - lonlat: ', URLonlat)
-      ur = new WMEURMPT.URT_UR(theUR.attributes.id, URLonlat.lon, URLonlat.lat)
+      ur = new WMEURMPT.URT_UR(theUR.attributes.id, theUR.geometry.coordinates[0], theUR.geometry.coordinates[1])
       WMEURMPT.logDebug('clickUR - ur: ', ur)
       if (ur.refreshFromWMEData()) {
         WMEURMPT.URList.push(ur)
@@ -6144,6 +6073,27 @@ function WMEURMPT_Injected () {
       }
     }
     WMEURMPT.updateIHMFromURList()
+  }
+
+  WMEURMPT.clickFeature = function(obj) {
+    WMEURMPT.logDebug('ClickFeature: ', obj)
+    switch (obj.layerName) {
+      case 'RESIDENTIAL_PLACE_UPDATES':
+      case 'PARKING_PLACE_UPDATES':
+      case 'place_updates':
+      case 'venues':
+        WMEURMPT.clickPUR(obj.featureId);
+        break;
+      case 'update_requests':
+        WMEURMPT.URJustOpened(obj.featureId);
+        break;
+      case 'mapComments':
+        WMEURMPT.clickMC();
+        break;
+      case 'mapProblems':
+        WMEURMPT.clickMP();
+        break;
+    }
   }
 
   WMEURMPT.clickUR = function (e) {
@@ -6159,20 +6109,19 @@ function WMEURMPT_Injected () {
     }
   }
 
-  WMEURMPT.clickPUR = function () {
-    WMEURMPT.logDebug('PUR clicked: ', this)
-    WMEURMPT.currentPURID = W.selectionManager.getSelectedWMEFeatures()[0].id
+  WMEURMPT.clickPUR = function (purId) {
+    WMEURMPT.log('PUR clicked: ' + WMEURMPT.currentPURID)
+    WMEURMPT.currentPURID = purId
     WMEURMPT.selectedPURID = WMEURMPT.currentPURID
     WMEURMPT.PURVisited(WMEURMPT.currentPURID)
-    WMEURMPT.log('PUR clicked: ' + WMEURMPT.currentPURID, this)
     let pur = WMEURMPT.getPURFromId(WMEURMPT.currentPURID)
     if (pur) {
       pur.refreshFromWMEData()
     } else if (pur == null) {
-      const thePUR = WMEURMPT.wazeModel.venues.objects[WMEURMPT.currentPURID]
-      const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(thePUR.attributes.geometry.getCentroid().x, thePUR.attributes.geometry.getCentroid().y)
-      WMEURMPT.logDebug('clickPUR - lonlat: ', lonlat)
-      pur = new WMEURMPT.URT_PUR(thePUR.attributes.id, lonlat.lon, lonlat.lat)
+      const thePUR = wmeSDK.DataModel.Venues.getById({ venueId: WMEURMPT.currentPURID })
+      const turfCentroid = turf.centroid(thePUR.geometry)
+      WMEURMPT.logDebug('clickPUR - lonlat: ', turfCentroid.geometry.coordinates)
+      pur = new WMEURMPT.URT_PUR(thePUR.id, turfCentroid.geometry.coordinates[0], turfCentroid.geometry.coordinates[1])
       WMEURMPT.logDebug('clickPUR - pur: ', pur)
       if (pur.refreshFromWMEData()) {
         WMEURMPT.PURList.push(pur)
@@ -6180,6 +6129,14 @@ function WMEURMPT_Injected () {
       }
     }
     WMEURMPT.updateIHMFromPURList()
+  }
+
+  WMEURMPT.clickMP = function() {
+    // do something here?
+  }
+
+  WMEURMPT.clickMC = function() {
+    // do something here?
   }
 
   WMEURMPT.getNewMC = function (mcID) {
@@ -6191,9 +6148,9 @@ function WMEURMPT_Injected () {
     if (mc) {
       mc.refreshFromWMEData()
     } else if (mc == null) {
-      const theMC = WMEURMPT.wazeModel.mapComments.objects[WMEURMPT.currentMCID]
-      const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(theMC.attributes.geometry.getCentroid().x, theMC.attributes.geometry.getCentroid().y)
-      mc = new WMEURMPT.URT_MC(theMC.attributes.id, lonlat.lon, lonlat.lat)
+      const theMC = wmeSDK.DataModel.MapComments.getById( {mapCommentId: WMEURMPT.currentMCID} )
+      const lonlat = turf.centroid( theMC.geometry.coordinates)
+      mc = new WMEURMPT.URT_MC(theMC.attributes.id, lonlat.geometry.coordinates[0], lonlat.geometry.coordinates[1])
       if (mc.refreshFromWMEData()) {
         WMEURMPT.MCList.push(mc)
         WMEURMPT.MCMap = WMEURMPT.listToObject(WMEURMPT.MCList)
@@ -6360,84 +6317,8 @@ function WMEURMPT_Injected () {
     WMEURMPT.updateIHMFromMPList()
   }
 
-  WMEURMPT.newActionAdded = function (lastAction) {
-    WMEURMPT.logDebug('Action added:', lastAction)
-    lastAction = lastAction.action
-    WMEURMPT.logDebug('Action added lastAction :', lastAction)
-    if (Object.prototype.hasOwnProperty.call(lastAction, 'object') && Object.prototype.hasOwnProperty.call(lastAction.object, 'type') && lastAction.object.type === 'mapProblem') {
-      const mp = WMEURMPT.getMPFromId(lastAction.object.attributes.id)
-      if (mp == null) {
-        return
-      }
-      mp.refreshFromWMEData()
-      if (mp.data.open === true) {
-        mp.data.resolvedOn = null
-        mp.data.resolvedBy = null
-        mp.data.resolvedByName = null
-      } else {
-        const now = new Date()
-        mp.data.resolvedOn = now.getTime()
-        mp.data.resolvedBy = WMEURMPT.me.getID()
-        mp.data.resolvedByName = WMEURMPT.me.getUsername()
-      }
-      WMEURMPT.updateIHMFromMPList()
-    }
-    if (Object.prototype.hasOwnProperty.call(lastAction, 'object') && Object.prototype.hasOwnProperty.call(lastAction.object, 'type') && lastAction.object.type === 'mapUpdateRequest') {
-      const ur = WMEURMPT.getURFromId(lastAction.object.attributes.id)
-      if (ur == null) {
-        return
-      }
-      ur.refreshFromWMEData(true)
-      if (ur.data.open === true) {
-        ur.data.resolvedOn = null
-        ur.data.resolvedBy = null
-        ur.data.resolvedByName = null
-      } else {
-        const now = new Date()
-        ur.data.resolvedOn = now.getTime()
-        ur.data.resolvedBy = WMEURMPT.me.getID()
-        ur.data.resolvedByName = WMEURMPT.me.getUsername()
-      }
-      WMEURMPT.updateIHMFromURList()
-    }
-    if (Object.prototype.hasOwnProperty.call(lastAction, 'request') && Object.prototype.hasOwnProperty.call(lastAction.request.attributes, 'approved')) {
-      let pur = WMEURMPT.getPURFromId(lastAction.venue.attributes.id)
-      if (pur) {
-        pur.refreshFromWMEData()
-      }
-      if (pur === null) {
-        const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(lastAction.venue.attributes.geometry.getCentroid().x, lastAction.venue.attributes.geometry.getCentroid().y)
-        pur = new WMEURMPT.URT_PUR(lastAction.venue.attributes.id, lonlat.lon, lonlat.lat)
-        if (pur.refreshFromWMEData()) {
-          WMEURMPT.PURList.push(pur)
-          WMEURMPT.PURMap = WMEURMPT.listToObject(WMEURMPT.PURList)
-        }
-      }
-      WMEURMPT.updateIHMFromPURList()
-    }
-    if (Object.prototype.hasOwnProperty.call(lastAction, 'object') && Object.prototype.hasOwnProperty.call(lastAction.object, 'type') && lastAction.object.type === 'mapComment') {
-      if (typeof lastAction.object.attributes.id === 'string') {
-        let mc = WMEURMPT.getMCFromId(lastAction.object.attributes.id)
-        if (mc) {
-          mc.refreshFromWMEData()
-        }
-        if (mc === null) {
-          const xyGeom = W.userscripts.toOLGeometry(lastAction.object.attributes.geometry)
-          const xy = new OpenLayers.Geometry.Point(xyGeom.getBounds().getCenterLonLat().lon, xyGeom.getBounds().getCenterLonLat().lat)
-          const lonlat = OpenLayers.Layer.SphericalMercator.inverseMercator(xy.x, xy.y)
-          mc = new WMEURMPT.URT_MC(lastAction.object.attributes.id, lonlat.lon, lonlat.lat)
-          if (mc.refreshFromWMEData()) {
-            WMEURMPT.MCList.push(mc)
-            WMEURMPT.MCMap = WMEURMPT.listToObject(WMEURMPT.MCList)
-          }
-        }
-        WMEURMPT.updateIHMFromMCList()
-      }
-    }
-  }
-
   WMEURMPT.getMPs = function (bounds, filter) {
-    const url = 'https://' + document.location.host + WMEURMPT.wazeConfigApiFeatures + '?language=en' + (WMEURMPT.scanUR ? '&mapUpdateRequestFilter=3%2C0' : '') + (WMEURMPT.scanMP ? '&problemFilter=3%2C3' : '') + '&mapComments=' + (WMEURMPT.scanMC ? 'true' : 'false') + '&venueLevel=3&venueFilter=' + (WMEURMPT.scanPUR ? '3%2C3%2C3' : '0%2C0%2C0') + '&editableAreas=true&bbox=' + bounds.left + '%2C' + bounds.bottom + '%2C' + bounds.right + '%2C' + bounds.top
+    const url = 'https://' + document.location.host + WMEURMPT.wazeConfigApiFeatures + '?language=en' + (WMEURMPT.scanUR ? '&mapUpdateRequestFilter=3%2C0' : '') + (WMEURMPT.scanMP ? '&problemFilter=3%2C3' : '') + '&mapComments=' + (WMEURMPT.scanMC ? 'true' : 'false') + '&venueLevel=3&venueFilter=' + (WMEURMPT.scanPUR ? '3%2C3%2C3' : '0%2C0%2C0') + '&editableAreas=true&bbox=' + bounds[0] + '%2C' + bounds[1] + '%2C' + bounds[2] + '%2C' + bounds[3]
     let xhr3Object = null
     if (XMLHttpRequest) {
       xhr3Object = new XMLHttpRequest()
@@ -6480,13 +6361,23 @@ function WMEURMPT_Injected () {
       let filterArea = []
       if (filter != null && (filter.type === 'editableArea' || filter.type === 'driveArea' || filter.type === 'managedArea')) {
         for (let a = 0; a < MPs.userAreas.objects.length; a++) {
-          filterArea = filterArea.concat(WMEURMPT.wazeMapAreaToOLPolygons(MPs.userAreas.objects[a].geometry))
+          filterArea = filterArea.concat(turf.polygon(MPs.userAreas.objects[a].geometry.coordinates))
         }
       }
       if (filter != null && filter.type === 'country') {
         for (let c = 0; c < WMEURMPT.areaList.country.length; c++) {
           if (WMEURMPT.areaList.country[c].name === filter.name) {
-            filterArea = WMEURMPT.areaList.country[c].geometryOL.geometry.components
+            const objArea = WMEURMPT.areaList.country[c]
+            if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+              filterArea = filterArea.concat(objArea.geometryGeoJSON)
+            }
+            else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+              filterArea = filterArea.concat(turf.multiPolygon(W.userscripts.toGeoJSONGeometry(objArea.geometryOL)))
+            } 
+            else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+              filterArea = filterArea.concat(turf.multiPolygon(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)))
+              objArea.geometryGeoJSON = W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)
+            }
             break
           }
         }
@@ -6494,7 +6385,17 @@ function WMEURMPT_Injected () {
       if (filter !== null && filter.type === 'custom') {
         for (let c = 0; c < WMEURMPT.areaList.custom.length; c++) {
           if (WMEURMPT.areaList.custom[c].name === filter.name) {
-            filterArea = WMEURMPT.areaList.custom[c].geometryOL.geometry.components
+            const objArea = WMEURMPT.areaList.custom[c]
+            if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+              filterArea = filterArea.concat(objArea.geometryGeoJSON)
+            }
+            else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+              filterArea = filterArea.concat(turf.multiPolygon(W.userscripts.toGeoJSONGeometry(objArea.geometryOL)))
+            } 
+            else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+              filterArea = filterArea.concat(turf.multiPolygon(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)))
+              objArea.geometryGeoJSON = W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)
+            }
             break
           }
         }
@@ -6507,23 +6408,12 @@ function WMEURMPT_Injected () {
             MPs.problems.objects.splice(cmp, 1)
             continue
           }
-          const lonlat = OpenLayers.Layer.SphericalMercator.forwardMercator(theMP.geometry.coordinates[0], theMP.geometry.coordinates[1])
-          let xy = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat)
-          if (filter.type === 'country' || filter.type === 'custom') {
-            xy = new OpenLayers.Geometry.Point(theMP.geometry.coordinates[0], theMP.geometry.coordinates[1])
-          }
+          const lonlat = turf.point(theMP.geometry.coordinates)
           let inside = false
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(lonlat,filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (!inside) {
@@ -6546,23 +6436,12 @@ function WMEURMPT_Injected () {
             MPs.mapUpdateRequests.objects.splice(cmp, 1)
             continue
           }
-          const lonlat = OpenLayers.Layer.SphericalMercator.forwardMercator(theUR.geometry.coordinates[0], theUR.geometry.coordinates[1])
-          let xy = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat)
-          if (filter.type === 'country' || filter.type === 'custom') {
-            xy = new OpenLayers.Geometry.Point(theUR.geometry.coordinates[0], theUR.geometry.coordinates[1])
-          }
+          const lonlat = turf.point(theUR.geometry.coordinates)
           let inside = false
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(lonlat,filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (!inside) {
@@ -6577,43 +6456,17 @@ function WMEURMPT_Injected () {
         while (cmp < MPs.mapComments.objects.length) {
           const theMC = MPs.mapComments.objects[cmp]
           let lonlat = null
-          let centroid = null
           if (theMC.geometry.type === 'Point') {
-            lonlat = OpenLayers.Layer.SphericalMercator.forwardMercator(theMC.geometry.coordinates[0], theMC.geometry.coordinates[1])
+            lonlat = turf.point(theMC.geometry.coordinates)
           } else {
-            const olpolys = []
-            theMC.geometry.coordinates.forEach(function (poly) {
-              const olpts = poly.map(function (e) {
-                return new OpenLayers.Geometry.Point(e[0], e[1])
-              })
-              const ollr = new OpenLayers.Geometry.LinearRing(olpts)
-              const olp = new OpenLayers.Geometry.Polygon(ollr)
-              olpolys.push(olp)
-            })
-            const olmultipoly = new OpenLayers.Geometry.MultiPolygon(olpolys)
-            centroid = olmultipoly.getCentroid()
-            lonlat = OpenLayers.Layer.SphericalMercator.forwardMercator(centroid.x, centroid.y)
-          }
-          let xy = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat)
-          if (filter.type === 'country' || filter.type === 'custom') {
-            if (theMC.geometry.type === 'Point') {
-              xy = new OpenLayers.Geometry.Point(theMC.geometry.coordinates[0], theMC.geometry.coordinates[1])
-            } else {
-              xy = centroid
-            }
+            const mcPoly = turf.polygon(theMC.geometry.coordinates)
+            lonlat = turf.centroid(mcPoly)
           }
           let inside = false
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(lonlat,filterArea[a])) {
+              inside = true
+              break
             }
           }
           if (!inside) {
@@ -6636,43 +6489,18 @@ function WMEURMPT_Injected () {
             continue
           }
           let lonlat = null
-          let centroid = null
           if (thePUR.geometry.type === 'Point') {
-            lonlat = OpenLayers.Layer.SphericalMercator.forwardMercator(thePUR.geometry.coordinates[0], thePUR.geometry.coordinates[1])
+            lonlat = turf.point(thePUR.geometry.coordinates)
           } else {
-            const olpolys = []
-            thePUR.geometry.coordinates.forEach(function (poly) {
-              const olpts = poly.map(function (e) {
-                return new OpenLayers.Geometry.Point(e[0], e[1])
-              })
-              const ollr = new OpenLayers.Geometry.LinearRing(olpts)
-              const olp = new OpenLayers.Geometry.Polygon(ollr)
-              olpolys.push(olp)
-            })
-            const olmultipoly = new OpenLayers.Geometry.MultiPolygon(olpolys)
-            centroid = olmultipoly.getCentroid()
-            lonlat = OpenLayers.Layer.SphericalMercator.forwardMercator(centroid.x, centroid.y)
-          }
-          let xy = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat)
-          if (filter.type === 'country' || filter.type === 'custom') {
-            if (thePUR.geometry.type === 'Point') {
-              xy = new OpenLayers.Geometry.Point(thePUR.geometry.coordinates[0], thePUR.geometry.coordinates[1])
-            } else {
-              xy = centroid
-            }
+            const venuePoly = turf.polygone(thePUR.geometry.coordinates)
+            lonlat = turf.centroid(venuePoly)
           }
           let inside = false
           for (let a = 0; a < filterArea.length; a++) {
-            if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-              if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-                inside = true
-                break
-              }
-            } else {
-              if (filterArea[a].bintreeContainsPoint(xy)) {
-                inside = true
-                break
-              }
+            if (turf.booleanPointInPolygon(lonlat,filterArea[a])) {
+//            if (filterArea[a].isInside(lonlat)) {
+              inside = true
+              break
             }
           }
           if (!inside) {
@@ -6837,18 +6665,9 @@ function WMEURMPT_Injected () {
         if (MCs.mapComments.objects[i].geometry.type === 'Point') {
           mc = new WMEURMPT.URT_MC(MCs.mapComments.objects[i].id, MCs.mapComments.objects[i].geometry.coordinates[0], MCs.mapComments.objects[i].geometry.coordinates[1])
         } else {
-          const olpolys = []
-          MCs.mapComments.objects[i].geometry.coordinates.forEach(function (poly) {
-            const olpts = poly.map(function (e) {
-              return new OpenLayers.Geometry.Point(e[0], e[1])
-            })
-            const ollr = new OpenLayers.Geometry.LinearRing(olpts)
-            const olp = new OpenLayers.Geometry.Polygon(ollr)
-            olpolys.push(olp)
-          })
-          const olmultipoly = new OpenLayers.Geometry.MultiPolygon(olpolys)
-          const centroid = olmultipoly.getCentroid()
-          mc = new WMEURMPT.URT_MC(MCs.mapComments.objects[i].id, centroid.x, centroid.y)
+          const tPoly = turf.polygon(MCs.mapComments.objects[i].geometry.coordinates)
+          const centroid = turf.centroid(tPoly)
+          mc = new WMEURMPT.URT_MC(MCs.mapComments.objects[i].id, centroid.geometry.coordinates[0], centroid.geometry.coordinates[1])
         }
         found = false
       }
@@ -6870,8 +6689,8 @@ function WMEURMPT_Injected () {
       }
       if (Object.prototype.hasOwnProperty.call(mc.data, 'conversation')) {
         mc.data.conversation.forEach(function (c, i) {
+          // what's the SDK version to fetch the user id now??? //
           if (c.userID === WMEURMPT.me.getID()) {
-            c.userName = WMEURMPT.me.getUsername()
             if (i === mc.data.conversation.length - 1) {
               mc.lastVisitCommentsCount = mc.data.conversation.length
             }
@@ -6905,18 +6724,9 @@ function WMEURMPT_Injected () {
         if (PURs.venues.objects[i].geometry.type === 'Point') {
           pur = new WMEURMPT.URT_PUR(PURs.venues.objects[i].id, PURs.venues.objects[i].geometry.coordinates[0], PURs.venues.objects[i].geometry.coordinates[1])
         } else {
-          const olpolys = []
-          PURs.venues.objects[i].geometry.coordinates.forEach(function (poly) {
-            const olpts = poly.map(function (e) {
-              return new OpenLayers.Geometry.Point(e[0], e[1])
-            })
-            const ollr = new OpenLayers.Geometry.LinearRing(olpts)
-            const olp = new OpenLayers.Geometry.Polygon(ollr)
-            olpolys.push(olp)
-          })
-          const olmultipoly = new OpenLayers.Geometry.MultiPolygon(olpolys)
-          const centroid = olmultipoly.getCentroid()
-          pur = new WMEURMPT.URT_PUR(PURs.venues.objects[i].id, centroid.x, centroid.y)
+          const purPoly = turf.polygon( PURs.venues.objects[i].geometry.coordinates )
+          const centroid = turf.centroid( purPoly)
+          pur = new WMEURMPT.URT_PUR(PURs.venues.objects[i].id, centroid.geometry.coordinates[0], centroid.geometry.coordinates[1])
         }
         found = false
       }
@@ -6976,16 +6786,13 @@ function WMEURMPT_Injected () {
     if (areaFilter.type === 'editableArea') {
       const userAreas = WMEURMPT.me.attributes.areas
       for (let i = 0; i < userAreas.length; i++) {
-        userAreas[i].geometry.calculateBounds()
-        const bounds = userAreas[i].geometry.bounds
-        const lonlatFrom = OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.left, bounds.bottom)
-        const lonlatTo = OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.right, bounds.top)
-        for (let lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
-          for (let lon = lonlatFrom.lon; lon < lonlatTo.lon; lon += 0.5) {
-            WMEURMPT.logDebug('Scan editable area from: ' + lon + ' ' + lat + ' to: ' + (lon + 1) + ' ' + (lat + 1))
-            const tileBounds = new OpenLayers.Bounds()
-            tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)))
-            tileBounds.extend(new OpenLayers.LonLat((lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)))
+        const areaPoly = turf.polygon(userAreas[i].geometry.coordinates)
+        const bounds = turf.bbox(areaPoly)
+        for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
+          for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
+            WMEURMPT.logDebug('Scan editable area from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + ((lon + 0.5).toFixed(6)) + ' ' + ((lat + 0.5).toFixed(6)))
+            const turfLine = turf.lineString([[lon.toFixed(6), lat.toFixed(6)],[(lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)]])
+            const tileBounds = turf.bbox(turfLine)
             WMEURMPT.scanAreaBoundsList.push(tileBounds)
           }
         }
@@ -6993,17 +6800,13 @@ function WMEURMPT_Injected () {
     }
     if (areaFilter.type === 'driveArea') {
       for (let i = 0; i < WMEURMPT.driveArea.length; i++) {
-        WMEURMPT.driveArea[i].calculateBounds()
         WMEURMPT.logDebug('WMEURMPT.driveArea', WMEURMPT.driveArea)
-        const bounds = WMEURMPT.driveArea[i].bounds
-        const lonlatFrom = OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.left, bounds.bottom)
-        const lonlatTo = OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.right, bounds.top)
-        for (let lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
-          for (let lon = lonlatFrom.lon; lon < lonlatTo.lon; lon += 0.5) {
-            WMEURMPT.logDebug('Scan drive area from: ' + lon + ' ' + lat + ' to: ' + (lon + 1) + ' ' + (lat + 1))
-            const tileBounds = new OpenLayers.Bounds()
-            tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)))
-            tileBounds.extend(new OpenLayers.LonLat((lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)))
+        const bounds = WMEURMPT.driveArea[i]
+        for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
+          for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
+            WMEURMPT.logDebug('Scan drive area from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + ((lon + 0.5).toFixed(6)) + ' ' + ((lat + 0.5).toFixed(6)))
+            const turfLine = turf.lineString([[lon.toFixed(6), lat.toFixed(6)],[(lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)]])
+            const tileBounds = turf.bbox(turfLine)
             WMEURMPT.scanAreaBoundsList.push(tileBounds)
           }
         }
@@ -7011,17 +6814,13 @@ function WMEURMPT_Injected () {
     }
     if (areaFilter.type === 'managedArea') {
       for (let i = 0; i < WMEURMPT.managedAreas.length; i++) {
-        WMEURMPT.managedAreas[i].calculateBounds()
         WMEURMPT.logDebug('WMEURMPT.managedAreas', WMEURMPT.managedAreas)
-        const bounds = WMEURMPT.managedAreas[i].bounds
-        const lonlatFrom = OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.left, bounds.bottom)
-        const lonlatTo = OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.right, bounds.top)
-        for (let lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
-          for (let lon = lonlatFrom.lon; lon < lonlatTo.lon; lon += 0.5) {
-            WMEURMPT.logDebug('Scan managed area from: ' + lon + ' ' + lat + ' to: ' + (lon + 1) + ' ' + (lat + 1))
-            const tileBounds = new OpenLayers.Bounds()
-            tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)))
-            tileBounds.extend(new OpenLayers.LonLat((lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)))
+        const bounds = WMEURMPT.managedAreas[i]
+        for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
+          for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
+            WMEURMPT.logDebug('Scan managed area from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + ((lon + 0.5).toFixed(6)) + ' ' + ((lat + 0.5).toFixed(6)))
+            const turfLine = turf.lineString([[lon.toFixed(6), lat.toFixed(6)],[(lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)]])
+            const tileBounds = turf.bbox(turfLine)
             WMEURMPT.scanAreaBoundsList.push(tileBounds)
           }
         }
@@ -7031,39 +6830,46 @@ function WMEURMPT_Injected () {
       let geometry = null
       for (let i = 0; i < WMEURMPT.areaList.country.length; i++) {
         if (WMEURMPT.areaList.country[i].name === areaFilter.name) {
-          geometry = WMEURMPT.areaList.country[i].geometryOL.geometry.components
+          const objArea = WMEURMPT.areaList.country[i]
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            geometry = objArea.geometryGeoJSON
+          } 
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            objArea.geometryGeoJSON = W.userscripts.toGeoJSONGeometry(objArea.geometryOL)
+            geometry = objArea.geometryGeoJSON
+          }
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            objArea.geometryGeoJSON = W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)
+            geometry = objArea.geometryGeoJSON
+          }
           break
         }
       }
       if (geometry === null) {
         return
       }
-      for (let i = 0; i < geometry.length; i++) {
-        const bounds = geometry[i].bounds
-        const lonlatFrom = new OpenLayers.LonLat(bounds.left, bounds.bottom)
-        const lonlatTo = new OpenLayers.LonLat(bounds.right, bounds.top)
-        for (let lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
-          for (let lon = lonlatFrom.lon; lon < lonlatTo.lon; lon += 0.5) {
-            if (lon > 180) {
-              lon -= 180
-            }
-            let lonStep = 0.5
-            if (lon + lonStep > 180) {
-              lonStep = 180 - lon
-            }
-            WMEURMPT.logDebug('Scan country from: ' + lon + ' ' + lat + ' to: ' + (lon + lonStep) + ' ' + (lat + 0.5))
-            let tileBounds = new OpenLayers.Bounds()
-            tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)))
-            tileBounds.extend(new OpenLayers.LonLat((lon + lonStep).toFixed(6), (lat + 0.5).toFixed(6)))
+      const bounds = turf.bbox(geometry)
+
+      for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
+        for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
+          if (lon > 180.0) {
+            lon -= 180.0
+          }
+          let lonStep = 0.5
+          let latStep = 0.5
+          if (lon + lonStep > 180.0) {
+            lonStep = 180.0 - lon
+          }
+          WMEURMPT.logDebug('Scan country from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + (lon + lonStep).toFixed(6) + ' ' + (lat + latStep).toFixed(6))
+          let line = turf.lineString([[lon.toFixed(6), lat.toFixed(6)],[(lon + lonStep).toFixed(6), (lat + latStep).toFixed(6)]])
+          let tileBounds = turf.bbox(line)
+          WMEURMPT.scanAreaBoundsList.push(tileBounds)
+          if (lonStep !== 0.5) {
+            lonStep = 0.5 - lonStep
+            WMEURMPT.logDebug('Scan country from: 0! ' + lat.toFixed(6) + ' to: ' + lonStep.toFixed(6) + ' ' + (lat + latStep).toFixed(6))
+            line = turf.lineString([[0, lat.toFixed(6)],[lonStep.toFixed(6), (lat + latStep).toFixed(6)]])
+            tileBounds = turf.bbox(line)
             WMEURMPT.scanAreaBoundsList.push(tileBounds)
-            if (lonStep !== 0.5) {
-              lonStep = 0.5 - lonStep
-              WMEURMPT.logDebug('Scan country from: 0! ' + lat + ' to: ' + lonStep + ' ' + (lat + 0.5))
-              tileBounds = new OpenLayers.Bounds()
-              tileBounds.extend(new OpenLayers.LonLat(0, lat.toFixed(6)))
-              tileBounds.extend(new OpenLayers.LonLat(lonStep.toFixed(6), (lat + 0.5).toFixed(6)))
-              WMEURMPT.scanAreaBoundsList.push(tileBounds)
-            }
           }
         }
       }
@@ -7071,8 +6877,18 @@ function WMEURMPT_Injected () {
     if (areaFilter.type === 'custom') {
       let geometry = null
       for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
-        if (WMEURMPT.areaList.custom[i].name === areaFilter.name) {
-          geometry = WMEURMPT.areaList.custom[i].geometryOL.geometry.components
+        const objArea = WMEURMPT.areaList.custom[i]
+        if (objArea.name === areaFilter.name) {
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            geometry = objArea.geometryGeoJSON
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            geometry = turf.multiPolygon(W.userscripts.toGeoJSONGeometry(objArea.geometryOL).coordinates)
+          } 
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            geometry = turf.multiPolygon(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT).coordinates)
+            objArea.geometryGeoJSON = geometry
+          }
           break
         }
       }
@@ -7080,21 +6896,17 @@ function WMEURMPT_Injected () {
         WMEURMPT.log('Bad geometry for area: ', areaFilter)
         return
       }
-      for (let i = 0; i < geometry.length; i++) {
-        const bounds = geometry[i].bounds
-        const lonlatFrom = new OpenLayers.LonLat(bounds.left, bounds.bottom)
-        const lonlatTo = new OpenLayers.LonLat(bounds.right, bounds.top)
-        for (let lat = lonlatFrom.lat; lat < lonlatTo.lat; lat += 0.5) {
-          for (let lon = lonlatFrom.lon; lon < lonlatTo.lon; lon += 0.5) {
-            WMEURMPT.logDebug('Scan custom from: ' + lon + ' ' + lat + ' to: ' + (lon + 1) + ' ' + (lat + 1))
-            const tileBounds = new OpenLayers.Bounds()
-            tileBounds.extend(new OpenLayers.LonLat(lon.toFixed(6), lat.toFixed(6)))
-            tileBounds.extend(new OpenLayers.LonLat((lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)))
-            WMEURMPT.scanAreaBoundsList.push(tileBounds)
-          }
+      const bounds = turf.bbox(geometry)
+      // Add 0.5 to latitude & longitude and move across bounding box in small chunks //
+      for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
+        for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
+          const line = turf.lineString([[lon, lat],[(lon+0.5), (lat+0.5)]])
+          const scanBounds = turf.bbox(line)
+          WMEURMPT.scanAreaBoundsList.push(scanBounds)
         }
       }
     }
+
     WMEURMPT.scanAreaBoundsCount = WMEURMPT.scanAreaBoundsList.length
     for (let i = 0; i < WMEURMPT.URList.length; i++) {
       WMEURMPT.URList[i].updated = false
@@ -7137,24 +6949,46 @@ function WMEURMPT_Injected () {
 
     if (typeof retries !== 'undefined' && retries !== null && retries === 0 && typeof seconds !== 'undefined' && seconds !== null && seconds === 0) {
       WMEURMPT.scanAreaBoundsList.shift()
-      if (tileBounds.right - tileBounds.left > 0.02 && tileBounds.top - tileBounds.bottom > 0.02) {
+      if (((tileBounds[2] - tileBounds[0]) > 0.02) && ((tilebounds[3] - tileBounds[1]) > 0.02)) {
+//      if (tileBounds.right - tileBounds.left > 0.02 && tileBounds.top - tileBounds.bottom > 0.02) {
         WMEURMPT.log('Error from waze server. Try a split...')
-        let newTileBounds = new OpenLayers.Bounds()
-        newTileBounds.extend(new OpenLayers.LonLat(tileBounds.left, tileBounds.bottom))
-        newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, (tileBounds.bottom + tileBounds.top) / 2.0))
-        WMEURMPT.scanAreaBoundsList.unshift(newTileBounds)
-        newTileBounds = new OpenLayers.Bounds()
-        newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, tileBounds.bottom))
-        newTileBounds.extend(new OpenLayers.LonLat(tileBounds.right, (tileBounds.bottom + tileBounds.top) / 2.0))
-        WMEURMPT.scanAreaBoundsList.unshift(newTileBounds)
-        newTileBounds = new OpenLayers.Bounds()
-        newTileBounds.extend(new OpenLayers.LonLat(tileBounds.left, (tileBounds.bottom + tileBounds.top) / 2.0))
-        newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, tileBounds.top))
-        WMEURMPT.scanAreaBoundsList.unshift(newTileBounds)
-        newTileBounds = new OpenLayers.Bounds()
-        newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, (tileBounds.bottom + tileBounds.top) / 2.0))
-        newTileBounds.extend(new OpenLayers.LonLat(tileBounds.right, tileBounds.top))
-        WMEURMPT.scanAreaBoundsList.unshift(newTileBounds)
+
+        // Bottom Left //
+        let newTileLine = turf.lineString(
+          [
+            [tileBounds[0], tileBounds[1]],
+            [((tileBounds[0] + tileBounds[2])/2.0),(((tileBounds[1] + tileBounds[3])/2.0))]
+          ]
+        )
+        WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
+
+        // Bottom Right //
+        newTileLine = turf.lineString(
+          [
+            [((tileBounds[0] + tileBounds[2])/2.0), tileBounds[1]],
+            [tileBounds[2],(((tileBounds[1] + tileBounds[3])/2.0))]
+          ]
+        )
+        WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
+
+        // Top Left
+        newTileLine = turf.lineString(
+          [
+            [tileBounds[0], (((tileBounds[1] + tileBounds[3])/2.0))],
+            [((tileBounds[0] + tileBounds[2])/2.0), tileBounds[1]]
+          ]
+        )
+        WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
+
+        // Top Right //
+        newTileLine = turf.lineString(
+          [
+            [((tileBounds[0] + tileBounds[2])/2.0),(((tileBounds[1] + tileBounds[3])/2.0))],
+            [tileBounds[2], tileBounds[3]]
+          ]
+        )
+        WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
+
         WMEURMPT.scanAreaBoundsCount += 4
       } else {
         WMEURMPT.log('Abort this area: (' + tileBounds.left + ' , ' + tileBounds.bottom + ') -> (' + tileBounds.right + ' , ' + tileBounds.top + ')')
@@ -7166,7 +7000,7 @@ function WMEURMPT_Injected () {
       WMEURMPT.showPBInfo(false)
       WMEURMPT.info()
       pb.hide()
-      WMEURMPT.refreshStats('', '')
+      //WMEURMPT.refreshStats('', '')
       WMEURMPT.updateIHMFromURList()
       WMEURMPT.updateIHMFromMPList()
       WMEURMPT.updateIHMFromMCList()
@@ -7184,22 +7018,42 @@ function WMEURMPT_Injected () {
     if (MPs != null) {
       if (Object.prototype.hasOwnProperty.call(MPs, 'error') && MPs.error === 1) {
         WMEURMPT.log('Found ' + MPs.logMessage.length + ' ' + MPs.logMessage.obj + '. This is a waze server limit. Enqueuing sub tile...')
-        let newTileBounds = new OpenLayers.Bounds()
-        newTileBounds.extend(new OpenLayers.LonLat(tileBounds.left, tileBounds.bottom))
-        newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, (tileBounds.bottom + tileBounds.top) / 2.0))
-        WMEURMPT.scanAreaBoundsList.unshift(newTileBounds)
-        newTileBounds = new OpenLayers.Bounds()
-        newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, tileBounds.bottom))
-        newTileBounds.extend(new OpenLayers.LonLat(tileBounds.right, (tileBounds.bottom + tileBounds.top) / 2.0))
-        WMEURMPT.scanAreaBoundsList.unshift(newTileBounds)
-        newTileBounds = new OpenLayers.Bounds()
-        newTileBounds.extend(new OpenLayers.LonLat(tileBounds.left, (tileBounds.bottom + tileBounds.top) / 2.0))
-        newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, tileBounds.top))
-        WMEURMPT.scanAreaBoundsList.unshift(newTileBounds)
-        newTileBounds = new OpenLayers.Bounds()
-        newTileBounds.extend(new OpenLayers.LonLat((tileBounds.left + tileBounds.right) / 2.0, (tileBounds.bottom + tileBounds.top) / 2.0))
-        newTileBounds.extend(new OpenLayers.LonLat(tileBounds.right, tileBounds.top))
-        WMEURMPT.scanAreaBoundsList.unshift(newTileBounds)
+        // Bottom Left //
+        let newTileLine = turf.lineString(
+          [
+            [tileBounds[0], tileBounds[1]],
+            [((tileBounds[0] + tileBounds[2])/2.0),(((tileBounds[1] + tileBounds[3])/2.0))]
+          ]
+        )
+        WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
+
+        // Bottom Right //
+        newTileLine = turf.lineString(
+          [
+            [((tileBounds[0] + tileBounds[2])/2.0), tileBounds[1]],
+            [tileBounds[2],(((tileBounds[1] + tileBounds[3])/2.0))]
+          ]
+        )
+        WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
+
+        // Top Left
+        newTileLine = turf.lineString(
+          [
+            [tileBounds[0], (((tileBounds[1] + tileBounds[3])/2.0))],
+            [((tileBounds[0] + tileBounds[2])/2.0), tileBounds[1]]
+          ]
+        )
+        WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
+
+        // Top Right //
+        newTileLine = turf.lineString(
+          [
+            [((tileBounds[0] + tileBounds[2])/2.0),(((tileBounds[1] + tileBounds[3])/2.0))],
+            [tileBounds[2], tileBounds[3]]
+          ]
+        )
+        WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
+
         WMEURMPT.scanAreaBoundsCount += 4
       } else {
         WMEURMPT.log('Found: ' + (Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests') ? MPs.mapUpdateRequests.objects.length + ' URs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'problems') ? MPs.problems.objects.length + ' MPs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'mapComments') ? MPs.mapComments.objects.length + ' MCs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'venues') ? MPs.venues.objects.length + ' PURs' : ''))
@@ -7222,26 +7076,16 @@ function WMEURMPT_Injected () {
         if (Object.prototype.hasOwnProperty.call(WMEURMPT.URList[i].data, 'session') === false) {
           WMEURMPT.log('pas bon ca: ', WMEURMPT.URList[i])
         }
-        let xy = new OpenLayers.Geometry.Point(WMEURMPT.URList[i].lonlat.lon, WMEURMPT.URList[i].lonlat.lat)
-        if (type === 'editableArea' || type === 'driveArea' || type === 'managedArea') {
-          xy = OpenLayers.Layer.SphericalMercator.inverseMercator(xy.x, xy.y)
-        }
-        if (xy.x < tileBounds.left || xy.x > tileBounds.right || xy.y < tileBounds.bottom || xy.y > tileBounds.top) {
-          i++
-          continue
-        }
         let inside = false
         for (let a = 0; a < filterArea.length; a++) {
-          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-            if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-              inside = true
-              break
-            }
-          } else {
-            if (filterArea[a].bintreeContainsPoint(xy)) {
-              inside = true
-              break
-            }
+          let xy = turf.point([WMEURMPT.URList[i].lonlat.lon, WMEURMPT.URList[i].lonlat.lat])
+          if (xy.geometry.coordinates[0] < tileBounds[0] || xy.geometry.coordinates[0] > tileBounds[2] || xy.geometry.coordinates[1] < tileBounds[1] || xy.geometry.coordinates[1] > tileBounds[3]) {
+            i++
+            continue
+          }
+          if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+            inside = true
+            break
           }
         }
         if (!inside) {
@@ -7260,26 +7104,16 @@ function WMEURMPT_Injected () {
     i = 0
     if (WMEURMPT.scanMP) {
       while (i < WMEURMPT.MPList.length) {
-        let xy = new OpenLayers.Geometry.Point(WMEURMPT.MPList[i].lonlat.lon, WMEURMPT.MPList[i].lonlat.lat)
-        if (type === 'editableArea' || type === 'driveArea' || type === 'managedArea') {
-          xy = OpenLayers.Layer.SphericalMercator.inverseMercator(xy.x, xy.y)
-        }
-        if (xy.x < tileBounds.left || xy.x > tileBounds.right || xy.y < tileBounds.bottom || xy.y > tileBounds.top) {
+        let xy = turf.point([WMEURMPT.MPList[i].lonlat.lon, WMEURMPT.MPList[i].lonlat.lat])
+        if (xy.geometry.coordinates[0] < tileBounds[0] || xy.geometry.coordinates[0] > tileBounds[2] || xy.geometry.coordinates[1] < tileBounds[1] || xy.geometry.coordinates[1] > tileBounds[3]) {
           i++
           continue
         }
         let inside = false
         for (let a = 0; a < filterArea.length; a++) {
-          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-            if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
+          if (turf.booleanPointInPolygon(xy, filterArea[a])) {
               inside = true
               break
-            }
-          } else {
-            if (filterArea[a].bintreeContainsPoint(xy)) {
-              inside = true
-              break
-            }
           }
         }
         if (!inside) {
@@ -7298,26 +7132,16 @@ function WMEURMPT_Injected () {
     i = 0
     if (WMEURMPT.scanMC) {
       while (i < WMEURMPT.MCList.length) {
-        let xy = new OpenLayers.Geometry.Point(WMEURMPT.MCList[i].lonlat.lon, WMEURMPT.MCList[i].lonlat.lat)
-        if (type === 'editableArea' || type === 'driveArea' || type === 'managedArea') {
-          xy = OpenLayers.Layer.SphericalMercator.inverseMercator(xy.x, xy.y)
-        }
-        if (xy.x < tileBounds.left || xy.x > tileBounds.right || xy.y < tileBounds.bottom || xy.y > tileBounds.top) {
+        let xy = turf.point([WMEURMPT.MCList[i].lonlat.lon, WMEURMPT.MCList[i].lonlat.lat])
+        if (xy.geometry.coordinates[0] < tileBounds[0] || xy.geometry.coordinates[0] > tileBounds[2] || xy.geometry.coordinates[1] < tileBounds[1] || xy.geometry.coordinates[1] > tileBounds[3]) {
           i++
           continue
         }
         let inside = false
         for (let a = 0; a < filterArea.length; a++) {
-          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-            if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
-              inside = true
-              break
-            }
-          } else {
-            if (filterArea[a].bintreeContainsPoint(xy)) {
-              inside = true
-              break
-            }
+          if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+            inside = true
+            break
           }
         }
         if (!inside) {
@@ -7336,26 +7160,16 @@ function WMEURMPT_Injected () {
     i = 0
     if (WMEURMPT.scanPUR) {
       while (i < WMEURMPT.PURList.length) {
-        let xy = new OpenLayers.Geometry.Point(WMEURMPT.PURList[i].lonlat.lon, WMEURMPT.PURList[i].lonlat.lat)
-        if (type === 'editableArea' || type === 'driveArea' || type === 'managedArea') {
-          xy = OpenLayers.Layer.SphericalMercator.inverseMercator(xy.x, xy.y)
-        }
-        if (xy.x < tileBounds.left || xy.x > tileBounds.right || xy.y < tileBounds.bottom || xy.y > tileBounds.top) {
+        let xy = turf.point([WMEURMPT.PURList[i].lonlat.lon, WMEURMPT.PURList[i].lonlat.lat])
+        if (xy.geometry.coordinates[0] < tileBounds[0] || xy.geometry.coordinates[0] > tileBounds[2] || xy.geometry.coordinates[1] < tileBounds[1] || xy.geometry.coordinates[1] > tileBounds[3]) {
           i++
           continue
         }
         let inside = false
         for (let a = 0; a < filterArea.length; a++) {
-          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-            if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top && filterArea[a].containsPoint(xy)) {
+          if (turf.booleanPointInPolygon(xy, filterArea[a])) {
               inside = true
               break
-            }
-          } else {
-            if (filterArea[a].bintreeContainsPoint(xy)) {
-              inside = true
-              break
-            }
           }
         }
         if (!inside) {
@@ -7375,7 +7189,8 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.URT_UR = function (id, lon, lat) {
     this.id = id
-    this.lonlat = new OpenLayers.LonLat(lon, lat)
+    this.centroid = turf.point( [lon, lat])
+    this.lonlat = {lon: lon, lat: lat}
     this.blackListed = false
     this.alreadyVisited = false
     this.lastVisitCommentsCount = 0
@@ -7411,12 +7226,10 @@ function WMEURMPT_Injected () {
         return
       }
       if (!WMEURMPT.mapCenterLonLat) {
-        WMEURMPT.mapCenterLonLat = OpenLayers.Layer.SphericalMercator.inverseMercator(WMEURMPT.wazeMap.olMap.center.lon, WMEURMPT.wazeMap.olMap.center.lat)
+        const mCenter = wmeSDK.Map.getMapCenter()
+        WMEURMPT.mapCenterLonLat = turf.point( [ mCenter.lon, mCenter.lat] )
       }
-      const p1 = new OpenLayers.Geometry.Point(WMEURMPT.mapCenterLonLat.lon, WMEURMPT.mapCenterLonLat.lat)
-      const p2 = new OpenLayers.Geometry.Point(this.lonlat.lon, this.lonlat.lat)
-      const line = new OpenLayers.Geometry.LineString([p1, p2])
-      this.distanceToMapCenter = line.getGeodesicLength(new OpenLayers.Projection('EPSG:4326'))
+      this.distanceToMapCenter = turf.distance(this.centroid, WMEURMPT.mapCenterLonLat, {units: 'meters'})
     }
     function refreshFromWMEData (forceSession) {
       const theUR = WMEURMPT.wazeModel.mapUpdateRequests.objects[this.id]
@@ -7614,7 +7427,8 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getUR = function (lon, lat, id) {
-    const bounds = new OpenLayers.Bounds(lon - 0.01, lat - 0.01, lon + 0.01, lat + 0.01)
+    const turfLine = turf.lineString( [[lon - 0.01, lat - 0.01],[lon + 0.01, lat + 0.01]])
+    const bounds = turf.bbox(turfLine)
     const URs = WMEURMPT.getMPs(bounds)
     if (URs == null) {
       return null
@@ -7640,7 +7454,8 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.URT_MP = function (id, lon, lat) {
     this.id = id
-    this.lonlat = new OpenLayers.LonLat(lon, lat)
+    this.centroid = turf.point( [lon, lat])
+    this.lonlat = {lon: lon, lat: lat}
     this.blackListed = false
     this.alreadyVisited = false
     this.distanceToMapCenter = 0
@@ -7658,12 +7473,10 @@ function WMEURMPT_Injected () {
         return
       }
       if (!WMEURMPT.mapCenterLonLat) {
-        WMEURMPT.mapCenterLonLat = OpenLayers.Layer.SphericalMercator.inverseMercator(WMEURMPT.wazeMap.olMap.center.lon, WMEURMPT.wazeMap.olMap.center.lat)
+        const mCenter = wmeSDK.Map.getMapCenter()
+        WMEURMPT.mapCenterLonLat = turf.point( [ mCenter.lon, mCenter.lat] )
       }
-      const p1 = new OpenLayers.Geometry.Point(WMEURMPT.mapCenterLonLat.lon, WMEURMPT.mapCenterLonLat.lat)
-      const p2 = new OpenLayers.Geometry.Point(this.lonlat.lon, this.lonlat.lat)
-      const line = new OpenLayers.Geometry.LineString([p1, p2])
-      this.distanceToMapCenter = line.getGeodesicLength(new OpenLayers.Projection('EPSG:4326'))
+      this.distanceToMapCenter = turf.distance(this.centroid, WMEURMPT.mapCenterLonLat, {units: 'meters'})
     }
     function refreshFromWMEData () {
       WMEURMPT.logDebug('Refresh MP: ', WMEURMPT.wazeModel.mapProblems.additionalInfo)
@@ -7715,7 +7528,8 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getMP = function (lon, lat, id) {
-    const bounds = new OpenLayers.Bounds(lon - 0.01, lat - 0.01, lon + 0.01, lat + 0.01)
+    const turfLine = turf.lineString( [[lon - 0.01, lat - 0.01],[lon + 0.01, lat + 0.01]] )
+    const bounds = turf.bbox(turfLine)
     const MPs = WMEURMPT.getMPs(bounds)
     if (MPs == null) {
       return null
@@ -7741,7 +7555,8 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.URT_MC = function (id, lon, lat) {
     this.id = id
-    this.lonlat = new OpenLayers.LonLat(lon, lat)
+    this.centroid = turf.point( [lon, lat])
+    this.lonlat = {lon: lon, lat: lat}
     this.blackListed = false
     this.alreadyVisited = false
     this.lastVisitCommentsCount = 0
@@ -7763,48 +7578,41 @@ function WMEURMPT_Injected () {
         return
       }
       if (!WMEURMPT.mapCenterLonLat) {
-        WMEURMPT.mapCenterLonLat = OpenLayers.Layer.SphericalMercator.inverseMercator(WMEURMPT.wazeMap.olMap.center.lon, WMEURMPT.wazeMap.olMap.center.lat)
+        const mCenter = wmeSDK.Map.getMapCenter()
+        WMEURMPT.mapCenterLonLat = turf.point( [ mCenter.lon, mCenter.lat] )
       }
-      const p1 = new OpenLayers.Geometry.Point(WMEURMPT.mapCenterLonLat.lon, WMEURMPT.mapCenterLonLat.lat)
-      const p2 = new OpenLayers.Geometry.Point(this.lonlat.lon, this.lonlat.lat)
-      const line = new OpenLayers.Geometry.LineString([p1, p2])
-      this.distanceToMapCenter = line.getGeodesicLength(new OpenLayers.Projection('EPSG:4326'))
+      this.distanceToMapCenter = turf.distance(this.centroid, WMEURMPT.mapCenterLonLat, {units: 'meters'})
     }
     function refreshFromWMEData (forceSession) {
-      const theMC = WMEURMPT.wazeModel.mapComments.objects[this.id]
+      const theMC = wmeSDK.DataModel.MapComments.getById({mapCommentId: this.id})
+      //const theMC = WMEURMPT.wazeModel.mapComments.objects[this.id]
       WMEURMPT.logDebug('refreshFromWME MC:', theMC)
       if (theMC == null) {
         return false
       }
       this.data = {};
-      ['body', 'createdBy', 'createdOn', 'endDate', 'isFollowing', 'subject', 'updatedBy', 'updatedOn'].forEach(function (p) {
-        this.data[p] = theMC.attributes[p]
-      }, this)
-      this.data.createdByName = 'Unknown'
-      for (const u in W.model.users.objects) {
-        if (W.model.users.objects[u].id === this.data.createdBy) {
-          this.data.createdByName = W.model.users.objects[u].userName
-          break
-        }
+      let objFields = ['body', 'isFollowing', 'isPoint', 'subject']
+      for (const elem of objFields) {
+        this.data[elem] = theMC[elem]
       }
-      this.data.updatedByName = 'Unknown'
-      for (const u in W.model.users.objects) {
-        if (W.model.users.objects[u].id === this.data.updatedBy) {
-          this.data.updatedByName = W.model.users.objects[u].userName
-          break
-        }
+
+      objFields = ['createdBy','createdOn','updatedOn','updatedBy']
+      for (const elem of objFields) {
+        this.data[elem] = theMC.modificationData[elem]
       }
+
+      this.data.createdByName = this.data.createdBy
+      this.data.updatedByName = this.data.updatedBy
+
       this.data.conversation = []
       if (Object.prototype.hasOwnProperty.call(theMC, 'conversation')) {
-        theMC.attributes.conversation.forEach(function (c, i) {
-          if (c.userID === WMEURMPT.me.getID()) {
-            c.userName = WMEURMPT.me.getUsername()
-            if (i === theMC.attributes.conversation.length - 1) {
-              this.lastVisitCommentsCount = theMC.attributes.conversation.length
+        theMC.conversation.forEach(function (c, i) {
+          if (c.userName === wmeSDK.State.getUserInfo().userName) {
+            if (i === theMC.conversation.length - 1) {
+              this.lastVisitCommentsCount = theMC.conversation.length
             }
           }
           this.data.conversation.push(JSON.parse(JSON.stringify(c)))
-          this.data.conversation[this.data.conversation.length - 1].userName = W.model.users.objects[c.userID].userName
         }, this)
       }
       if (Object.prototype.hasOwnProperty.call(theMC, 'state') && theMC.state === 'DELETE') {
@@ -7876,7 +7684,8 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getMC = function (lon, lat, id) {
-    const bounds = new OpenLayers.Bounds(lon - 0.01, lat - 0.01, lon + 0.01, lat + 0.01)
+    const turfLine = turf.lineString([[lon - 0.01, lat - 0.01], [lon + 0.01, lat + 0.01]])
+    const bounds = truf.bbox(turfLine)
     const MCs = WMEURMPT.getMPs(bounds)
     if (MCs == null) {
       return null
@@ -7902,7 +7711,8 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.URT_PUR = function (id, lon, lat) {
     this.id = id
-    this.lonlat = new OpenLayers.LonLat(lon, lat)
+    this.centroid = turf.point( [lon, lat])
+    this.lonlat = {lon: lon, lat: lat}
     this.blackListed = false
     this.alreadyVisited = false
     this.refreshFromServer = refreshFromServer
@@ -7923,58 +7733,45 @@ function WMEURMPT_Injected () {
         return
       }
       if (!WMEURMPT.mapCenterLonLat) {
-        WMEURMPT.mapCenterLonLat = OpenLayers.Layer.SphericalMercator.inverseMercator(WMEURMPT.wazeMap.olMap.center.lon, WMEURMPT.wazeMap.olMap.center.lat)
+        const mCenter = wmeSDK.Map.getMapCenter()
+        WMEURMPT.mapCenterLonLat = turf.point( [ mCenter.lon, mCenter.lat] )
       }
-      const p1 = new OpenLayers.Geometry.Point(WMEURMPT.mapCenterLonLat.lon, WMEURMPT.mapCenterLonLat.lat)
-      const p2 = new OpenLayers.Geometry.Point(this.lonlat.lon, this.lonlat.lat)
-      const line = new OpenLayers.Geometry.LineString([p1, p2])
-      this.distanceToMapCenter = line.getGeodesicLength(new OpenLayers.Projection('EPSG:4326'))
+      this.distanceToMapCenter = turf.distance(this.centroid, WMEURMPT.mapCenterLonLat, {units: 'meters'})
     }
     function refreshFromWMEData (forceSession) {
-      const thePUR = WMEURMPT.wazeModel.venues.objects[this.id]
+      const thePUR = wmeSDK.DataModel.Venues.getById({venueId: this.id})
       WMEURMPT.logDebug('refreshFromWME PUR:', thePUR)
       if (thePUR == null) {
         return false
       }
       this.data = {};
-      ['categories', 'name', 'createdBy', 'createdOn', 'streetID'].forEach(function (p) {
-        this.data[p] = thePUR.attributes[p] === undefined ? 'undefined' : thePUR.attributes[p]
-      }, this)
-      this.data.createdByName = 'Unknown'
-      for (const u in thePUR.model.users.objects) {
-        if (thePUR.model.users.objects[u].id === this.data.createdBy) {
-          this.data.createdByName = thePUR.model.users.objects[u].userName
-          break
-        }
-      }
+
+      this.data.name = thePUR['name'] === undefined ? 'undefined' : thePUR['name']
+      this.data.categories = thePUR['categories'] === undefined ? 'undefined' : thePUR['categories']
+
+      this.data.createdOn = thePUR.modificationData['createdOn'] === undefined ? 'undefined' : thePUR.modificationData['createdOn']
+      this.data.createdByName = thePUR.modificationData['createdBy'] === undefined ? 'undefined' : thePUR.modificationData['createdBy']
       this.data.updatedByName = 'Unknown'
-      for (const u in thePUR.model.users.objects) {
-        if (thePUR.model.users.objects[u].id === this.data.updatedBy) {
-          this.data.updatedByName = thePUR.model.users.objects[u].userName
-          break
-        }
+
+      if ((thePUR.modificationData['updatedBy'] !== undefined) && (thePUR.modificationData['updatedBy'] !== null)) {
+        this.data.updatedByName = thePUR.modificationData['updatedBy']
       }
-      if (Object.prototype.hasOwnProperty.call(thePUR.attributes, 'venueUpdateRequests') && thePUR.attributes.venueUpdateRequests.length >> 0) {
+
+      if ((thePUR.modificationData['updatedOn'] !== undefined) && (thePUR.modificationData['updatedOn'] !== null)) {
+        this.data.updatedOn = thePUR.modificationData['updatedOn']
+      }
+
+      if (Object.prototype.hasOwnProperty.call(thePUR, 'venueUpdateRequests') && thePUR.venueUpdateRequests.length >> 0) {
         this.data.venueUpdateRequests = []
         this.data.dateAddedMin = 0
         this.data.dateAddedMax = 0
-        for (let n = 0; n < thePUR.attributes.venueUpdateRequests.length; n++) {
-          if (Object.prototype.hasOwnProperty.call(thePUR.attributes.venueUpdateRequests[n].changed, 'approved') && thePUR.attributes.venueUpdateRequests[n].changed.approved !== null) {
-            thePUR.attributes.venueUpdateRequests.splice(n, 1)
-            continue
-          }
+        for (let n = 0; n < thePUR.venueUpdateRequests.length; n++) {
           this.data.venueUpdateRequests[n] = {};
-          ['createdBy', 'dateAdded', 'type', 'updateType', 'subject'].forEach(function (p) {
-            this.data.venueUpdateRequests[n][p] = thePUR.attributes.venueUpdateRequests[n].attributes[p] === undefined ? 'undefined' : thePUR.attributes.venueUpdateRequests[n].attributes[p]
+          ['createdBy', 'dateAdded', 'updateType', 'subject'].forEach(function (p) {
+            this.data.venueUpdateRequests[n][p] = thePUR.venueUpdateRequests[n][p] === undefined ? 'undefined' : thePUR.venueUpdateRequests[n][p]
           }, this)
-          this.data.venueUpdateRequests[n].changed = thePUR.attributes.venueUpdateRequests[n].changed
-          this.data.venueUpdateRequests[n].createdByName = 'Unknown'
-          for (const u in thePUR.model.users.objects) {
-            if (thePUR.model.users.objects[u].id === this.data.venueUpdateRequests[n].createdBy) {
-              this.data.venueUpdateRequests[n].createdByName = thePUR.model.users.objects[u].userName
-              break
-            }
-          }
+          this.data.venueUpdateRequests[n].changedFields = thePUR.venueUpdateRequests[n].changedFields
+          this.data.venueUpdateRequests[n].createdByName = this.data.createdBy
           if (this.data.venueUpdateRequests[n].dateAdded << this.data.dateAddedMin) {
             this.data.dateAddedMin = this.data.venueUpdateRequests[n].dateAdded
           }
@@ -7983,7 +7780,7 @@ function WMEURMPT_Injected () {
           }
           WMEURMPT.logDebug('this.id: ' + this.id + '; this.data.venueUpdateRequests[' + n + '].dateAdded: ' + this.data.venueUpdateRequests[n].dateAdded, this)
         }
-      } else if (Object.prototype.hasOwnProperty.call(thePUR.attributes, 'venueUpdateRequests') && thePUR.attributes.venueUpdateRequests.length === 0) {
+      } else if (Object.prototype.hasOwnProperty.call(thePUR, 'venueUpdateRequests') && thePUR.venueUpdateRequests.length === 0) {
         WMEURMPT.PURList.splice(WMEURMPT.PURMap[this.id], 1)
         WMEURMPT.PURMap = WMEURMPT.listToObject(WMEURMPT.PURList)
         this.clean()
@@ -8063,7 +7860,8 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getPUR = function (lon, lat, id) {
-    const bounds = new OpenLayers.Bounds(lon - 0.01, lat - 0.01, lon + 0.01, lat + 0.01)
+    const turfLine = truf.lineString([[lon - 0.01, lat - 0.01], [lon + 0.01, lat + 0.01]])
+    const bounds = truf.bbox(turfLine)
     const PURs = WMEURMPT.getMPs(bounds)
     if (PURs == null) {
       return null
@@ -8094,6 +7892,7 @@ function WMEURMPT_Injected () {
     this.subset = false
     this.parent = ''
     this.geometryWKT = ''
+    this.geometryGeoJSON = null
     this.geometryOL = null
     this.getGeometryFromServer = getGeometryFromServer
     this.getCategoryElementsFromServer = getCategoryElementsFromServer
@@ -8106,7 +7905,7 @@ function WMEURMPT_Injected () {
         callback(null)
         return
       }
-      const url = WMEURMPT.servers[serverIndex].url + 'getArea.php?category=' + this.category + (this.subset === true ? '&subset=' + this.parent : '') + '&name=' + this.name
+      const url = WMEURMPT.servers[serverIndex].url + 'getArea.php?category=' + this.category + (this.subset === true ? '&subset=' + this.parent : '') + '&name=' + this.name + '&format=geojson'
       const context = this
       WMEURMPT.log('Try to download area from server ' + WMEURMPT.servers[serverIndex].name)
       // eslint-disable-next-line no-undef
@@ -8114,7 +7913,7 @@ function WMEURMPT_Injected () {
         if (data.status === 'success') {
           try {
             const jsonObj = JSON.parse(data.data)
-            context.geometryWKT = jsonObj.geometry
+            context.geometryGeoJSON = jsonObj
             callback(context)
           } catch (e) {
             WMEURMPT.log('Error while getting area from server' + WMEURMPT.servers[serverIndex].name + '!', e)
@@ -8151,23 +7950,12 @@ function WMEURMPT_Injected () {
       }, null)
     }
     function isInside (lonlat) {
-      const xy = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat)
-      let filterArea = []
-      if ((this.category === 'country' || this.category === 'custom') && (this.geometryOL !== null)) {
-        filterArea = this.geometryOL.geometry.components
+      if (typeof this.geometryGeoJSON !== 'undefined' && this.geometryGeoJSON !== null) {
+        return turf.booleanPointInPolygon(lonlat, this.geometryGeoJSON)
       }
-      for (let a = 0; a < filterArea.length; a++) {
-        if (xy.x >= filterArea[a].bounds.left && xy.x <= filterArea[a].bounds.right && xy.y >= filterArea[a].bounds.bottom && xy.y <= filterArea[a].bounds.top) {
-          if (Object.prototype.hasOwnProperty.call(filterArea[a], 'bintreeContainsPoint') === false) {
-            if (filterArea[a].containsPoint(xy)) {
-              return true
-            }
-          } else {
-            if (filterArea[a].bintreeContainsPoint(xy)) {
-              return true
-            }
-          }
-        }
+      else if (typeof this.geometryWKT !== 'undefined' && this.geometryWKT !== 'null' && this.geometryWKT !== '') {
+        this.geometryGeoJSON = turf.multiPolygon(W.userscripts.convertWktToGeoJSON(this.geometryWKT).coordinates)
+        return turf.booleanPointInPolygon(lonlat, this.geometryGeoJSON)
       }
       return false
     }
@@ -8214,8 +8002,10 @@ function WMEURMPT_Injected () {
       MCBodyMaxLength: WMEURMPT.MCBodyMaxLength,
       PURCategoriesMaxLength: WMEURMPT.PURCategoriesMaxLength,
       PURNameMaxLength: WMEURMPT.PURNameMaxLength,
+      keepBlacklist: WMEURMPT.keepBlacklist,
       taggedURList: WMEURMPT.taggedURList,
       URAgeColIsLastComment: WMEURMPT.URAgeColIsLastComment,
+      MCAgeColIsLastComment: WMEURMPT.MCAgeColIsLastComment,
       disableScrolling: WMEURMPT.disableScrolling,
       purInvertFilter: WMEURMPT.purInvertFilter,
       urtInvertFilter: WMEURMPT.urtInvertFilter
@@ -8298,6 +8088,7 @@ function WMEURMPT_Injected () {
       WMEURMPT.countryFilterList = typeof options.countryFilterList === 'undefined' ? [] : options.countryFilterList
       WMEURMPT.isComputeDistances = typeof options.isComputeDistances === 'undefined' ? true : options.isComputeDistances
       WMEURMPT.isAutoScan = typeof options.isAutoScan === 'undefined' ? true : options.isAutoScan
+      WMEURMPT.toggleAutoScanEvents()
       WMEURMPT.scanUR = typeof options.scanUR === 'undefined' ? true : options.scanUR
       WMEURMPT.scanMP = typeof options.scanMP === 'undefined' ? true : options.scanMP
       WMEURMPT.scanMC = typeof options.scanMC === 'undefined' ? true : options.scanMC
@@ -8318,6 +8109,7 @@ function WMEURMPT_Injected () {
       WMEURMPT.PURNameMaxLength = typeof options.PURNameMaxLength === 'undefined' ? WMEURMPT.PURNameMaxLength : options.PURNameMaxLength
       WMEURMPT.taggedURList = typeof options.taggedURList === 'undefined' ? WMEURMPT.taggedURList : options.taggedURList
       WMEURMPT.URAgeColIsLastComment = typeof options.URAgeColIsLastComment === 'undefined' ? WMEURMPT.URAgeColIsLastComment : options.URAgeColIsLastComment
+      WMEURMPT.MCAgeColIsLastComment = typeof options.MCAgeColIsLastComment === 'undefined' ? WMEURMPT.MCAgeColIsLastComment : options.MCAgeColIsLastComment
       WMEURMPT.disableScrolling = typeof options.disableScrolling === 'undefined' ? WMEURMPT.disableScrolling : options.disableScrolling
       WMEURMPT.purInvertFilter = typeof options.purInvertFilter === 'undefined' ? WMEURMPT.purInvertFilter : options.purInvertFilter
       WMEURMPT.urtInvertFilter = typeof options.urtInvertFilter === 'undefined' ? WMEURMPT.urtInvertFilter : options.urtInvertFilter
@@ -8380,7 +8172,13 @@ function WMEURMPT_Injected () {
     if (data.data != null) {
       WMEURMPT.PURList = JSON.parse(data.data)
       for (let i = 0; i < WMEURMPT.PURList.length; i++) {
-        const purtmp = new WMEURMPT.URT_PUR(WMEURMPT.PURList[i].id, WMEURMPT.PURList[i].lonlat.lon, WMEURMPT.PURList[i].lonlat.lat)
+        let lonlat = []
+        if (Object.hasOwn(WMEURMPT.PURList[i].lonlat, 'lon')) {
+          lonlat = [WMEURMPT.PURList[i].lonlat.lon, WMEURMPT.PURList[i].lonlat.lat]
+        } else {
+          lonlat = WMEURMPT.PURList[i].lonlat
+        }
+        const purtmp = new WMEURMPT.URT_PUR(WMEURMPT.PURList[i].id, lonlat[0], lonlat[1])
         WMEURMPT.PURList[i].refreshFromServer = purtmp.refreshFromServer
         WMEURMPT.PURList[i].refreshFromWMEData = purtmp.refreshFromWMEData
         WMEURMPT.PURList[i].clean = purtmp.clean
@@ -8565,7 +8363,19 @@ function WMEURMPT_Injected () {
   WMEURMPT.bootstrapURT()
 }
 
-GM_addElement('script', {
-  // eslint-disable-next-line quotes, camelcase
-  textContent: '' + WMEURMPT_Injected.toString() + "\nWMEURMPT_Injected();"
+let wmeSDK
+unsafeWindow.SDK_INITIALIZED.then(() => {
+  if (!unsafeWindow.getWmeSdk) {
+    throw new Error(`${GM_info.script.name}: SDK is not initalized`)
+  };
+  wmeSDK = unsafeWindow.getWmeSdk({
+    scriptId: 'wme-urmpt',
+    scriptName: 'WME UR-MP Tracking'
+  });
+  console.debug(`${GM_info.script.name}: SDK v${wmeSDK.getSDKVersion()} initalized`);
+  wmeSDK.Events.once({ eventName: 'wme-ready' }).then(urmptInit);
 })
+
+function urmptInit() {
+  WMEURMPT_Injected();
+}
