@@ -796,6 +796,52 @@ function WMEURMPT_Injected () {
     countryListSelect.parentNode.parentNode.replaceChild(errorMessage, countryListSelect.parentNode)
   }
 
+  WMEURMPT.fetchArea = function (areaName) {
+    let filterArea = []
+
+    for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
+      const objArea = WMEURMPT.areaList.custom[i]
+      if (objArea.name === areaName) {
+        if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+          if (objArea.geometryGeoJSON.type == 'Feature') {
+            filterArea = filterArea.concat(objArea.geoJSONGeometry.geometry)
+          } else {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          }
+        }
+        else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+          filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+        }
+        else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+          filterArea =filterArea.concat( W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+          WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
+        }
+      }
+    }
+
+    for (let i = 0; i < WMEURMPT.areaList.country.lengthl; i++) {
+      const objArea = WMEURMPT.areaList.country[i]
+      if (objArea.name === areaName) {
+        if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+          if (objArea.geometryGeoJSON.type == 'Feature') {
+            filterArea = filterArea.concat(objArea.geoJSONGeometry.geometry)
+          }
+          else {
+            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          }
+        }
+        else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+          filterArea =filterArea.concat( W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+        }
+        else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+          filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+          WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
+        }
+      }
+    }
+    return filterArea
+  }
+
   WMEURMPT.isInAreas = function (lonlat) {
     for (let c = 0; c < WMEURMPT.areaList.country.length; c++) {
       if (WMEURMPT.areaList.country[c].isInside(lonlat)) {
@@ -1128,55 +1174,16 @@ function WMEURMPT_Injected () {
     }
     if (WMEURMPT.currentURFilter & WMEURMPT.URFilterList.hideArea) {
       const xy = turf.point([ur.lonlat.lon, ur.lonlat.lat])
-      for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
-        if (WMEURMPT.areaList.custom[i].name === WMEURMPT.currentUROnlyArea) {
-          inside = false
-          const objArea = WMEURMPT.areaList.custom[i]
-          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
-          }
-          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-          }
-          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-            filterArea =filterArea.concat( W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-            WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
-          }
-          for (let a = 0; a < filterArea.length; a++) {
-            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
-              inside = true
-              break
-            }
-          }
-          if (inside === false) {
-            return true
-          }
+      inside = false
+      areaFilter = areaFilter.concat(WMEURMPT.fetchArea(WMEURMPT.currentUROnlyArea))
+      for (let a = 0; a < filterArea.length; a++) {
+        if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+          inside = true
+          break
         }
       }
-      for (let i = 0; i < WMEURMPT.areaList.country.length; i++) {
-        if (WMEURMPT.areaList.country[i].name === WMEURMPT.currentUROnlyArea) {
-          inside = false
-          const objArea = WMEURMPT.areaList.country[i]
-          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
-          }
-          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-            filterArea =filterArea.concat( W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-          }
-          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-            WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
-          }
-          for (let a = 0; a < filterArea.length; a++) {
-            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
-              inside = true
-              break
-            }
-          }
-          if (inside === false) {
-            return true
-          }
-        }
+      if (inside === false) {
+        return true
       }
     }
     return false
@@ -1219,59 +1226,20 @@ function WMEURMPT_Injected () {
     }
     if (WMEURMPT.currentMPFilter & WMEURMPT.MPFilterList.hideArea) {
       const xy = turf.point([mp.lonlat.lon, mp.lonlat.lat])
-      for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
-        if (WMEURMPT.areaList.custom[i].name === WMEURMPT.currentMPOnlyArea) {
-          inside = false
-          const objArea = WMEURMPT.areaList.custom[i]
-          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
-          }
-          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-          }
-          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-            WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
-          }
-          for (let a = 0; a < filterArea.length; a++) {
-            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
-              inside = true
-              break
-            }
-          }
-          if (inside === false) {
-            return true
-          }
+      filterArea = filterArea.concat(WMEURMPT.fetchArea(WMEURMPT.currentMPOnlyArea))
+      for (let a = 0; a < filterArea.length; a++) {
+        if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+          inside = true
+          break
         }
       }
-      for (let i = 0; i < WMEURMPT.areaList.country.length; i++) {
-        if (WMEURMPT.areaList.country[i].name === WMEURMPT.currentMPOnlyArea) {
-          inside = false
-          const objArea = WMEURMPT.areaList.country[i]
-          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
-          }
-          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-          }
-          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-            WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
-          }
-          for (let a = 0; a < filterArea.length; a++) {
-            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
-              inside = true
-              break
-            }
-          }
-          if (inside === false) {
-            return true
-          }
-        }
+      if (inside === false) {
+        return true
       }
     }
     return false
   }
+
   WMEURMPT.isMCFiltered = function (mc) {
     let inside = false
     let filterArea = []
@@ -1299,52 +1267,16 @@ function WMEURMPT_Injected () {
     }
     if (WMEURMPT.currentMCFilter & WMEURMPT.MCFilterList.hideArea) {
       const xy = turf.point([mc.lonlat.lon, mc.lonlat.lat])
-      for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
-        if (WMEURMPT.areaList.custom[i].name === WMEURMPT.currentMCOnlyArea) {
-          inside = false
-          const objArea = WMEURMPT.areaList.custom[i]
-          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
-          }
-          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-          }
-          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-            WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
-          }
-          for (let a = 0; a < filterArea.length; a++) {
-            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
-              inside = true
-              break
-            }
-          }
+      filterArea = filterArea.concat(WMEURMPT.fetchArea(WMEURMPT.currentMCOnlyArea))
+      for (let a = 0; a < filterArea.length; a++) {
+        if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+          inside = true
+          break
         }
       }
-      for (let i = 0; i < WMEURMPT.areaList.country.length; i++) {
-        if (WMEURMPT.areaList.country[i].name === WMEURMPT.currentMCOnlyArea) {
-          inside = false
-          const objArea = WMEURMPT.areaList.country[i]
-          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
-          }
-          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-          }
-          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-            WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
-          }
-          for (let a = 0; a < filterArea.length; a++) {
-            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
-              inside = true
-              break
-            }
-          }
-          if (inside === false) {
-            return true
-          }
-        }
+
+      if (inside === false) {
+        return true
       }
     }
     return false
@@ -1391,55 +1323,15 @@ function WMEURMPT_Injected () {
     }
     if (WMEURMPT.currentPURFilter & WMEURMPT.PURFilterList.hideArea) {
       const xy = turf.point([pur.lonlat.lon, pur.lonlat.lat])
-      for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
-        if (WMEURMPT.areaList.custom[i].name === WMEURMPT.currentPUROnlyArea) {
-          inside = false
-          const objArea = WMEURMPT.areaList.custom[i]
-          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
-          }
-          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-          }
-          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-            WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
-          }
-          for (let a = 0; a < filterArea.length; a++) {
-            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
-              inside = true
-              break
-            }
-          }
-          if (inside === false) {
-            return true
-          }
+      filterArea = filterArea.concat( WMEURMPT.fetchArea(WMEURMPT.currentPUROnlyArea))
+      for (let a = 0; a < filterArea.length; a++) {
+        if (turf.booleanPointInPolygon(xy, filterArea[a])) {
+          inside = true
+          break
         }
       }
-      for (let i = 0; i < WMEURMPT.areaList.country.length; i++) {
-        if (WMEURMPT.areaList.country[i].name === WMEURMPT.currentPUROnlyArea) {
-          inside = false
-          const objArea = WMEURMPT.areaList.country[i]
-          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
-          }
-          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-          }
-          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-            WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
-          }
-          for (let a = 0; a < filterArea.length; a++) {
-            if (turf.booleanPointInPolygon(xy, filterArea[a])) {
-              inside = true
-              break
-            }
-          }
-          if (inside === false) {
-            return true
-          }
-        }
+      if (inside === false) {
+        return true
       }
     }
     return false
@@ -2053,8 +1945,15 @@ function WMEURMPT_Injected () {
         let objArea = null
         let center = null
         if (typeof area.geometryGeoJSON !== 'undefined' && area.geometryGeoJSON !== null) {
-          center = turf.centroid(area.geometryGeoJSON)
-          objArea = area.geometryGeoJSON
+          if (area.geometryGeoJSON.type == 'feature') {
+            center = turf.centroid(area.geometryGeoJSON.geometry)
+            objArea = area.geometryGeoJSON.geometry
+          }
+          else {
+            center = turf.centroid(area.geometryGeoJSON)
+            objArea = area.geometryGeoJSON
+          }
+          
         }
         else if (typeof area.geometryWKT !== 'undefined' && area.geometryWKT !== null) {
           area.geometryGeoJSON = W.userscripts.convertWktToGeoJSON(area.geometryWKT)
