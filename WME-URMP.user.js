@@ -1966,12 +1966,10 @@ function WMEURMPT_Injected () {
           center = turf.centroid(area.geometryGeoJSON)          
         }
 
-        wmeSDK.Map.setMapCenter( {
-          lonLat: {
-            lat: center.geometry.coordinates[1],
-            lon: center.geometry.coordinates[0]
-          }
-        })
+        WMEURMPT.jumpMapToCenter(
+            center.geometry.coordinates[0],
+            center.geometry.coordinates[1]
+        )
 
         wmeSDK.DataModel.Venues.addVenue(
           {
@@ -5523,11 +5521,22 @@ function WMEURMPT_Injected () {
     }
   }
 
+  WMEURMPT.jumpMapToCenter = function (lon, lat) {
+    if (typeof lon === 'string') {
+      lon = Number(lon)
+    }
+
+    if (typeof lat === 'string') {
+      lat = Number(lat)
+    }
+    wmeSDK.Map.setMapCenter( { lonLat: {lat: lat, lon: lon}})
+  }
+
   WMEURMPT.targetMapToUR = function (lon, lat, URId) {
     WMEURMPT.log('Target map to UR: ' + URId)
     WMEURMPT.selectedURID = URId
     WMEURMPT.updateFlashingURs()
-    wmeSDK.Map.setMapCenter( { lonLat: {lat: lat, lon: lon}})
+    WMEURMPT.jumpMapToCenter(lon,lat)
     wmeSDK.Map.setLayerVisibility( { layerName: 'update_requests', visibility: true})
     URId = parseInt(URId)
     window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectURById, [{ URId, attempts: 0 }]), 250)
@@ -5537,7 +5546,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.log('Target map to MP: ' + MPId)
     WMEURMPT.selectedMPID = MPId
     WMEURMPT.updateFlashingMPs()
-    wmeSDK.Map.setMapCenter( { lonLat: {lat: lat, lon: lon}})
+    WMEURMPT.jumpMapToCenter(lon,lat)
     wmeSDK.Map.setLayerVisibility( { layerName: 'mapProblems', visibility: true})
     window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMPById, [{ MPId, attempts: 0 }]), 250)
   }
@@ -5546,7 +5555,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.log('Target map to MC: ' + MCId)
     WMEURMPT.selectedMCID = MCId
     WMEURMPT.updateFlashingMCs()
-    wmeSDK.Map.setMapCenter( { lonLat: {lat: lat, lon: lon}})
+    WMEURMPT.jumpMapToCenter(lon,lat)
     wmeSDK.Map.setLayerVisibility( { layerName: 'mapComments', visibility: true})
     window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectMCById, [{ MCId, attempts: 0 }]), 250)
   }
@@ -5555,8 +5564,7 @@ function WMEURMPT_Injected () {
     WMEURMPT.log('Target map to PUR: ' + PURId)
     WMEURMPT.selectedPURID = PURId
     WMEURMPT.updateFlashingPURs()
-
-    wmeSDK.Map.setMapCenter( { lonLat: {lat: lat, lon: lon}})
+    WMEURMPT.jumpMapToCenter(lon,lat)
     wmeSDK.Map.setLayerVisibility( { layerName: 'place_updates', visibility: true })
     wmeSDK.Map.setLayerVisibility( { layerName: 'venues', visibility: true })
     wmeSDK.Map.setLayerVisibility( { layerName: 'PARKING_PLACE_UPDATES', visibility: true })
@@ -5572,10 +5580,11 @@ function WMEURMPT_Injected () {
     if (URId.attempts === 0) {
       URId.didShow = false
     }
-    WMEURMPT.wazeModel.updateRequestSessions.getAsync([URId.URId])
-    const session = WMEURMPT.wazeModel.updateRequestSessions.objects[URId.URId]
+
+    // Get the UR - if it's not in the data model, data must not have been loaded yet, retry again in 100ms
+    //const ur = wmeSDK.DataModel.MapUpdateRequests.getById({mapUpdateRequestId: URId.URId})
     const ur = WMEURMPT.wazeModel.mapUpdateRequests.getObjectById(URId.URId)
-    if (ur != null && session != null) {
+    if (ur != null) {
       if (!URId.didShow) {
         WMEURMPT.logDebug('Select UR by ID: ' + URId.URId)
         WMEURMPT.wazePC.showProblem(ur, { showNext: false })
