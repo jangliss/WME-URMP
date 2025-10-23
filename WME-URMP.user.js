@@ -796,46 +796,50 @@ function WMEURMPT_Injected () {
     countryListSelect.parentNode.parentNode.replaceChild(errorMessage, countryListSelect.parentNode)
   }
 
-  WMEURMPT.fetchArea = function (areaName) {
+  WMEURMPT.fetchArea = function (areaName, areaType) {
     let filterArea = []
 
-    for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
-      const objArea = WMEURMPT.areaList.custom[i]
-      if (objArea.name === areaName) {
-        if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-          if (objArea.geometryGeoJSON.type == 'Feature') {
-            filterArea = filterArea.concat(objArea.geoJSONGeometry.geometry)
-          } else {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+    if (typeof areaType === 'undefined' || areaType === null || areaType === 'custom') {
+      for (let i = 0; i < WMEURMPT.areaList.custom.length; i++) {
+        const objArea = WMEURMPT.areaList.custom[i]
+        if (objArea.name === areaName) {
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            if (objArea.geometryGeoJSON.type == 'Feature') {
+              filterArea = filterArea.concat(objArea.geoJSONGeometry.geometry)
+            } else {
+              filterArea = filterArea.concat(objArea.geometryGeoJSON)
+            }
           }
-        }
-        else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-          filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-        }
-        else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-          filterArea =filterArea.concat( W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-          WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea = filterArea.concat(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
+          }
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea =filterArea.concat( W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.custom[i].geometryGeoJSON = filterArea[0]
+          }
         }
       }
     }
 
-    for (let i = 0; i < WMEURMPT.areaList.country.lengthl; i++) {
-      const objArea = WMEURMPT.areaList.country[i]
-      if (objArea.name === areaName) {
-        if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-          if (objArea.geometryGeoJSON.type == 'Feature') {
-            filterArea = filterArea.concat(objArea.geoJSONGeometry.geometry)
+    if (typeof areaType == 'undefined' || areaType === null || areaType === 'country') {
+      for (let i = 0; i < WMEURMPT.areaList.country.lengthl; i++) {
+        const objArea = WMEURMPT.areaList.country[i]
+        if (objArea.name === areaName) {
+          if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
+            if (objArea.geometryGeoJSON.type == 'Feature') {
+              filterArea = filterArea.concat(objArea.geoJSONGeometry.geometry)
+            }
+            else {
+              filterArea = filterArea.concat(objArea.geometryGeoJSON)
+            }
           }
-          else {
-            filterArea = filterArea.concat(objArea.geometryGeoJSON)
+          else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
+            filterArea =filterArea.concat( W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
           }
-        }
-        else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-          filterArea =filterArea.concat( W.userscripts.convertWktToGeoJSON(objArea.geometryWKT))
-        }
-        else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-          filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
-          WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
+          else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
+            filterArea = filterArea.concat(W.userscripts.toGeoJSONGeometry(objArea.geometryOL))
+            WMEURMPT.areaList.country[i].geometryGeoJSON = filterArea[0]
+          }
         }
       }
     }
@@ -916,19 +920,14 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getSelectedMC = function () {
-    let m = null
-    try {
-      m = W.selectionManager.getSelectedDataModelObjects()
-    } catch {
-      return null
-    }
-    let returnId = null
-    if ((Array.isArray(m) === false) || ((Array.isArray(m)) && (m.length !== 1))) {
+    const m = wmeSDK.Editing.getSelection()
+
+    if (null === m) {
       return null
     }
 
-    if ((typeof m[0].type !== 'undefined') && (m[0].type === 'mapComment') && ((returnId = m[0].getID()) !== null)) {
-      return returnId
+    if (m.objectType === 'mapComment' && m.ids.length > 0) {
+      return m.ids[0]
     }
     return null
   }
@@ -5601,7 +5600,13 @@ function WMEURMPT_Injected () {
       if (!WMEURMPT.isAutoScan) {
         WMEURMPT.URJustOpened(URId.URId)
       }
-      WMEURMPT.newDataAvailableStarts()
+      WMEURMPT.newDataAvailableStarts(
+        {
+          dataModelName: 'mapUpdateRequets',
+          objectIds: [URId.URId]
+
+        }
+      )
 
       return
     }
@@ -5620,13 +5625,18 @@ function WMEURMPT_Injected () {
     if (mp !== null) {
         WMEURMPT.MPVisited(MPId.MPId)
         WMEURMPT.currentMPID = MPId.MPId
-        WMEURMPT.newDataAvailableStarts()
         wmeSDK.Editing.setSelection({
           selection: {
             ids: [MPId.MPId],
             objectType: "mapProblem"
           }
         })
+        WMEURMPT.newDataAvailableStarts(
+          {
+            dataModelName: 'mapProblems',
+            objectIds: [MPId.MPId]
+          }
+        )
         return
     }
     MPId.attempts++
@@ -5644,13 +5654,15 @@ function WMEURMPT_Injected () {
     if (mc != null) {
       WMEURMPT.MCVisited(MCId.MCId)
       WMEURMPT.currentMCID = MCId.MCId
-      WMEURMPT.newDataAvailableStarts()
       wmeSDK.Editing.setSelection({
         selection: {
           ids: [MCId.MCId],
           objectType: "mapComment"
         }
       })
+      WMEURMPT.newDataAvailableStarts(
+        { dataModelName: 'mapComments', objectIds: [MCId.MCId] }
+      )
       return
     }
     MCId.attempts++
@@ -5692,69 +5704,58 @@ function WMEURMPT_Injected () {
       return;
     }
     WMEURMPT.logDebug('changed object:', dataObj)
-    if (WMEURMPT.isScanningWME) {
-      return
-    }
-    if (!WMEURMPT.isAutoScan) {
-      // this.name = type of object being changed
-      // this.objectType = type of object being changed
-      // this.trigger.arguments (0 = event type, 1 = objects changed)
-
-      switch (dataObj.dataModelName) {
-        case 'venues': {
-          const purID = dataObj.objectIds[0]
-          WMEURMPT.log('scan only selected: PUR: ' + purID)
-          if (purID != null) {
-            const thePUR = WMEURMPT.getPURFromId(purID)
-            if (thePUR != null) {
-              thePUR.refreshFromWMEData()
-            }
+    switch (dataObj.dataModelName) {
+      case 'venues': {
+        const purID = dataObj.objectIds[0]
+        WMEURMPT.log('scan only selected: PUR: ' + purID)
+        if (purID != null) {
+          const thePUR = WMEURMPT.getPURFromId(purID)
+          if (thePUR != null) {
+            thePUR.refreshFromWMEData()
           }
-          break
         }
-        case 'mapComments': {
-          const mcID = WMEURMPT.getSelectedMC()
-          WMEURMPT.log('scan only selected: MC: ' + mcID)
-          if (mcID != null && typeof mcID === 'number' && mcID > 0) {
-            let theMC = WMEURMPT.getMCFromId(mcID)
-            if (theMC != null) {
-              theMC.refreshFromWMEData()
-              WMEURMPT.updateIHMFromMCList()
-            } else {
-              theMC = WMEURMPT.getNewMC(mcID)
-            }
+        break
+      }
+      case 'mapComments': {
+        const mcID = WMEURMPT.getSelectedMC()
+        WMEURMPT.log('scan only selected: MC: ' + mcID)
+        if (mcID != null) {
+          let theMC = WMEURMPT.getMCFromId(mcID)
+          if (theMC != null) {
+            theMC.refreshFromWMEData()
+            WMEURMPT.updateIHMFromMCList()
+          } else {
+            theMC = WMEURMPT.getNewMC(mcID)
           }
-          break
         }
-        case 'mapProblems': {
-          const mpID = WMEURMPT.getSelectedProblem()
-          WMEURMPT.log('scan only selected: MP: ' + mpID)
-          if (mpID != null) {
-            const theMP = WMEURMPT.getMPFromId(mpID)
-            if (theMP != null) {
-              theMP.refreshFromWMEData()
-              WMEURMPT.updateIHMFromMPList()
-            }
+        break
+      }
+      case 'mapProblems': {
+        const mpID = WMEURMPT.getSelectedProblem()
+        WMEURMPT.log('scan only selected: MP: ' + mpID)
+        if (mpID != null) {
+          const theMP = WMEURMPT.getMPFromId(mpID)
+          if (theMP != null) {
+            theMP.refreshFromWMEData()
+            WMEURMPT.updateIHMFromMPList()
           }
-          break
         }
-        case 'mapUpdateRequets': {
-          const urID = WMEURMPT.getSelectedUR()
-          WMEURMPT.log('scan only selected: UR: ' + urID)
-          if (urID != null) {
-            const theUR = WMEURMPT.getURFromId(urID)
-            if (theUR != null) {
-              theUR.refreshFromWMEData(true)
-              WMEURMPT.updateIHMFromURList()
-            }
+        break
+      }
+      case 'mapUpdateRequets': {
+        const urID = WMEURMPT.getSelectedUR()
+        WMEURMPT.log('scan only selected: UR: ' + urID)
+        if (urID != null) {
+          const theUR = WMEURMPT.getURFromId(urID)
+          if (theUR != null) {
+            theUR.refreshFromWMEData(true)
+            WMEURMPT.updateIHMFromURList()
           }
         }
       }
-
-      return
     }
-    WMEURMPT.isScanningWME = true
-    WMEURMPT.newDataAvailable(0)
+
+    return
   }
 
   WMEURMPT.newDataAvailable = function (i) {
@@ -5931,7 +5932,7 @@ function WMEURMPT_Injected () {
       pb.hide()
       pb.update(0)
       WMEURMPT.info()
-      window.setTimeout(WMEURMPT.newDataAvailableStarts, 1000)
+      //window.setTimeout(WMEURMPT.newDataAvailableStarts, 1000)
     }
   }
 
@@ -6273,40 +6274,10 @@ function WMEURMPT_Injected () {
         }
       }
       if (filter != null && filter.type === 'country') {
-        for (let c = 0; c < WMEURMPT.areaList.country.length; c++) {
-          if (WMEURMPT.areaList.country[c].name === filter.name) {
-            const objArea = WMEURMPT.areaList.country[c]
-            if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-              filterArea = filterArea.concat(objArea.geometryGeoJSON)
-            }
-            else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-              filterArea = filterArea.concat(turf.multiPolygon(W.userscripts.toGeoJSONGeometry(objArea.geometryOL)))
-            } 
-            else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-              filterArea = filterArea.concat(turf.multiPolygon(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)))
-              objArea.geometryGeoJSON = W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)
-            }
-            break
-          }
-        }
+        filterArea = filterArea.concat(WMEURMPT.fetchArea(filter.name, 'country'))
       }
       if (filter !== null && filter.type === 'custom') {
-        for (let c = 0; c < WMEURMPT.areaList.custom.length; c++) {
-          if (WMEURMPT.areaList.custom[c].name === filter.name) {
-            const objArea = WMEURMPT.areaList.custom[c]
-            if (typeof objArea.geometryGeoJSON !== 'undefined' && objArea.geometryGeoJSON !== null) {
-              filterArea = filterArea.concat(objArea.geometryGeoJSON)
-            }
-            else if (typeof objArea.geometryOL !== 'undefined' && objArea.geometryOL !== null) {
-              filterArea = filterArea.concat(turf.multiPolygon(W.userscripts.toGeoJSONGeometry(objArea.geometryOL)))
-            } 
-            else if (typeof objArea.geometryWKT !== 'undefined' && objArea.geometryWKT !== null) {
-              filterArea = filterArea.concat(turf.multiPolygon(W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)))
-              objArea.geometryGeoJSON = W.userscripts.convertWktToGeoJSON(objArea.geometryWKT)
-            }
-            break
-          }
-        }
+        filterArea = filterArea.concat(WMEURMPT.fetchArea( filter.name, 'custom'))
       }
       let cmp = 0
       if (Object.prototype.hasOwnProperty.call(MPs, 'problems')) {
@@ -6400,7 +6371,7 @@ function WMEURMPT_Injected () {
           if (thePUR.geometry.type === 'Point') {
             lonlat = turf.point(thePUR.geometry.coordinates)
           } else {
-            const venuePoly = turf.polygone(thePUR.geometry.coordinates)
+            const venuePoly = turf.polygon(thePUR.geometry.coordinates)
             lonlat = turf.centroid(venuePoly)
           }
           let inside = false
