@@ -3380,9 +3380,9 @@ function WMEURMPT_Injected () {
     window.setTimeout(WMEURMPT.setupCAEvents)
     window.setTimeout(WMEURMPT.updateScanGroup)
     const userTabs = WMEURMPT.getId('user-tabs')
-    const sidePanelPrefs = WMEURMPT.getId('sidepanel-prefs')
+    const sidePanel = WMEURMPT.getId('sidepanel-issue-tracker')
     const navTabs = WMEURMPT.getElementsByClassName('nav-tabs', userTabs)[0]
-    const tabContent = sidePanelPrefs.parentNode
+    const tabContent = sidePanel.parentNode
     const newtab = WMEURMPT.createElement('li')
     newtab.innerHTML = WMEURMPT.convertHtml('<a title="UR-MP Tracking" href="#sidepanel-urt" data-toggle="tab"><span class="fa fa-map-marker icon-map-marker" style="color: red;"></span></a>')
     navTabs.appendChild(newtab)
@@ -8569,3 +8569,4 @@ GM_addElement('script', {
   // eslint-disable-next-line quotes, camelcase
   textContent: '' + WMEURMPT_Injected.toString() + "\nWMEURMPT_Injected();"
 })
+
