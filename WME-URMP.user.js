@@ -485,26 +485,6 @@ function WMEURMPT_Injected () {
     return false
   }
 
-  WMEURMPT.restackUR = function () {
-    WMEURMPT.logDebug('restackUR - stackedURList', WMEURMPT.stackedURList)
-    if (WMEURMPT.stackedURList.length === 0) {
-      return
-    }
-    for (let i = 0; i < WMEURMPT.stackedURList.length; i++) {
-      const id = parseInt(WMEURMPT.stackedURList[i].id)
-      const URAtt = WMEURMPT.wazeModel.mapUpdateRequests.objects[id].attributes
-      URAtt.geometry.x = WMEURMPT.stackedURList[i].oriX
-      URAtt.geometry.y = WMEURMPT.stackedURList[i].oriY
-      if (URAtt.geometry.oriX !== 'undefined') {
-        delete URAtt.geometry.oriX
-      }
-      if (URAtt.geometry.oriY !== 'undefined') {
-        delete URAtt.geometry.oriY
-      }
-    }
-    WMEURMPT.stackedURList = []
-  }
-
   WMEURMPT.bootstrapURT = function () {
     window.setTimeout(WMEURMPT.initialize, 500)
   }
@@ -679,11 +659,6 @@ function WMEURMPT_Injected () {
     wmeSDK.Events.off({
       eventName: 'wme-map-zoom-changed',
       eventHandler: WMEURMPT.mapZoomEnd
-    })
-
-    wmeSDK.Events.off({
-      eventName: 'wme-map-data-loaded',
-      eventHandler: WMEURMPT.setupListener
     })
 
     wmeSDK.Events.off({
@@ -931,10 +906,26 @@ function WMEURMPT_Injected () {
       WMEURMPT.log('error while getting selected PUR: ', e)
       return null
     }
-    return selObjs.ids[0]
+    return selObjs.ids
   }
 
   WMEURMPT.updateRequestSessions = function () {
+/*
+    // No useful data in here that we can't get with more granular information from the URL below //
+    const urList = wmeSDK.DataModel.MapUpdateRequests.getAll()
+    for (let i = 0; i < urList.length; i++ ) {
+      urObj = urList[i]
+      let ur = WMEURMPT.getURFromId(urObj.id)
+      if (null !== ur) {
+        wmeSDK.DataModel.MapUpdateRequests.getUpdateRequestDetails({ mapUpdateRequestId: urObj.id }).then(
+          function(objUpdateRequestDetails) {
+            ur.lastVisitCommentsCount = objUpdateRequestDetails.comments.length
+            console.debug("objUpdate: ", objUpdateRequestDetails)
+          }
+        )
+      }
+    }
+*/
     const ids = []
     let xhr3Object = null
     for (const i in WMEURMPT.wazeModel.mapUpdateRequests.objects) {
@@ -3141,7 +3132,7 @@ function WMEURMPT_Injected () {
     window.setTimeout(WMEURMPT.setupCAEvents)
     window.setTimeout(WMEURMPT.updateScanGroup)
     const userTabs = WMEURMPT.getId('user-tabs')
-    const sidePanelPrefs = WMEURMPT.getId('sidepanel-prefs')
+    const sidePanelPrefs = WMEURMPT.getId('sidepanel-issue-tracker')
     const navTabs = WMEURMPT.getElementsByClassName('nav-tabs', userTabs)[0]
     const tabContent = sidePanelPrefs.parentNode
     const newtab = WMEURMPT.createElement('li')
@@ -5696,10 +5687,10 @@ function WMEURMPT_Injected () {
     WMEURMPT.logDebug('changed object:', dataObj)
     switch (dataObj.dataModelName) {
       case 'venues': {
-        const purID = dataObj.objectIds[0]
+        const purID = WMEURMPT.getSelectedPUR()
         WMEURMPT.log('scan only selected: PUR: ' + purID)
-        if (purID != null) {
-          const thePUR = WMEURMPT.getPURFromId(purID)
+        if (purID != null && purID.length > 0) {
+          const thePUR = WMEURMPT.getPURFromId(purID[0])
           if (thePUR != null) {
             thePUR.refreshFromWMEData()
           }
@@ -5744,8 +5735,8 @@ function WMEURMPT_Injected () {
         }
       }
     }
-
-    return
+    WMEURMPT.isScanningWME = true
+    WMEURMPT.newDataAvailable(0)
   }
 
   WMEURMPT.newDataAvailable = function (i) {
@@ -5931,25 +5922,6 @@ function WMEURMPT_Injected () {
     WMEURMPT.clickUR(e)
   }
 
-  WMEURMPT.setupListener = function () {
-    const urs = W.map.getLayerByName('update_requests').features
-    for (let i = 0; i < urs.length; i++) {
-      const urx = urs[i].attributes.wazeFeature.id
-      const urModel = W.model.mapUpdateRequests.getObjectById(urx)
-      if (urModel) {
-        const urel = W.userscripts.getFeatureElementByDataModel(urModel)
-        if (urel) {
-          urel.addEventListener('click', WMEURMPT.clickUR, false)
-        }
-      }
-    }
-    const purs = WMEURMPT.getElementsByClassName('place-update')
-    for (let i = 0; i < purs.length; i++) {
-      const pur = purs[i]
-      pur.addEventListener('click', WMEURMPT.clickPUR, false)
-    }
-  }
-
   WMEURMPT.URJustOpened = function (urId) {
     WMEURMPT.currentURID = urId
     WMEURMPT.URVisited(WMEURMPT.currentURID)
@@ -5964,7 +5936,7 @@ function WMEURMPT_Injected () {
     } else if (ur == null) {
       const theUR = wmeSDK.DataModel.MapUpdateRequests.getById( {mapUpdateRequestId: WMEURMPT.currentURID} )
       WMEURMPT.logDebug('clickUR - theUR: ', theUR)
-      ur = new WMEURMPT.URT_UR(theUR.attributes.id, theUR.geometry.coordinates[0], theUR.geometry.coordinates[1])
+      ur = new WMEURMPT.URT_UR(theUR.id, theUR.geometry.coordinates[0], theUR.geometry.coordinates[1])
       WMEURMPT.logDebug('clickUR - ur: ', ur)
       if (ur.refreshFromWMEData()) {
         WMEURMPT.URList.push(ur)
@@ -7060,6 +7032,7 @@ function WMEURMPT_Injected () {
       if (theUR == null) {
         return false
       }
+
       WMEURMPT.logDebug('refreshFromWME session:', WMEURMPT.wazeModel.updateRequestSessions.objects[this.id])
       this.data = {}
       this.data.description = theUR.attributes.description
