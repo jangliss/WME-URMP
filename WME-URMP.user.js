@@ -2655,6 +2655,37 @@ function WMEURMPT_Injected () {
     }
   }
 
+  WMEURMPT.initializeSideBar = function() {
+      // const labelText = $('<div>')
+      //   .append(
+      //     $('<span>', {
+      //       class: 'fa fa-power-off',
+      //       id: 'gis-layers-power-btn',
+      //       style: `margin-right: 5px;cursor: pointer;color: ${powerButtonColor};font-size: 13px;`,
+      //       title: 'Toggle GIS Layers',
+      //     }),
+      //     $('<span>', { title: 'GIS Layers' }).text('GIS-L')
+      //   )
+      //   .html();
+
+    const labelText = $('<div>')
+      .append(
+        $('<span>'), {
+          class: 'fa fa-map-marker icon-map-marker',
+          id: 'urmpt-button',
+          style: 'color: red',
+          title: 'UR-MP Tracking'
+        }
+      )
+      .html()
+
+    const tabContent = $('<div')
+      .append(
+        $('<span>', {})
+      )
+      .html()
+  }
+
   WMEURMPT.initialiseURT = function () {
     WMEURMPT.initManagedArea()
     let content = ''
