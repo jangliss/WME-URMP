@@ -203,7 +203,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.sortModeListMP = { priorityASC: 1, priorityDSC: -1, typeASC: 2, typeDSC: -2, distanceASC: 3, distanceDSC: -3 }
   WMEURMPT.sortModeListMC = { distanceASC: 1, distanceDSC: -1, commentCountASC: 2, commentCountDSC: -2, ageASC: 3, ageDSC: -3 }
   WMEURMPT.sortModeListPUR = { ageASC: 1, ageDSC: -1, categoriesASC: 2, categoriesDSC: -2, distanceASC: 3, distanceDSC: -3, nameASC: 4, nameDSC: -4, nbpurASC: 5, nbpurDSC: -5 }
-  WMEURMPT.URFilterList = { hideClosed: 1, hideWithoutCommentFromMe: 2, hideWithCommentCount: 4, hideOutOfMyManagedArea: 8, hideVisited: 16, hideBlacklisted: 32, hideWhitelisted: 64, hideGE: 128, hideNotKW: 256, hideLimitTo: 512, hideType: 1024, hideArea: 2048, hideLastCommentFromEditor: 4096, hideTagged: 8192, hideNoNewComment: 16384, hideOutOfMyDriveArea: 32768 }
+  WMEURMPT.URFilterList = { hideClosed: 1, hideWithoutCommentFromMe: 2, hideWithCommentCount: 4, hideOutOfMyManagedArea: 8, hideVisited: 16, hideBlacklisted: 32, hideWhitelisted: 64, hideGE: 128, hideNotKW: 256, hideLimitTo: 512, hideType: 1024, hideArea: 2048, hideLastCommentFromEditor: 4096, hideTagged: 8192, hideNoNewComment: 16384, hideOutOfMyDriveArea: 32768, hideWithoutCommentFromMT: 65536 }
   WMEURMPT.MPFilterList = { hideClosed: 1, hideOutOfMyManagedArea: 2, hideVisited: 4, hideBlacklisted: 8, hideWhitelisted: 16, hideLimitTo: 32, hideType: 64, hideArea: 128, hideOutOfMyDriveArea: 256 }
   WMEURMPT.MCFilterList = { hideOutOfMyManagedArea: 1, hideVisited: 2, hideBlacklisted: 4, hideWhitelisted: 8, hideLimitTo: 16, hideArea: 32, hideNotKW: 64, hideOutOfMyDriveArea: 128 }
   WMEURMPT.PURFilterList = { hideOutOfMyManagedArea: 1, hideVisited: 2, hideBlacklisted: 4, hideWhitelisted: 8, hideLimitTo: 16, hideArea: 32, hideNotKW: 64, hideCategorie: 128, hideOutOfMyDriveArea: 256 }
@@ -1134,6 +1134,7 @@ function WMEURMPT_Injected () {
 
   WMEURMPT.isURFiltered2 = function (ur) {
     const userId = WMEURMPT.loginManager.user.getID()
+    const Map_TeamUserId = 2218201706
     let found = false
     let inside = false
     let filterArea = []
@@ -1201,6 +1202,18 @@ function WMEURMPT_Injected () {
       found = false
       for (let c = 0; c < ur.data.session.comments.length; c++) {
         if (ur.data.session.comments[c].userID === userId) {
+          found = true
+          break
+        }
+      }
+      if (!found) {
+        return true
+      }
+    }
+    if (WMEURMPT.currentURFilter & WMEURMPT.URFilterList.hideWithoutCommentFromMT) {
+      found = false
+      for (let c = 0; c < ur.data.session.comments.length; c++) {
+        if (ur.data.session.comments[c].userID === Map_TeamUserId) {
           found = true
           break
         }
@@ -1562,6 +1575,10 @@ function WMEURMPT_Injected () {
   WMEURMPT.toggleURFilterHideWithoutCommentFromMe = function () {
     WMEURMPT.log('Switch UR filter "hide without comments from me"')
     WMEURMPT.toggleURFilter('urt-checkbox-filterHideWithoutCommentFromMe', WMEURMPT.URFilterList.hideWithoutCommentFromMe)
+  }
+  WMEURMPT.toggleURFilterHideWithoutCommentFromMT = function () {
+    WMEURMPT.log('Switch UR filter "hide without comments from Map_Team"')
+    WMEURMPT.toggleURFilter('urt-checkbox-filterHideWithoutCommentFromMT', WMEURMPT.URFilterList.hideWithoutCommentFromMT)
   }
   WMEURMPT.toggleURFilterHideWithCommentCount = function () {
     WMEURMPT.log('Switch UR filter "hide more than ' + WMEURMPT.currentURCommentsCount + ' comments"')
@@ -3033,6 +3050,7 @@ function WMEURMPT_Injected () {
     content = '<ul class="urt-filter-list">'
     content += '<li><input type="checkbox" id="urt-checkbox-filterInvert"><b>Invert filters</b></li>'
     content += '<li title="Show URs I have already commented"><input type="checkbox" id="urt-checkbox-filterHideWithoutCommentFromMe"> Hide without comment from me</li>'
+    content += '<li title="Show URs commented by Map_Team"><input type="checkbox" id="urt-checkbox-filterHideWithoutCommentFromMT"> Hide without comment from Map_Team</li>'
     content += '<li title="Show URs with last comment from Reporter"><input type="checkbox" id="urt-checkbox-filterHideLastCommentFromEditor"> Hide last comment from an editor</li>'
     content += '<li title="Show only URs from 0 to n comments"><input type="checkbox" id="urt-checkbox-filterHideWithCommentCount"> Hide with more than <input size="2" maxlength="2" type="text" id="urt-filterHideWithCommentCount" value="' + WMEURMPT.currentURCommentsCount + '"></input> comment(s)</li>'
     content += '<li title="Show URs with unread comment(s)"><input type="checkbox" id="urt-checkbox-filterHideNoNewComment"> Hide no new comment</li>'
@@ -3396,6 +3414,9 @@ function WMEURMPT_Injected () {
     if (WMEURMPT.currentURFilter & WMEURMPT.URFilterList.hideWithoutCommentFromMe) {
       WMEURMPT.getId('urt-checkbox-filterHideWithoutCommentFromMe').checked = true
     }
+    if (WMEURMPT.currentURFilter & WMEURMPT.URFilterList.hideWithoutCommentFromMT) {
+      WMEURMPT.getId('urt-checkbox-filterHideWithoutCommentFromMT').checked = true
+    }
     if (WMEURMPT.currentURFilter & WMEURMPT.URFilterList.hideWithCommentCount) {
       WMEURMPT.getId('urt-checkbox-filterHideWithCommentCount').checked = true
     }
@@ -3444,6 +3465,7 @@ function WMEURMPT_Injected () {
       WMEURMPT.getId('urt-checkbox-filterHideClosed').onclick = WMEURMPT.toggleURFilterHideClosed
     }
     WMEURMPT.getId('urt-checkbox-filterHideWithoutCommentFromMe').onclick = WMEURMPT.toggleURFilterHideWithoutCommentFromMe
+    WMEURMPT.getId('urt-checkbox-filterHideWithoutCommentFromMT').onclick = WMEURMPT.toggleURFilterHideWithoutCommentFromMT
     WMEURMPT.getId('urt-checkbox-filterHideWithCommentCount').onclick = WMEURMPT.toggleURFilterHideWithCommentCount
     WMEURMPT.getId('urt-checkbox-filterHideNoNewComment').onclick = WMEURMPT.toggleURFilterHideNoNewComment
     WMEURMPT.getId('urt-checkbox-filterHideOutOfMyDriveArea').onclick = WMEURMPT.toggleURFilterHideOutOfMyDriveArea
@@ -8569,4 +8591,3 @@ GM_addElement('script', {
   // eslint-disable-next-line quotes, camelcase
   textContent: '' + WMEURMPT_Injected.toString() + "\nWMEURMPT_Injected();"
 })
-
