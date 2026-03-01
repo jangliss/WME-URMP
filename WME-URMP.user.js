@@ -2,7 +2,7 @@
 // @name        WME UR-MP tracking
 // @version     3.9.24
 // @description Track UR and MP in the Waze Map Editor
-// @namespace   https://greasyfork.org/fr/scripts/368141-wme-ur-mp-tracking
+// @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
 // @icon        data:image/png;base64,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
 // @grant       GM_addElement
@@ -13,6 +13,8 @@
 // @copyright   2023, dummyd2, seb-d59, jangliss
 // @author      dummyd2, seb-d59, jangliss
 // @connect     waze.netdork.net
+// @downloadURL https://update.greasyfork.org/scripts/368141/WME%20UR-MP%20tracking.user.js
+// @updateURL   https://update.greasyfork.org/scripts/368141/WME%20UR-MP%20tracking.meta.js
 // ==/UserScript==
 
 /*******
@@ -201,7 +203,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.managedAreas = []
   WMEURMPT.sortModeListUR = { ageASC: 1, ageDSC: -1, typeASC: 2, typeDSC: -2, commentCountASC: 3, commentCountDSC: -3, distanceASC: 4, distanceDSC: -4, lastCommentASC: 5, lastCommentDSC: -5 }
   WMEURMPT.sortModeListMP = { priorityASC: 1, priorityDSC: -1, typeASC: 2, typeDSC: -2, distanceASC: 3, distanceDSC: -3 }
-  WMEURMPT.sortModeListMC = { distanceASC: 1, distanceDSC: -1, commentCountASC: 2, commentCountDSC: -2, ageASC: 3, ageDSC: -3 }
+  WMEURMPT.sortModeListMC = { distanceASC: 1, distanceDSC: -1, commentCountASC: 2, commentCountDSC: -2, ageASC: 3, ageDSC: -3, lastCommentASC: 4, lastCommentDSC: -4 }
   WMEURMPT.sortModeListPUR = { ageASC: 1, ageDSC: -1, categoriesASC: 2, categoriesDSC: -2, distanceASC: 3, distanceDSC: -3, nameASC: 4, nameDSC: -4, nbpurASC: 5, nbpurDSC: -5 }
   WMEURMPT.URFilterList = { hideClosed: 1, hideWithoutCommentFromMe: 2, hideWithCommentCount: 4, hideOutOfMyManagedArea: 8, hideVisited: 16, hideBlacklisted: 32, hideWhitelisted: 64, hideGE: 128, hideNotKW: 256, hideLimitTo: 512, hideType: 1024, hideArea: 2048, hideLastCommentFromEditor: 4096, hideTagged: 8192, hideNoNewComment: 16384, hideOutOfMyDriveArea: 32768, hideWithoutCommentFromMT: 65536 }
   WMEURMPT.MPFilterList = { hideClosed: 1, hideOutOfMyManagedArea: 2, hideVisited: 4, hideBlacklisted: 8, hideWhitelisted: 16, hideLimitTo: 32, hideType: 64, hideArea: 128, hideOutOfMyDriveArea: 256 }
@@ -1565,7 +1567,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.toggleURInvertFilter = function () {
     WMEURMPT.log('Switch UR filter "invert filter"')
     WMEURMPT.urtInvertFilter = this.checked
-    WMEURMPT.updateIHMFromPURList()
+    WMEURMPT.updateIHMFromURList()
     WMEURMPT.saveOptions()
   }
   WMEURMPT.toggleURFilterHideClosed = function () {
@@ -4394,6 +4396,19 @@ function WMEURMPT_Injected () {
     return 0
   }
 
+    WMEURMPT.getMCLastCommentMeta = function (mc) {
+        const conv = (mc && mc.data && Array.isArray(mc.data.conversation)) ? mc.data.conversation : []
+        if (conv.length === 0) {
+            return { has: false, createdOn: (mc && mc.data ? mc.data.createdOn : -1), userName: '' }
+        }
+        const last = conv[conv.length - 1] || {}
+        return {
+            has: true,
+            createdOn: typeof last.createdOn === 'number' ? last.createdOn : -1,
+            userName: typeof last.userName === 'string' ? last.userName : ''
+        }
+  }
+
   WMEURMPT.compareMC = function (a, b, i) {
     if (arguments.length === 2) {
       i = 0
@@ -4440,6 +4455,42 @@ function WMEURMPT_Injected () {
           return WMEURMPT.compareMC(a, b, i + 1)
         }
         return bcount - acount
+        case WMEURMPT.sortModeListMC.lastCommentDSC: {
+            const la = WMEURMPT.getMCLastCommentMeta(a)
+            const lb = WMEURMPT.getMCLastCommentMeta(b)
+
+            // Prefer items that actually have comments
+            if (la.has && !lb.has) return -1
+            if (!la.has && lb.has) return 1
+
+            if (la.createdOn === lb.createdOn) {
+                // Tie-breaker by userName (so it also kind-of answers “ποιος”)
+                const ua = la.userName || ''
+                const ub = lb.userName || ''
+                const cmp = ua.localeCompare(ub)
+                if (cmp === 0) return WMEURMPT.compareMC(a, b, i + 1)
+                return cmp
+            }
+            // DESC = newest first
+            return lb.createdOn - la.createdOn
+        }
+        case WMEURMPT.sortModeListMC.lastCommentASC: {
+            const la = WMEURMPT.getMCLastCommentMeta(a)
+            const lb = WMEURMPT.getMCLastCommentMeta(b)
+
+            if (la.has && !lb.has) return 1
+            if (!la.has && lb.has) return -1
+
+            if (la.createdOn === lb.createdOn) {
+                const ua = la.userName || ''
+                const ub = lb.userName || ''
+                const cmp = ua.localeCompare(ub)
+                if (cmp === 0) return WMEURMPT.compareMC(a, b, i + 1)
+                return cmp
+            }
+            // ASC = oldest first
+            return la.createdOn - lb.createdOn
+        }
     }
     return 0
   }
@@ -5110,7 +5161,13 @@ function WMEURMPT_Injected () {
     content += '<table id="urmpt-mc-table" class="urt-table">'
     content += '<thead><tr>'
     content += '<td><div class="urt-table-head-icon"><img style="width: 16px" title="Blacklist MC 1 by 1." src="data:image/png;base64,' + WMEURMPT.icon_blacklist + '" /></div></td>'
-    content += '<td><div class="urt-table-head-icon"><a href="#" id="mct-table-sort-age"><img style="width: 16px" title="Age of the MC.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_age + '" /></a></div></td>'
+    //content += '<td><div class="urt-table-head-icon"><a href="#" id="mct-table-sort-age"><img style="width: 16px" title="Age of the MC.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_age + '" /></a></div></td>'
+    content += '<td><div class="urt-table-head-icon">' +
+          '<a href="#" id="mct-table-sort-age">' +
+          '<img style="width: 16px" title="Age of the MC.' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_age + '" />' +
+          '</a>' +
+          '<a href="#" id="mct-table-sort-lastcomment" style="font-size: 1.5em;" class="w-icon w-icon-chat" title="Sort by last comment"></a>' +
+          '</div></td>'
     content += '<td style="max-width:' + WMEURMPT.MCSubjectMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Subject</td>'
     content += '<td style="max-width:' + WMEURMPT.MCBodyMaxLength + 'ch; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Body</td>'
     content += '<td><div class="urt-table-head-icon"><a href="#" id="mct-table-sort-ccount"><img style="width: 16px" title="Comments count' + NL + 'Click to sort." src="data:image/png;base64,' + WMEURMPT.icon_comments + '" /></a></div></td>'
@@ -5218,6 +5275,20 @@ function WMEURMPT_Injected () {
         WMEURMPT.changeTableMCSortTo(newSortMode + '')
       }
     }())
+      asort = WMEURMPT.getId('mct-table-sort-lastcomment')
+      asort.onclick = (function () {
+          let newSortMode = WMEURMPT.sortModeListMC.lastCommentDSC
+          if (
+              WMEURMPT.currentSortModeMC === WMEURMPT.sortModeListMC.lastCommentDSC ||
+              WMEURMPT.currentSortModeMC === WMEURMPT.sortModeListMC.lastCommentASC
+          ) {
+              newSortMode = WMEURMPT.currentSortModeMC * -1
+          }
+          return function () {
+              WMEURMPT.changeTableMCSortTo(newSortMode + '')
+          }
+      }())
+
     window.setTimeout(WMEURMPT.setupMCListHandlers)
     WMEURMPT.updateFlashingMCs()
   }
