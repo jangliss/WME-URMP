@@ -3406,7 +3406,7 @@ function WMEURMPT_Injected () {
     navTabs.appendChild(newtab)
     addon.id = 'sidepanel-urt'
     addon.className = 'tab-pane'
-    addon.style.marginLeft = '-10px'
+    addon.style.marginLeft = '2px'
     tabContent.appendChild(addon)
     if (WMEURMPT.currentURFilter & WMEURMPT.URFilterList.hideClosed && WMEURMPT.ul >= WMEURMPT.rl4cp) {
       WMEURMPT.getId('urt-checkbox-filterHideClosed').checked = true
