@@ -3171,7 +3171,7 @@ function WMEURMPT_Injected () {
     navTabs.appendChild(newtab)
     addon.id = 'sidepanel-urt'
     addon.className = 'tab-pane'
-    addon.style.marginLeft = '-10px'
+    addon.style.marginLeft = '2px'
     tabContent.appendChild(addon)
     if (WMEURMPT.currentURFilter & WMEURMPT.URFilterList.hideClosed && WMEURMPT.ul >= WMEURMPT.rl4cp) {
       WMEURMPT.getId('urt-checkbox-filterHideClosed').checked = true
@@ -3591,13 +3591,13 @@ function WMEURMPT_Injected () {
     if (WMEURMPT.isAutoScan) {
       wmeSDK.Events.on({
         eventName: 'wme-data-model-objects-added',
-        eventHandler: WMEURMPT.newDataAvailableStarts
+        eventHandler: WMEURMPT.newDataAvailableStartsViaAutoScan
       })
     } else {
       if (wmeSDK.Events.eventBus.handlers.has('wme-data-model-objects-added')) {
         wmeSDK.Events.off({
           eventName: 'wme-data-model-objects-added',
-          eventHandler: WMEURMPT.newDataAvailableStarts
+          eventHandler: WMEURMPT.newDataAvailableStartsViaAutoScan
         })
       }
     }
@@ -5711,6 +5711,13 @@ function WMEURMPT_Injected () {
     window.setTimeout(WMEURMPT.getFunctionWithArgs(WMEURMPT.selectPURById, [PURId]), 100)
   }
 
+  WMEURMPT.newDataAvailableStartsViaAutoScan = function (dataObj) {
+    if (!WMEURMPT.isAutoScan) {
+      return;
+    }
+    WMEURMPT.newDataAvailableStarts(dataObj)
+  }
+
   WMEURMPT.newDataAvailableStarts = function (dataObj) {
     if (typeof dataObj === 'undefined') {
       return;
@@ -6263,7 +6270,11 @@ function WMEURMPT_Injected () {
       let filterArea = []
       if (filter != null && (filter.type === 'editableArea' || filter.type === 'driveArea' || filter.type === 'managedArea')) {
         for (let a = 0; a < MPs.userAreas.objects.length; a++) {
-          filterArea = filterArea.concat(turf.polygon(MPs.userAreas.objects[a].geometry.coordinates))
+          if (MPs.userAreas.objects[a].geometry.type === 'MultiPolygon') {
+            filterArea = filterArea.concat(turf.multiPolygon(MPs.userAreas.objects[a].geometry.coordinates))
+          } else {
+            filterArea = filterArea.concat(turf.polygon(MPs.userAreas.objects[a].geometry.coordinates))
+          }
         }
       }
       if (filter != null && (filter.type === 'country' || filter.type === 'custom')) {
@@ -6904,6 +6915,10 @@ function WMEURMPT_Injected () {
         }
         let inside = false
         for (let a = 0; a < filterArea.length; a++) {
+          if (typeof WMEURMPT.URList[i] == 'undefined' || WMEURMPT.URList[i] == null) {
+            WMEURMPT.URList.splice(i, 1)
+            continue
+          }
           let xy = turf.point([WMEURMPT.URList[i].lonlat.lon, WMEURMPT.URList[i].lonlat.lat])
           if (xy.geometry.coordinates[0] < tileBounds[0] || xy.geometry.coordinates[0] > tileBounds[2] || xy.geometry.coordinates[1] < tileBounds[1] || xy.geometry.coordinates[1] > tileBounds[3]) {
             i++
