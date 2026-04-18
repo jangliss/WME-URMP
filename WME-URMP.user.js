@@ -5774,24 +5774,36 @@ function WMEURMPT_Injected () {
       WMEURMPT.log("Can't select MP " + MPId.MPId)
       return
     }
-    const mp = wmeSDK.DataModel.MapProblems.getById({ mapProblemId: MPId.MPId })
+    //const mp = wmeSDK.DataModel.MapProblems.getById({ mapProblemId: MPId.MPId })
+    const mp = W.model.mapProblems.getObjectById(MPId.MPId)
     WMEURMPT.logDebug('mp :', mp)
     if (mp !== null) {
-        WMEURMPT.MPVisited(MPId.MPId)
-        WMEURMPT.currentMPID = MPId.MPId
+        WMEURMPT.wazePC.showProblem(mp, { showNext: false })
+
+        const selectedMP = WMEURMPT.wazePC.currentProblem
+        if (selectedMP.attributes.id === MPId.MPId) {
+          WMEURMPT.MPVisited(MPId.MPId)
+          WMEURMPT.currentMPID = MPId.MPId
+          WMEURMPT.newDataAvailableStarts(
+            {
+              dataModelName: 'mapProblems',
+              objectIds: [MPId.MPId]
+            }
+          )
+          return
+        }
+
+/*
+      // SDK Does not let us select map problems //
         wmeSDK.Editing.setSelection({
           selection: {
             ids: [MPId.MPId],
             objectType: "mapProblem"
           }
         })
-        WMEURMPT.newDataAvailableStarts(
-          {
-            dataModelName: 'mapProblems',
-            objectIds: [MPId.MPId]
-          }
-        )
-        return
+*/
+
+
     }
     MPId.attempts++
     WMEURMPT.log('Can not select MP ' + MPId.MPId + '. Trying again ' + MPId.attempts + '/10...')
