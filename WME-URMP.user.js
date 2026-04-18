@@ -745,7 +745,8 @@ function WMEURMPT_Injected () {
   WMEURMPT.initManagedArea = function () {
     const userAreas = WMEURMPT.me.attributes.areas
     for (let a = 0; a < userAreas.length; a++) {
-      const tmpArea = turf.bbox(userAreas[a].geometry)
+      //const tmpArea = turf.bbox(userAreas[a].geometry)
+      const tmpArea = userAreas[a].geometry
       if (userAreas[a].type === 'drive') {
         WMEURMPT.driveArea.push(tmpArea)
       }
@@ -2383,9 +2384,11 @@ function WMEURMPT_Injected () {
     const div = WMEURMPT.getId('urmpt-stats')
     WMEURMPT.removeChildElements(div)
 
-    div.innerHTML = WMEURMPT.convertHtml('<font style="font-size: larger; font-weight: bold;">Statistics</font><hr/>')
-    div.innerHTML += WMEURMPT.convertHtml('<div style="display: flex;"><span style="margin: 5px; display: table;" >From: </span><input value="' + fromDate + '" type="text" id="urmpt-stat-from" size="9"/><span style="margin: 5px; display: table;" > to </span><input value="' + toDate + '" type="text" id="urmpt-stat-to" size="9"/><button id="urmpt-stat-refresh" style="display: table; width: 40px; padding: 0px;">OK</button></div><hr/>')
-    div.innerHTML += WMEURMPT.convertHtml('<a id="urmpt-stat-export_csv" href="#">Export to CSV</a><hr/>')
+    let content = ''
+    content = '<font style="font-size: larger; font-weight: bold;">Statistics</font><hr/>'
+    content += '<div style="display: flex;"><span style="margin: 5px; display: table;" >From: </span><input value="' + fromDate + '" type="text" id="urmpt-stat-from" size="9"/><span style="margin: 5px; display: table;" > to </span><input value="' + toDate + '" type="text" id="urmpt-stat-to" size="9"/><button id="urmpt-stat-refresh" style="display: table; width: 40px; padding: 0px;">OK</button></div><hr/>'
+    content += '<a id="urmpt-stat-export_csv" href="#">Export to CSV</a><hr/>'
+
     let dateFilteredURList = WMEURMPT.URList
     let dateFilteredMPList = WMEURMPT.MPList
     if (fromDate !== '' && toDate !== '') {
@@ -2398,11 +2401,11 @@ function WMEURMPT_Injected () {
         return value.data.resolvedOn != null && value.data.resolvedOn >= df && value.data.resolvedOn <= dt
       })
     }
-    div.innerHTML += WMEURMPT.convertHtml('General:<br/><br/>')
+    content += 'General:<br/><br/>'
     WMEURMPT.statsCSV += 'General' + NL
-    div.innerHTML += WMEURMPT.convertHtml(WMEURMPT.computeStats(dateFilteredURList, dateFilteredMPList, fromDate, toDate))
-    div.innerHTML += WMEURMPT.convertHtml('<hr/>')
-    div.innerHTML += WMEURMPT.convertHtml('You:<br/><br/>')
+    content += WMEURMPT.computeStats(dateFilteredURList, dateFilteredMPList, fromDate, toDate)
+    content += '<hr/>'
+    content += 'You:<br/><br/>'
     const closedURbyMe = dateFilteredURList.filter(function (value) {
       return value.data.resolvedBy === WMEURMPT.me.getID()
     }).length
@@ -2417,15 +2420,15 @@ function WMEURMPT_Injected () {
       return value.data.resolvedBy === WMEURMPT.me.getID() && value.data.open === false && value.data.resolution === 1
     }).length
     const soMPbyMe = closedMPbyMe - niMPbyMe
-    div.innerHTML += WMEURMPT.convertHtml('URs closed: ' + closedURbyMe + ' (' + Math.round(closedURbyMe * 100 / dateFilteredURList.length) + '%)<br/>')
-    div.innerHTML += WMEURMPT.convertHtml('&nbsp;&nbsp;Not identified: ' + niURbyMe + ' (' + Math.round(niURbyMe * 100 / closedURbyMe) + '%)<br/>')
-    div.innerHTML += WMEURMPT.convertHtml('&nbsp;&nbsp;Solved: ' + soURbyMe + ' (' + Math.round(soURbyMe * 100 / closedURbyMe) + '%)<br/>')
-    div.innerHTML += WMEURMPT.convertHtml('MPs closed: ' + closedMPbyMe + ' (' + Math.round(closedMPbyMe * 100 / dateFilteredMPList.length) + '%)<br/>')
-    div.innerHTML += WMEURMPT.convertHtml('&nbsp;&nbsp;Not identified: ' + niMPbyMe + ' (' + Math.round(niMPbyMe * 100 / closedMPbyMe) + '%)<br/>')
-    div.innerHTML += WMEURMPT.convertHtml('&nbsp;&nbsp;Solved: ' + soMPbyMe + ' (' + Math.round(soMPbyMe * 100 / closedMPbyMe) + '%)<br/>')
-    div.innerHTML += WMEURMPT.convertHtml('<hr/>')
-    div.innerHTML += WMEURMPT.convertHtml('Per area:<br/><br/>')
-    div.innerHTML += WMEURMPT.convertHtml('<ul>')
+    content += 'URs closed: ' + closedURbyMe + ' (' + Math.round(closedURbyMe * 100 / dateFilteredURList.length) + '%)<br/>'
+    content += '&nbsp;&nbsp;Not identified: ' + niURbyMe + ' (' + Math.round(niURbyMe * 100 / closedURbyMe) + '%)<br/>'
+    content += '&nbsp;&nbsp;Solved: ' + soURbyMe + ' (' + Math.round(soURbyMe * 100 / closedURbyMe) + '%)<br/>'
+    content += 'MPs closed: ' + closedMPbyMe + ' (' + Math.round(closedMPbyMe * 100 / dateFilteredMPList.length) + '%)<br/>'
+    content += '&nbsp;&nbsp;Not identified: ' + niMPbyMe + ' (' + Math.round(niMPbyMe * 100 / closedMPbyMe) + '%)<br/>'
+    content += '&nbsp;&nbsp;Solved: ' + soMPbyMe + ' (' + Math.round(soMPbyMe * 100 / closedMPbyMe) + '%)<br/>'
+    content += '<hr/>'
+    content += 'Per area:<br/><br/>'
+    content += '<ul>'
     WMEURMPT.statsCSV += 'You' + NL
     WMEURMPT.statsCSV += 'UR;Count;Percent' + NL
     WMEURMPT.statsCSV += 'Closed;' + closedURbyMe + ';' + closedURbyMe * 100 / dateFilteredURList.length + NL
@@ -2442,7 +2445,7 @@ function WMEURMPT_Injected () {
     let fromMPList = dateFilteredMPList.filter(function (value) {
       return WMEURMPT.isInsideDriveArea(value.lonlat.lon, value.lonlat.lat)
     })
-    div.innerHTML += WMEURMPT.convertHtml('<li>Your drive area<br/>' + WMEURMPT.computeStats(fromURList, fromMPList, fromDate, toDate) + '</li>')
+    content += '<li>Your drive area<br/>' + WMEURMPT.computeStats(fromURList, fromMPList, fromDate, toDate) + '</li>'
     if (WMEURMPT.uam) {
       WMEURMPT.statsCSV += 'Your managed area' + NL
       fromURList = dateFilteredURList.filter(function (value) {
@@ -2451,7 +2454,7 @@ function WMEURMPT_Injected () {
       fromMPList = dateFilteredMPList.filter(function (value) {
         return WMEURMPT.isInsideManagedArea(value.lonlat.lon, value.lonlat.lat)
       })
-      div.innerHTML += WMEURMPT.convertHtml('<li>Your managed area<br/>' + WMEURMPT.computeStats(fromURList, fromMPList, fromDate, toDate) + '</li>')
+      content += '<li>Your managed area<br/>' + WMEURMPT.computeStats(fromURList, fromMPList, fromDate, toDate) + '</li>'
     }
     for (let a = 0; a < WMEURMPT.areaList.country.length; a++) {
       WMEURMPT.statsCSV += WMEURMPT.areaList.country[a].name + NL
@@ -2461,7 +2464,7 @@ function WMEURMPT_Injected () {
       fromMPList = dateFilteredMPList.filter(function (value) {
         return WMEURMPT.areaList.country[a].isInside(value.lonlat)
       })
-      div.innerHTML += WMEURMPT.convertHtml('<li>' + WMEURMPT.areaList.country[a].name + '<br/>' + WMEURMPT.computeStats(fromURList, fromMPList, fromDate, toDate) + '</li>')
+      content += '<li>' + WMEURMPT.areaList.country[a].name + '<br/>' + WMEURMPT.computeStats(fromURList, fromMPList, fromDate, toDate) + '</li>'
     }
     for (let a = 0; a < WMEURMPT.areaList.custom.length; a++) {
       WMEURMPT.statsCSV += WMEURMPT.areaList.custom[a].name + NL
@@ -2471,9 +2474,10 @@ function WMEURMPT_Injected () {
       fromMPList = dateFilteredMPList.filter(function (value) {
         return WMEURMPT.areaList.custom[a].isInside(value.lonlat)
       })
-      div.innerHTML += WMEURMPT.convertHtml('<li>' + WMEURMPT.areaList.custom[a].name + '<br/>' + WMEURMPT.computeStats(fromURList, fromMPList, fromDate, toDate) + '</li>')
+      content += '<li>' + WMEURMPT.areaList.custom[a].name + '<br/>' + WMEURMPT.computeStats(fromURList, fromMPList, fromDate, toDate) + '</li>'
     }
-    div.innerHTML += WMEURMPT.convertHtml('</ul>')
+    content += '</ul>'
+    div.innerHTML = WMEURMPT.convertHtml(content)
     WMEURMPT.showPBInfo(false)
     pb.hide()
     pb.update(0)
@@ -2775,12 +2779,13 @@ function WMEURMPT_Injected () {
       // Create tab menu bar
       const urmpTabs = WMEURMPT.createElement('ul', 'urmp-tabs')
       urmpTabs.className = 'nav nav-tabs'
-      content = '<li class="active" style="width: 16.5%; text-align: center; height: 30px;"><a id="urmp-tabstitle-ur" style="height: 30px;" href="#urmp-tabs-ur" data-toggle="tab">UR</a></li>'
-      content += '<li class="" style="width: 16.5%; text-align: center; height: 30px;"><a id="urmp-tabstitle-mp" style="height: 30px;" href="#urmp-tabs-mp" data-toggle="tab">MP</a></li>'
-      content += '<li class="" style="width: 16.5%; text-align: center; height: 30px;"><a id="urmp-tabstitle-mc" style="height: 30px;" href="#urmp-tabs-mc" data-toggle="tab">MC</a></li>'
-      content += '<li class="" style="width: 16.5%; text-align: center; height: 30px;"><a id="urmp-tabstitle-pur" style="height: 30px;" href="#urmp-tabs-pur" data-toggle="tab">PUR</a></li>'
-      content += '<li class="" style="width: 16.5%; text-align: center; height: 30px;"><a class="w-icon-2x w-icon w-icon-pencil" style="font-size: 1.5em; height: 30px;" href="#urmp-tabs-areas" data-toggle="tab"></a></li>'
-      content += '<li class="" style="width: 16.5%; text-align: center; height: 30px;"><a class="w-icon-2x w-icon w-icon-settings" style="font-size: 1.5em; height: 30px;" href="#urmp-tabs-settings" data-toggle="tab"></a></li>'
+      content = '<li class="active" style="width: 13.75%; text-align: center; height: 30px;"><a id="urmp-tabstitle-ur" style="height: 30px;" href="#urmp-tabs-ur" data-toggle="tab">UR</a></li>'
+      content += '<li class="" style="width: 13.75%; text-align: center; height: 30px;"><a id="urmp-tabstitle-mp" style="height: 30px;" href="#urmp-tabs-mp" data-toggle="tab">MP</a></li>'
+      content += '<li class="" style="width: 13.75%; text-align: center; height: 30px;"><a id="urmp-tabstitle-mc" style="height: 30px;" href="#urmp-tabs-mc" data-toggle="tab">MC</a></li>'
+      content += '<li class="" style="width: 13.75%; text-align: center; height: 30px;"><a id="urmp-tabstitle-pur" style="height: 30px;" href="#urmp-tabs-pur" data-toggle="tab">PUR</a></li>'
+      content += '<li class="" style="width: 13.75%; text-align: center; height: 30px;"><a class="fa fa-bar-chart icon-bar-chart" id="urmp-tabstitle-stat" style="height: 30px;" href="#urmp-tabs-os" data-toggle="tab"></a></li>'
+      content += '<li class="" style="width: 13.75%; text-align: center; height: 30px;"><a class="w-icon-2x w-icon w-icon-pencil" style="font-size: 1.5em; height: 30px;" href="#urmp-tabs-areas" data-toggle="tab"></a></li>'
+      content += '<li class="" style="width: 13.75%; text-align: center; height: 30px;"><a class="w-icon-2x w-icon w-icon-settings" style="font-size: 1.5em; height: 30px;" href="#urmp-tabs-settings" data-toggle="tab"></a></li>'
       urmpTabs.innerHTML = WMEURMPT.convertHtml(content)
       addon.appendChild(urmpTabs)
       window.setTimeout(WMEURMPT.connectURTabHandler)
@@ -3061,6 +3066,16 @@ function WMEURMPT_Injected () {
       elt = WMEURMPT.createElement('div', 'purt-list')
       purTabPane.appendChild(elt)
       // End of PUR Tab //
+
+      // Create Stats Tab //
+      const osTabPane = WMEURMPT.createElement('section', 'urmp-tabs-os')
+      osTabPane.className = 'tab-pane'
+      osTabPane.style.paddingLeft = '0px'
+      osTabPane.style.paddingRight = '40px'
+      urmpTabContent.appendChild(osTabPane)
+      const divStats = WMEURMPT.createElement('div','urmpt-stats')
+      osTabPane.appendChild(divStats)
+      // End of Stats Tab //
 
       // Create Areas Tab //
       const areasTabPane = WMEURMPT.createElement('section', 'urmp-tabs-areas')
@@ -6839,8 +6854,14 @@ function WMEURMPT_Injected () {
     }
     if (areaFilter.type === 'driveArea') {
       for (let i = 0; i < WMEURMPT.driveArea.length; i++) {
-        WMEURMPT.logDebug('WMEURMPT.driveArea', WMEURMPT.driveArea)
-        const bounds = WMEURMPT.driveArea[i]
+        WMEURMPT.logDebug('WMEURMPT.driveArea', WMEURMPT.driveArea[i])
+        let bounds = null
+        if (Array.isArray(WMEURMPT.driveArea[i])) {
+          bounds = WMEURMPT.driveArea[i]
+        }
+        else if (typeof WMEURMPT.driveArea[i].type !== 'undefined') {
+          bounds = turf.bbox(WMEURMPT.driveArea[i])
+        }
         for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
           for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
             WMEURMPT.logDebug('Scan drive area from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + ((lon + 0.5).toFixed(6)) + ' ' + ((lat + 0.5).toFixed(6)))
@@ -6853,8 +6874,14 @@ function WMEURMPT_Injected () {
     }
     if (areaFilter.type === 'managedArea') {
       for (let i = 0; i < WMEURMPT.managedAreas.length; i++) {
-        WMEURMPT.logDebug('WMEURMPT.managedAreas', WMEURMPT.managedAreas)
-        const bounds = WMEURMPT.managedAreas[i]
+        WMEURMPT.logDebug('WMEURMPT.managedAreas', WMEURMPT.managedAreas[i])
+        let bounds = null
+        if (Array.isArray(WMEURMPT.managedAreas[i])) {
+          bounds = WMEURMPT.managedAreas[i]
+        }
+        else if (typeof WMEURMPT.managedAreas[i].type !== 'undefined') {
+          bounds = turf.bbox(WMEURMPT.managedAreas[i])
+        }
         for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
           for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
             WMEURMPT.logDebug('Scan managed area from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + ((lon + 0.5).toFixed(6)) + ' ' + ((lat + 0.5).toFixed(6)))
@@ -6996,7 +7023,7 @@ function WMEURMPT_Injected () {
       WMEURMPT.showPBInfo(false)
       WMEURMPT.info()
       pb.hide()
-      //WMEURMPT.refreshStats('', '')
+      WMEURMPT.refreshStats('', '')
       WMEURMPT.updateIHMFromURList()
       WMEURMPT.updateIHMFromMPList()
       WMEURMPT.updateIHMFromMCList()
@@ -7855,12 +7882,19 @@ function WMEURMPT_Injected () {
       }, null)
     }
     function isInside (lonlat) {
+      let point = null
+      if (typeof lonlat !== 'undefined' && typeof lonlat.lat !== 'undefined' && lonlat.lat !== '') {
+        point = turf.point([lonlat.lon, lonlat.lat])
+      }
+      if (null === point) {
+        return false
+      }
       if (typeof this.geometryGeoJSON !== 'undefined' && this.geometryGeoJSON !== null) {
-        return turf.booleanPointInPolygon(lonlat, this.geometryGeoJSON)
+        return turf.booleanPointInPolygon(point, this.geometryGeoJSON)
       }
       else if (typeof this.geometryWKT !== 'undefined' && this.geometryWKT !== 'null' && this.geometryWKT !== '') {
         this.geometryGeoJSON = turf.multiPolygon(W.userscripts.convertWktToGeoJSON(this.geometryWKT).coordinates)
-        return turf.booleanPointInPolygon(lonlat, this.geometryGeoJSON)
+        return turf.booleanPointInPolygon(point, this.geometryGeoJSON)
       }
       return false
     }
