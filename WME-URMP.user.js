@@ -1835,6 +1835,7 @@ function WMEURMPT_Injected () {
     ca.name = elName.value
     WMEURMPT.log('Add CA to scan list: ' + ca.name)
     ca.geometryWKT = WMEURMPT.lastUploadedWKT
+    ca.geometryGeoJSON = W.userscripts.convertWktToGeoJSON(WMEURMPT.lastUploadedWKT)
     WMEURMPT.removeCustomNameFromAreaList(ca.name)
     WMEURMPT.areaList.custom.push(ca)
     elName.value = ''
@@ -1866,6 +1867,7 @@ function WMEURMPT_Injected () {
       ca.name = a.name
       WMEURMPT.log('Add CA to scan list: ' + ca.name)
       ca.geometryWKT = a.geometryWKT
+      ca.geometryGeoJSON = a.geometryGeoJSON
       WMEURMPT.removeCustomNameFromAreaList(ca.name)
       WMEURMPT.areaList.custom.push(ca)
     })
@@ -2045,7 +2047,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.exportAllCAToJSON = function () {
     this.setAttribute('download', 'URMPT_CustomAreas_' + WMEURMPT.me.getUsername() + '.json')
     this.href = 'data:application/octet-stream;charset=utf-8;base64,' + btoa(JSON.stringify(WMEURMPT.areaList.custom.map(function (e) {
-      return { name: e.name, geometryWKT: e.geometryWKT }
+      return { name: e.name, geometryWKT: e.geometryWKT , geometryGeoJSON: e.geometryGeoJSON }
     })))
   }
 
@@ -3191,8 +3193,11 @@ function WMEURMPT_Injected () {
       mcAgeColumnSpan.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-mcagecolislastcomment"' + (WMEURMPT.MCAgeColIsLastComment ? 'checked ' : '') + '/> MC age column is last comment age<br>')
       settingsTabPane.appendChild(mcAgeColumnSpan)
       const disableScrollingSpan = WMEURMPT.createElement('span')
-      disableScrollingSpan.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-disablescrolling" ' + (WMEURMPT.disableScrolling ? 'checked ' : '') + '/> Disable text scrolling in tables')
+      disableScrollingSpan.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-disablescrolling" ' + (WMEURMPT.disableScrolling ? 'checked ' : '') + '/> Disable text scrolling in tables<br>')
       settingsTabPane.appendChild(disableScrollingSpan)
+      const keepBlacklist = WMEURMPT.createElement('span')
+      keepBlacklist.innerHTML = WMEURMPT.convertHtml('<input type="checkbox" id="urmpt-setting-keepblacklist" ' + (WMEURMPT.keepBlacklist ? 'checked ' : '') + '/> Keep blacklist state on clear')
+      settingsTabPane.appendChild(keepBlacklist)
       window.setTimeout(WMEURMPT.setupCAEvents)
       window.setTimeout(WMEURMPT.updateScanGroup)
 
@@ -3461,6 +3466,23 @@ function WMEURMPT_Injected () {
       if (!WMEURMPT.disableScrolling === false) {
         WMEURMPT.updateLongTextCrop()
       }
+      WMEURMPT.getId('urmpt-setting-keepblacklist').addEventListener('change', function (e) {
+        WMEURMPT.keepBlacklist = e.target.checked
+
+        if (e.target.checked) {
+          WMEURMPT.URBlacklist = WMEURMPT.URList.filter( urObj => { urObj.blackListed }).map( urObj => urObj.id )
+          WMEURMPT.MPBlacklist = WMEURMPT.MPList.filter( mpObj => { mpObj.blackListed }).map( mpObj => mpObj.id )
+          WMEURMPT.MCBlacklist = WMEURMPT.MCList.filter( mcObj => { mcObj.blackListed }).map( mcObj => mcObj.id)
+          WMEURMPT.PURBlacklist = WMEURMPT.PURList.filter( purObj => { purObj.blackListed }).map( purObj => purObj.id )
+        } else {
+          WMEURMPT.URBlacklist = []
+          WMEURMPT.MPBlacklist = []
+          WMEURMPT.MCBlacklist = []
+          WMEURMPT.PURBlacklist = []
+        }
+
+        WMEURMPT.saveOptions()
+      })
       // End of Settings Tab //
 
       // Setup Stylesheet //
@@ -3809,6 +3831,18 @@ function WMEURMPT_Injected () {
     }
     WMEURMPT.log((WMEURMPT.URList[i].blackListed ? 'Whitelist' : 'Blacklist') + ' UR: ' + WMEURMPT.URList[i].id)
     WMEURMPT.URList[i].blackListed = !WMEURMPT.URList[i].blackListed
+
+    if (WMEURMPT.keepBlacklist) {
+      if (WMEURMPT.URList[i].blackListed && WMEURMPT.URBlacklist.indexOf(WMEURMPT.URList[i].id) == -1 ) {
+        WMEURMPT.URBlacklist.push(WMEURMPT.URList[i].id)
+      } else {
+        const idx = WMEURMPT.URBlacklist.indexOf(WMEURMPT.URList[i].id)
+        if (idx > -1) {
+          WMEURMPT.URBlacklist.splice(idx,1)
+        }
+      }
+    }
+
     WMEURMPT.updateIHMFromURList()
   }
 
@@ -6487,7 +6521,6 @@ function WMEURMPT_Injected () {
           let inside = false
           for (let a = 0; a < filterArea.length; a++) {
             if (turf.booleanPointInPolygon(lonlat,filterArea[a])) {
-//            if (filterArea[a].isInside(lonlat)) {
               inside = true
               break
             }
@@ -6598,6 +6631,11 @@ function WMEURMPT_Injected () {
           }
         }
         ur.data.session.comments[c].userName = userName
+
+        if (WMEURMPT.keepBlacklist) {
+          ur.blackListed = (WMEURMPT.URBlacklist.indexOf(ur.id) > -1 ? true : false)
+        }
+
       }
       ur.clean()
       ur.updateDistanceToMapCenter()
@@ -7858,6 +7896,10 @@ function WMEURMPT_Injected () {
       PURCategoriesMaxLength: WMEURMPT.PURCategoriesMaxLength,
       PURNameMaxLength: WMEURMPT.PURNameMaxLength,
       keepBlacklist: WMEURMPT.keepBlacklist,
+      URBlacklist: WMEURMPT.URBlacklist,
+      MPBlacklist: WMEURMPT.MPBlacklist,
+      MCBlacklist: WMEURMPT.MCBlacklist,
+      PURBlacklist: WMEURMPT.PURBlacklist,
       taggedURList: WMEURMPT.taggedURList,
       URAgeColIsLastComment: WMEURMPT.URAgeColIsLastComment,
       MCAgeColIsLastComment: WMEURMPT.MCAgeColIsLastComment,
@@ -7968,6 +8010,12 @@ function WMEURMPT_Injected () {
       WMEURMPT.disableScrolling = typeof options.disableScrolling === 'undefined' ? WMEURMPT.disableScrolling : options.disableScrolling
       WMEURMPT.purInvertFilter = typeof options.purInvertFilter === 'undefined' ? WMEURMPT.purInvertFilter : options.purInvertFilter
       WMEURMPT.urtInvertFilter = typeof options.urtInvertFilter === 'undefined' ? WMEURMPT.urtInvertFilter : options.urtInvertFilter
+      WMEURMPT.keepBlacklist = typeof options.keepBlacklist === 'undefined' ? WMEURMPT.keepBlacklist : options.keepBlacklist
+      WMEURMPT.URBlacklist = typeof options.URBlacklist === 'undefined' ? WMEURMPT.URBlacklist : options.URBlacklist
+      WMEURMPT.MPBlacklist = typeof options.MPBlacklist === 'undefined' ? WMEURMPT.MPBlacklist : options.MPBlacklist
+      WMEURMPT.MCBlacklist = typeof options.MCBlacklist === 'undefined' ? WMEURMPT.MCBlacklist : options.MCBlacklist
+      WMEURMPT.PURBlacklist = typeof options.PURBlacklist === 'undefined' ? WMEURMPT.PURBlacklist : options.PURBlacklist
+
     }
   }
 
