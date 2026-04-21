@@ -195,7 +195,7 @@ function WMEURMPT_Injected () {
   // eslint-disable-next-line quotes
   const NL = "\n"
   const WMEURMPT = {}
-  WMEURMPT.isDebug = true
+  WMEURMPT.isDebug = false
   WMEURMPT.urmpt_version = '3.9.26'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
