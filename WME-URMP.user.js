@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.26
+// @version     3.9.27
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -196,7 +196,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.26'
+  WMEURMPT.urmpt_version = '3.9.27'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
   WMEURMPT.URMap = {}
@@ -5864,15 +5864,19 @@ function WMEURMPT_Injected () {
       WMEURMPT.newDataAvailableStarts(
         {dataModelname: 'venues', objectIds: [PURId.PURId]}
       )
-      wmeSDK.DataModel.Venues.showVenueUpdateRequestDialog({ venueId: PURId.PURId})
-/*
+
       wmeSDK.Editing.setSelection({
         selection: {
           ids: [PURId.PURId],
           objectType: "venue"
         }
       })
-*/
+
+      // Set a timeout to trigger the venue update page to show up //
+      window.setTimeout(function() {
+        wmeSDK.DataModel.Venues.showVenueUpdateRequestDialog({ venueId: PURId.PURId})
+      }, 100)
+
       return
     }
     PURId.attempts++
