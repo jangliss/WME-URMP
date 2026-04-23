@@ -5875,7 +5875,7 @@ function WMEURMPT_Injected () {
       // Set a timeout to trigger the venue update page to show up //
       window.setTimeout(function() {
         wmeSDK.DataModel.Venues.showVenueUpdateRequestDialog({ venueId: PURId.PURId})
-      }, 100)
+      }, 250)
 
       return
     }
