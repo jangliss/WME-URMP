@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.27
+// @version     3.9.28
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -196,7 +196,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.27'
+  WMEURMPT.urmpt_version = '3.9.28'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
   WMEURMPT.URMap = {}
@@ -7268,6 +7268,9 @@ function WMEURMPT_Injected () {
         const mCenter = wmeSDK.Map.getMapCenter()
         WMEURMPT.mapCenterLonLat = turf.point( [ mCenter.lon, mCenter.lat] )
       }
+      if (null === this.centroid || typeof this.centroid === 'undefined') {
+        this.centroid = turf.point([this.lonlat.lon, this.lonlat.lat])
+      }
       this.distanceToMapCenter = turf.distance(this.centroid, WMEURMPT.mapCenterLonLat, {units: 'meters'})
     }
     async function refreshFromWMEData () {
@@ -7412,6 +7415,9 @@ function WMEURMPT_Injected () {
         const mCenter = wmeSDK.Map.getMapCenter()
         WMEURMPT.mapCenterLonLat = turf.point( [ mCenter.lon, mCenter.lat] )
       }
+      if (null === this.centroid || typeof this.centroid === 'undefined') {
+        this.centroid = turf.point([this.lonlat.lon, this.lonlat.lat])
+      }
       this.distanceToMapCenter = turf.distance(this.centroid, WMEURMPT.mapCenterLonLat, {units: 'meters'})
     }
     function refreshFromWMEData () {
@@ -7516,6 +7522,9 @@ function WMEURMPT_Injected () {
       if (!WMEURMPT.mapCenterLonLat) {
         const mCenter = wmeSDK.Map.getMapCenter()
         WMEURMPT.mapCenterLonLat = turf.point( [ mCenter.lon, mCenter.lat] )
+      }
+      if (null === this.centroid || typeof this.centroid === 'undefined') {
+        this.centroid = turf.point([this.lonlat.lon, this.lonlat.lat])
       }
       this.distanceToMapCenter = turf.distance(this.centroid, WMEURMPT.mapCenterLonLat, {units: 'meters'})
     }
@@ -7671,6 +7680,9 @@ function WMEURMPT_Injected () {
       if (!WMEURMPT.mapCenterLonLat) {
         const mCenter = wmeSDK.Map.getMapCenter()
         WMEURMPT.mapCenterLonLat = turf.point( [ mCenter.lon, mCenter.lat] )
+      }
+      if (null === this.centroid || typeof this.centroid === 'undefined') {
+        this.centroid = turf.point([this.lonlat.lon, this.lonlat.lat])
       }
       this.distanceToMapCenter = turf.distance(this.centroid, WMEURMPT.mapCenterLonLat, {units: 'meters'})
     }
