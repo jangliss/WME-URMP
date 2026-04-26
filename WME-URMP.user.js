@@ -195,7 +195,7 @@ function WMEURMPT_Injected () {
   // eslint-disable-next-line quotes
   const NL = "\n"
   const WMEURMPT = {}
-  WMEURMPT.isDebug = false
+  WMEURMPT.isDebug = true
   WMEURMPT.urmpt_version = '3.9.28'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
@@ -551,9 +551,6 @@ function WMEURMPT_Injected () {
     }
     WMEURMPT.setupPolicies()
     WMEURMPT.load()
-    W.prefs.on('change:isImperial', function () {
-      WMEURMPT.unregisterEvents()
-    })
   }
 
   WMEURMPT.waitForObject = function (varName, shortcutName) {
@@ -4711,7 +4708,7 @@ function WMEURMPT_Injected () {
       const URDays = WMEURMPT.getDuration(WMEURMPT.URList[i].data.driveDate)
       const distance = WMEURMPT.URList[i].distanceToMapCenter
       let distanceStr = ''
-      if (W.prefs.get('isImperial')) {
+      if (wmeSDK.Settings.getUserSettings().isImperial) {
         distanceStr = Math.floor(distance * 3.28084) + '&nbsp;<font size: smaller>ft</font>'
         if (distance * 3.28084 >= 1000) {
           distanceStr = Math.floor(distance * 0.000621371) + '&nbsp;<font size: smaller>mi</font>'
@@ -4912,7 +4909,7 @@ function WMEURMPT_Injected () {
       }
       const distance = WMEURMPT.MPList[i].distanceToMapCenter
       let distanceStr = ''
-      if (W.prefs.get('isImperial')) {
+      if (wmeSDK.Settings.getUserSettings().isImperial) {
         distanceStr = Math.floor(distance * 3.28084) + '&nbsp;<font size: smaller>ft</font>'
         if (distance * 3.28084 >= 1000) {
           distanceStr = Math.floor(distance * 0.000621371) + '&nbsp;<font size: smaller>mi</font>'
@@ -5086,7 +5083,7 @@ function WMEURMPT_Injected () {
       }
       const distance = WMEURMPT.MCList[i].distanceToMapCenter
       let distanceStr = ''
-      if (W.prefs.get('isImperial')) {
+      if (wmeSDK.Settings.getUserSettings().isImperial) {
         distanceStr = Math.floor(distance * 3.28084) + '&nbsp;<font size: smaller>ft</font>'
         if (distance * 3.28084 >= 1000) {
           distanceStr = Math.floor(distance * 0.000621371) + '&nbsp;<font size: smaller>mi</font>'
@@ -5245,7 +5242,7 @@ function WMEURMPT_Injected () {
       }
       const distance = WMEURMPT.PURList[i].distanceToMapCenter
       let distanceStr = ''
-      if (W.prefs.get('isImperial')) {
+      if (wmeSDK.Settings.getUserSettings().isImperial) {
         distanceStr = Math.floor(distance * 3.28084) + '&nbsp;<font size: smaller>ft</font>'
         if (distance * 3.28084 >= 1000) {
           distanceStr = Math.floor(distance * 0.000621371) + '&nbsp;<font size: smaller>mi</font>'
