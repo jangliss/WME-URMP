@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.28
+// @version     3.9.29
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -196,7 +196,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.28'
+  WMEURMPT.urmpt_version = '3.9.29'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
   WMEURMPT.URMap = {}
@@ -6850,7 +6850,7 @@ function WMEURMPT_Injected () {
         for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
           for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
             WMEURMPT.logDebug('Scan editable area from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + ((lon + 0.5).toFixed(6)) + ' ' + ((lat + 0.5).toFixed(6)))
-            const turfLine = turf.lineString([[lon.toFixed(6), lat.toFixed(6)],[(lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)]])
+            const turfLine = turf.lineString([[Number(lon.toFixed(6)), Number(lat.toFixed(6))],[Number((lon + 0.5).toFixed(6)), Number((lat + 0.5).toFixed(6))]])
             const tileBounds = turf.bbox(turfLine)
             WMEURMPT.scanAreaBoundsList.push(tileBounds)
           }
@@ -6870,7 +6870,7 @@ function WMEURMPT_Injected () {
         for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
           for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
             WMEURMPT.logDebug('Scan drive area from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + ((lon + 0.5).toFixed(6)) + ' ' + ((lat + 0.5).toFixed(6)))
-            const turfLine = turf.lineString([[lon.toFixed(6), lat.toFixed(6)],[(lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)]])
+            const turfLine = turf.lineString([[Number(lon.toFixed(6)), Number(lat.toFixed(6))],[Number((lon + 0.5).toFixed(6)), Number((lat + 0.5).toFixed(6))]])
             const tileBounds = turf.bbox(turfLine)
             WMEURMPT.scanAreaBoundsList.push(tileBounds)
           }
@@ -6890,7 +6890,7 @@ function WMEURMPT_Injected () {
         for (let lat = bounds[1]; lat < bounds[3]; lat += 0.5) {
           for (let lon = bounds[0]; lon < bounds[2]; lon += 0.5) {
             WMEURMPT.logDebug('Scan managed area from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + ((lon + 0.5).toFixed(6)) + ' ' + ((lat + 0.5).toFixed(6)))
-            const turfLine = turf.lineString([[lon.toFixed(6), lat.toFixed(6)],[(lon + 0.5).toFixed(6), (lat + 0.5).toFixed(6)]])
+            const turfLine = turf.lineString([[Number(lon.toFixed(6)), Number(lat.toFixed(6))],[Number((lon + 0.5).toFixed(6)), Number((lat + 0.5).toFixed(6))]])
             const tileBounds = turf.bbox(turfLine)
             WMEURMPT.scanAreaBoundsList.push(tileBounds)
           }
@@ -6921,13 +6921,13 @@ function WMEURMPT_Injected () {
             lonStep = 180.0 - lon
           }
           WMEURMPT.logDebug('Scan ' + areaFilter.type + ' from: ' + lon.toFixed(6) + ' ' + lat.toFixed(6) + ' to: ' + (lon + lonStep).toFixed(6) + ' ' + (lat + latStep).toFixed(6))
-          let line = turf.lineString([[lon.toFixed(6), lat.toFixed(6)],[(lon + lonStep).toFixed(6), (lat + latStep).toFixed(6)]])
+          let line = turf.lineString([[Number(lon.toFixed(6)), Number(lat.toFixed(6))],[Number((lon + lonStep).toFixed(6)), Number((lat + latStep).toFixed(6))]])
           let tileBounds = turf.bbox(line)
           WMEURMPT.scanAreaBoundsList.push(tileBounds)
           if (lonStep !== 0.5) {
             lonStep = 0.5 - lonStep
             WMEURMPT.logDebug('Scan ' + areaFilter.type + ' from: 0! ' + lat.toFixed(6) + ' to: ' + lonStep.toFixed(6) + ' ' + (lat + latStep).toFixed(6))
-            line = turf.lineString([[0, lat.toFixed(6)],[lonStep.toFixed(6), (lat + latStep).toFixed(6)]])
+            line = turf.lineString([[0, Number(lat.toFixed(6))],[Number(lonStep.toFixed(6)), Number((lat + latStep).toFixed(6))]])
             tileBounds = turf.bbox(line)
             WMEURMPT.scanAreaBoundsList.push(tileBounds)
           }
