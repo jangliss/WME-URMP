@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.29
+// @version     3.9.30
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -196,7 +196,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.29'
+  WMEURMPT.urmpt_version = '3.9.30'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
   WMEURMPT.URMap = {}
@@ -6435,8 +6435,8 @@ function WMEURMPT_Injected () {
     if (Object.prototype.hasOwnProperty.call(MPs, 'mapComments') && MPs.mapComments.objects.length === 500) {
       return { error: 1, logMessage: { obj: 'mapComments', length: 500 } }
     }
-    if (Object.prototype.hasOwnProperty.call(MPs, 'venues') && MPs.venues.objects.length >= 1200) {
-      return { error: 1, logMessage: { obj: 'venues', length: 1200 } }
+    if (Object.prototype.hasOwnProperty.call(MPs, 'venues') && MPs.venues.objects.length >= 3000) {
+      return { error: 1, logMessage: { obj: 'venues', length: 3000 } }
     }
     if (filter != null) {
       let filterArea = []
