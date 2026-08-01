@@ -2594,7 +2594,7 @@ function WMEURMPT_Injected () {
       displayedCount++
       const number = t === 'UR' ? WMEURMPT.getDuration(src[i].data.driveDate) : src[i].data.weight
       const type = typeFunc(t === 'UR' ? src[i].data.type : src[i].data.subType)
-      const commentCount = src[i].data.session.comments.length
+      const commentCount = src[i].data.session && src[i].data.session.comments && src[i].data.session.comments.length || 0;
       let updatedBy = ''
       if (commentCount > 0) {
         const m = commentCount - 1
@@ -6425,7 +6425,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getMPs = function (bounds, filter) {
-    const url = 'https://' + document.location.host + WMEURMPT.wazeConfigApiFeatures + '?language=en' + (WMEURMPT.scanUR ? '&mapUpdateRequestFilter=3%2C0' : '') + (WMEURMPT.scanMP ? '&problemFilter=3%2C3' : '') + '&mapComments=' + (WMEURMPT.scanMC ? 'true' : 'false') + '&venueLevel=3&venueFilter=' + (WMEURMPT.scanPUR ? '3%2C3%2C3' : '0%2C0%2C0') + '&editableAreas=true&bbox=' + bounds[0] + '%2C' + bounds[1] + '%2C' + bounds[2] + '%2C' + bounds[3]
+    const url = 'https://' + document.location.host + WMEURMPT.wazeConfigApiFeatures + '?language=en' + (WMEURMPT.scanUR ? '&mapUpdateRequestFilter=3%2C0' : '') + (WMEURMPT.scanMP ? '&problemFilter=3%2C3' : '') + '&mapComments=' + (WMEURMPT.scanMC ? 'true' : 'false') + '&venueLevel=3&venueFilter=' + (WMEURMPT.scanPUR ? '3%2C3%2C3%2C3' : '0%2C0%2C0%2C0') + '&editableAreas=true&bbox=' + bounds[0] + '%2C' + bounds[1] + '%2C' + bounds[2] + '%2C' + bounds[3]
     let xhr3Object = null
     if (XMLHttpRequest) {
       xhr3Object = new XMLHttpRequest()
