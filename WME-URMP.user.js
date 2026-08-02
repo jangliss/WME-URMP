@@ -292,6 +292,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.customAreaList = []
   WMEURMPT.areaList = { custom: [], country: [] }
   WMEURMPT.statsCSV = ''
+  WMEURMPT.statsTopUser = 3
   WMEURMPT.policySafeHTML = null
   WMEURMPT.policySanitizeHTML = null
   WMEURMPT.icon_comments = 'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB94DDg83H1XMMOAAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAEQ0lEQVRYw+2XTUhcVxTHf0+dwcxUHawuxImtH0hbBEebGLCFutGFgSaBriImoXRRBLciqYuKza4bN21dVFcJgouE2IKolIJYP0BmFCwKoyJxksyMTGZ0Zvpax3u6eW+YD40abTftH+7mvnfv/3/OPfecc+G/Du0ca2sBJ5Bv7BMDXgDr/6Tgz4CfgAAQAaIGcQzYB8KAH/gZuHVRpAXAbeAlIIDk5uaKzWZTRUVFUlxcLMXFxVJUVCQ2m03y8vLE/A/wAV8Aljc9gk+AB8BHABUVFTQ0NHDt2jWuXLlCbW0tZWVlKKXw+/14vV4WFxdZWFhgaWlJdnZ2zP0XgF7g17NY/qXhUrHb7aq/v195PB45DZRSsrKyIgMDA2K1Wk1vhAxvnAq3AR2QiooKtba2JkqpNILTIJFIyMbGhqqvr1eGiEOg6yTyauBPQOrq6lQikTgTaaYnRET8fr80NzcLoAzDPn6dgBlA6uvrVTgcfmPyTBHb29tSU1NjHscvgP0o8k8BcTgcanp6+tzkmSJmZ2dNAQcGVxZ+A+TmzZvnZz0GHR0dZjwMAdZU8hLgldVqVUNDQxdmfSZmZmZML2wAhZl3fr+goEBWV1ezXHiUmNMIzLw94XBY7Ha7KaIkJ0XAW0COxWKhqqoqPVtpGpqmMTw8zN27d3ny5Ely/uHDh9y5c4epqSmUUiilePz4Mffu3WNychJN0xCRtH2MYMxKhNeBmMPhkN3d3SxLxsfHpbCwUABxOp3i8Xhkfn4+mXbz8/MlEAiI1+tNzmmaJj6fL22fcDgsNTU1ZhyUpnrgBXB4cHAgq6urAEnlAJubm8TjcQACgQCRSIS1tbXkd13XCYVCbG1tJedEhPX19OKo6zper1cD/jISU1pdeJ6TkyN9fX1ZHvD5fNLa2ipOp1M6OzslGAxKNBqVlpYWKS8vl46ODonH4xKNRqW9vV2cTqfcuHEjKxZGRkZM62ePygXDgDQ1NalgMJi1OBQKidvtlkgkkvy2v78vHo9HYrFYcm5vb0+Wl5dF1/WsQKyurjYF3AdyMgWUmOc3ODiYFv2ZEX/czTjqFpj/9fT0pJbpD49LxQ9MEXNzc+oiMqCIyNjYmFgsFmXUg+9eVwvyzXrQ1NR0IeSPHj0Sh8Nhun4JePukingLEJfLda6sFwwGpaurS9nt9lTyd0/TD1w/j4BQKCS9vb1SWloqmqaZ5z4JlGYS5R1BbgM+B7h8+bLouq6Nj48zOjoqT58+1RKJBC6Xi7a2NmlsbNQqKys5PDzk2bNneDweJiYmcLvd5l7K6Kq+B74GEqex/r7ZvXR3d6urV6+qlCZTjA5YThgxwA18C7x/lnfBV8A3Keo1Y0SM8jkLxI2u6YNj3gW/G2+DdeD5WZrQFoMo05ofgXeOSBoWg/ySMfJf134fh9QYuAT8YVjzEvgBGAFeHbP2wBgXivcAF//jX8TfP8rg1M0AqeYAAAAASUVORK5CYII='
@@ -2341,21 +2342,21 @@ function WMEURMPT_Injected () {
     WMEURMPT.statsCSV += 'Bests' + NL
     out += 'Best UR closer:<ol>'
     WMEURMPT.statsCSV += 'UR Closer;count;solved;not identified' + NL
-    for (let i = 0; i < 3 && i < sortableURClosers.length; i++) {
+    for (let i = 0; i < WMEURMPT.statsTopUser && i < sortableURClosers.length; i++) {
       out += '<li>' + sortableURClosers[i][0] + ' (' + sortableURClosers[i][1].total + ' URs closed, ' + sortableURClosers[i][1].solved + ' solved and ' + (sortableURClosers[i][1].total - sortableURClosers[i][1].solved) + ' not identified)</li>'
       WMEURMPT.statsCSV += sortableURClosers[i][0] + ';' + sortableURClosers[i][1].total + ';' + sortableURClosers[i][1].solved + ';' + (sortableURClosers[i][1].total - sortableURClosers[i][1].solved) + NL
     }
     out += '</ol>'
     out += 'Best MP closer:<ol>'
     WMEURMPT.statsCSV += 'MP Closer;count;solved;not identified' + NL
-    for (let i = 0; i < 3 && i < sortableMPClosers.length; i++) {
+    for (let i = 0; i < WMEURMPT.statsTopUser && i < sortableMPClosers.length; i++) {
       out += '<li>' + sortableMPClosers[i][0] + ' (' + sortableMPClosers[i][1].total + ' MPs closed, ' + sortableMPClosers[i][1].solved + ' solved and ' + (sortableMPClosers[i][1].total - sortableMPClosers[i][1].solved) + ' not identified)</li>'
       WMEURMPT.statsCSV += sortableMPClosers[i][0] + ';' + sortableMPClosers[i][1].total + ';' + sortableMPClosers[i][1].solved + ';' + (sortableMPClosers[i][1].total - sortableMPClosers[i][1].solved) + NL
     }
     out += '</ol>'
     out += 'Best pipelette:<ol>'
     WMEURMPT.statsCSV += 'Pipelette;Message count' + NL
-    for (let i = 0; i < 3 && i < sortablePipelettes.length; i++) {
+    for (let i = 0; i < WMEURMPT.statsTopUser && i < sortablePipelettes.length; i++) {
       out += '<li>' + sortablePipelettes[i][0] + ' (' + sortablePipelettes[i][1] + ' comments)</li>'
       WMEURMPT.statsCSV += sortablePipelettes[i][0] + ';' + sortablePipelettes[i][1] + NL
     }
@@ -3194,6 +3195,9 @@ function WMEURMPT_Injected () {
       const purNameColumnWidth = WMEURMPT.createElement('span')
       purNameColumnWidth.innerHTML = WMEURMPT.convertHtml('PUR name column width: <input style="height:20px" type="text" size="3" id="urmpt-setting-purnamewidth" value="' + WMEURMPT.PURNameMaxLength + '"/><br>')
       settingsTabPane.appendChild(purNameColumnWidth)
+      const statsTopUser = WMEURMPT.createElement('span')
+      statsTopUser.innerHTML = WMEURMPT.convertHtml('Top User Stats: <input style="height:20px" size="3" type="number" id="urmpt-setting-statstopuser" min="1" max="100" value="' + (WMEURMPT.statsTopUser || 3) + '" /><br/>')
+      settingsTabPane.appendChild(statsTopUser)
       const urTaggedListSpan = WMEURMPT.createElement('span')
       urTaggedListSpan.innerHTML = WMEURMPT.convertHtml('UR Tag keywords: <input style="height:20px;width:100%;" type="text" id="urmpt-setting-urtaglist" value="' + WMEURMPT.taggedURList.join(';') + '"/>')
       settingsTabPane.appendChild(urTaggedListSpan)
@@ -3501,6 +3505,11 @@ function WMEURMPT_Injected () {
         WMEURMPT.hideRank4Tip = e.target.checked
         WMEURMPT.saveOptions()
         WMEURMPT.updateScanGroup()
+      })
+
+      WMEURMPT.getId('urmpt-setting-statstopuser').addEventListener('change', function(e) {
+        WMEURMPT.statsTopUser = e.target.value
+        WMEURMPT.saveOptions()
       })
       // End of Settings Tab //
 
@@ -8007,7 +8016,8 @@ function WMEURMPT_Injected () {
       disableScrolling: WMEURMPT.disableScrolling,
       purInvertFilter: WMEURMPT.purInvertFilter,
       urtInvertFilter: WMEURMPT.urtInvertFilter,
-      hideRank4Tip: WMEURMPT.hideRank4Tip
+      hideRank4Tip: WMEURMPT.hideRank4Tip,
+      statsTopUser: WMEURMPT.statsTopUser
     }
     WMEURMPT.log('save options: ', options)
     // eslint-disable-next-line no-undef
@@ -8118,6 +8128,7 @@ function WMEURMPT_Injected () {
       WMEURMPT.MPBlacklist = typeof options.MPBlacklist === 'undefined' ? WMEURMPT.MPBlacklist : options.MPBlacklist
       WMEURMPT.MCBlacklist = typeof options.MCBlacklist === 'undefined' ? WMEURMPT.MCBlacklist : options.MCBlacklist
       WMEURMPT.PURBlacklist = typeof options.PURBlacklist === 'undefined' ? WMEURMPT.PURBlacklist : options.PURBlacklist
+      WMEURMPT.statsTopUser = options.statsTopUser || 3
 
     }
   }
