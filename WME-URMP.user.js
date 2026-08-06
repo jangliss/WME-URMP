@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.34
+// @version     3.9.35
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -196,7 +196,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.34'
+  WMEURMPT.urmpt_version = '3.9.35'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
   WMEURMPT.URMap = {}
@@ -3542,9 +3542,9 @@ function WMEURMPT_Injected () {
       css += '.urt-progressBarFG { float: left; position: relative; bottom: 22px; height: 0px; text-align: center; width: 100% }'
       css += '#urt-info { margin: 5px; }'
       css += '.urt-blacklist { background: transparent url(data:image/png;base64,' + WMEURMPT.icon_blacklist + ') center top; background-size: 16px 16px; background-repeat: no-repeat; } '
-      css += '#urmp-tabs { display: flex; width: calc(100% - 26px) !important; padding-left: 0; padding-right: 0; margin: 0 20px 0 6px; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; }'
-      css += '#urmp-tabs > li { display: block; flex: 1 1 0; min-width: 0; text-align: center; }'
-      css += '#urmp-tabs > li > a { display: block; padding: 5px 0; margin-right: 0; text-align: center; overflow: hidden; white-space: nowrap; }'
+      css += '#urmp-tabs { display: flex; width: calc(100% - 26px) !important; padding-left: 0; padding-right: 0; padding-bottom: 0 !important; margin: 0 20px 0 6px; border-radius: 12px; overflow: hidden; border: 1px solid #dddddd; }'
+      css += '#urmp-tabs > li { display: block; flex: 1 1 0 !important; min-width: 0; text-align: center; }'
+      css += '#urmp-tabs > li > a { display: block; padding: 5px 0 !important; margin: 0 !important; line-height: normal !important; text-align: center; overflow: hidden; white-space: nowrap; }'
       css += '#urmp-tabs > li.active > a, #urmp-tabs > li.active > a:hover, #urmp-tabs > li.active > a:focus { border-radius: 10px; border-bottom-color: #ddd; }'
       css += '#urmpt-qoptions { display: block; margin: 0 20px 0 6px; border-radius: 12px; border: 1px solid #dddddd; }'
       css += '.urt-chkbox { width: 16px; height: 16px; margin-top: -5px; }'
