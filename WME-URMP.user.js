@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.35
+// @version     3.9.36
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -196,7 +196,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.35'
+  WMEURMPT.urmpt_version = '3.9.36'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
   WMEURMPT.URMap = {}
@@ -6434,7 +6434,7 @@ function WMEURMPT_Injected () {
   }
 
   WMEURMPT.getMPs = function (bounds, filter) {
-    const url = 'https://' + document.location.host + WMEURMPT.wazeConfigApiFeatures + '?language=en' + (WMEURMPT.scanUR ? '&mapUpdateRequestFilter=3%2C0' : '') + (WMEURMPT.scanMP ? '&problemFilter=3%2C3' : '') + '&mapComments=' + (WMEURMPT.scanMC ? 'true' : 'false') + '&venueLevel=3&venueFilter=' + (WMEURMPT.scanPUR ? '3%2C3%2C3%2C3' : '0%2C0%2C0%2C0') + '&editableAreas=true&bbox=' + bounds[0] + '%2C' + bounds[1] + '%2C' + bounds[2] + '%2C' + bounds[3]
+    const url = 'https://' + document.location.host + WMEURMPT.wazeConfigApiFeatures + '?language=en' + (WMEURMPT.scanUR ? '&mapUpdateRequestFilter=3%2C0' : '') + (WMEURMPT.scanMP ? '&problemFilter=3%2C3' : '') + '&mapComments=' + (WMEURMPT.scanMC ? 'true' : 'false') + '&venueLevel=4&venueFilter=' + (WMEURMPT.scanPUR ? '3%2C3%2C3%2C3' : '0%2C0%2C0%2C0') + '&editableAreas=true&bbox=' + bounds[0] + '%2C' + bounds[1] + '%2C' + bounds[2] + '%2C' + bounds[3]
     let xhr3Object = null
     if (XMLHttpRequest) {
       xhr3Object = new XMLHttpRequest()
@@ -7038,7 +7038,7 @@ function WMEURMPT_Injected () {
         newTileLine = turf.lineString(
           [
             [tileBounds[0], (((tileBounds[1] + tileBounds[3])/2.0))],
-            [((tileBounds[0] + tileBounds[2])/2.0), tileBounds[1]]
+            [((tileBounds[0] + tileBounds[2])/2.0), tileBounds[3]]
           ]
         )
         WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
@@ -7103,7 +7103,7 @@ function WMEURMPT_Injected () {
         newTileLine = turf.lineString(
           [
             [tileBounds[0], (((tileBounds[1] + tileBounds[3])/2.0))],
-            [((tileBounds[0] + tileBounds[2])/2.0), tileBounds[1]]
+            [((tileBounds[0] + tileBounds[2])/2.0), tileBounds[3]]
           ]
         )
         WMEURMPT.scanAreaBoundsList.unshift(turf.bbox(newTileLine))
