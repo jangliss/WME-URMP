@@ -214,6 +214,8 @@ function WMEURMPT_Injected () {
   WMEURMPT.dom = {}
   WMEURMPT.driveArea = []
   WMEURMPT.managedAreas = []
+  WMEURMPT.cachedFilterArea = []
+  WMEURMPT.cachedFilterType = null
   WMEURMPT.sortModeListUR = { ageASC: 1, ageDSC: -1, typeASC: 2, typeDSC: -2, commentCountASC: 3, commentCountDSC: -3, distanceASC: 4, distanceDSC: -4, lastCommentASC: 5, lastCommentDSC: -5 }
   WMEURMPT.sortModeListMP = { priorityASC: 1, priorityDSC: -1, typeASC: 2, typeDSC: -2, distanceASC: 3, distanceDSC: -3 }
   WMEURMPT.sortModeListMC = { distanceASC: 1, distanceDSC: -1, commentCountASC: 2, commentCountDSC: -2, ageASC: 3, ageDSC: -3, lastCommentASC: 4, lastCommentDSC: -4 }
@@ -6489,6 +6491,11 @@ function WMEURMPT_Injected () {
         filterArea = filterArea.concat(WMEURMPT.fetchAreaGeometry(filter.name, filter.type))
       }
 
+      if (filterArea.length > 0) {
+        WMEURMPT.cachedFilterArea = filterArea
+        WMEURMPT.cachedFilterType = filter.type
+      }
+
       WMEURMPT.logDebug('Filter Areas Count:', filterArea.length);
 
       let cmp = 0
@@ -6660,6 +6667,102 @@ function WMEURMPT_Injected () {
     return MPs
   }
 
+  WMEURMPT.getPURs = function (bounds, filter) {
+    const body = JSON.stringify({
+        fromCreationTime: null,
+        fromUpdateTime: null,
+        toCreationTime: null,
+        toUpdateTime: null,
+        bbox: [bounds[0], bounds[1], bounds[2], bounds[3]],
+        cityId: null,
+        countryId: null,
+        managedAreaId: null,
+        managedAreaIds: null,
+        stateId: null,
+        userPropertiesFilter: {},
+        venueUpdateRequestsFilter: {
+            categories: null,
+            lockRanks: [0, 1, 2, 3, 4, 5],
+            residential: null,
+            types: null
+        }
+    })
+
+    let xhr3Object = null
+    if (XMLHttpRequest) {
+        xhr3Object = new XMLHttpRequest()
+    } else if (ActiveXObject) {
+        xhr3Object = new ActiveXObject('Microsoft.XMLHTTP')
+    }
+
+    let PURs = null
+    xhr3Object.open('POST', 'https://' + document.location.host + '/Descartes/app/v1/Issues/Search/Map', false)
+    xhr3Object.withCredentials = true
+    xhr3Object.setRequestHeader('content-type', 'application/json; charset=utf-8')
+    const csrfToken = document.cookie.split('; ').find(c => c.startsWith('_csrf_token=')) ?.split('=')[1]
+    if (csrfToken) {
+        xhr3Object.setRequestHeader('x-csrf-token', decodeURIComponent(csrfToken))
+    }
+    xhr3Object.send(body)
+
+    if (xhr3Object.status === 200) {
+        try {
+            PURs = JSON.parse(xhr3Object.responseText)
+        } catch (e) {
+            WMEURMPT.log("Error: can't read PUR server response: ", e)
+            WMEURMPT.log('Response from server: ', xhr3Object.responseText)
+            PURs = null
+        }
+    }
+
+    if (PURs === null || !Object.prototype.hasOwnProperty.call(PURs, 'venues')) {
+        return null
+    }
+
+    if (filter != null) {
+        let filterArea = []
+        if (filter.type === 'editableArea' || filter.type === 'driveArea' || filter.type === 'managedArea') {
+           filterArea = WMEURMPT.cachedFilterArea ?? []
+        }
+        if (filter.type === 'country' || filter.type === 'custom') {
+            filterArea = filterArea.concat(WMEURMPT.fetchAreaGeometry(filter.name, filter.type))
+        }
+
+        let i = 0
+        while (i < PURs.venues.objects.length) {
+            const thePUR = PURs.venues.objects[i]
+            if (!thePUR.venueUpdateRequests || thePUR.venueUpdateRequests.length === 0) {
+                PURs.venues.objects.splice(i, 1)
+                continue
+            }
+            let lonlat = null
+            if (thePUR.geometry.type === 'Point') {
+                lonlat = turf.point(thePUR.geometry.coordinates)
+            } else {
+                lonlat = turf.centroid(turf.polygon(thePUR.geometry.coordinates))
+            }
+            let inside = false
+            for (let a = 0; a < filterArea.length; a++) {
+                if (turf.booleanPointInPolygon(lonlat, filterArea[a])) {
+                    inside = true
+                    break
+                }
+            }
+            if (!inside) {
+                PURs.venues.objects.splice(i, 1)
+                continue
+            }
+            i++
+        }
+
+        PURs.area = filterArea
+        PURs.filterType = filter.type
+        PURs.tile = bounds
+    }
+
+    return PURs
+  }
+
   WMEURMPT.updateURList = function (URs) {
     if (Object.prototype.hasOwnProperty.call(URs, 'mapUpdateRequests') === false) {
       return
@@ -6808,10 +6911,15 @@ function WMEURMPT_Injected () {
     }
   }
   WMEURMPT.updatePURList = function (PURs) {
-    if (Object.prototype.hasOwnProperty.call(PURs, 'venues') === false) {
+    if (PURs === null || Object.prototype.hasOwnProperty.call(PURs, 'venues') === false) {
       return
     }
     for (let i = 0; i < PURs.venues.objects.length; i++) {
+      if (!PURs.venues.objects[i].venueUpdateRequests ||
+           PURs.venues.objects[i].venueUpdateRequests.length === 0) {
+          continue
+      }
+
       let found = true
       let pur = WMEURMPT.getPURFromId(PURs.venues.objects[i].id)
       if (pur == null) {
@@ -6983,6 +7091,10 @@ function WMEURMPT_Injected () {
     for (let i = 0; i < WMEURMPT.PURList.length; i++) {
       WMEURMPT.PURList[i].updated = false
     }
+
+    WMEURMPT.cachedFilterArea = []
+    WMEURMPT.cachedFilterType = null
+    
     WMEURMPT.log('Starting scan...')
     WMEURMPT.log('Tile count: ' + WMEURMPT.scanAreaBoundsList.length)
     const pb = new WMEURMPT.ProgressBar(WMEURMPT.getId('urt-progressBar'))
@@ -7075,6 +7187,7 @@ function WMEURMPT_Injected () {
     tileBounds = WMEURMPT.scanAreaBoundsList[0]
     const progression = Math.floor((1 - WMEURMPT.scanAreaBoundsList.length / WMEURMPT.scanAreaBoundsCount) * 100)
     const MPs = WMEURMPT.getMPs(tileBounds, areaFilter)
+    const PURs = WMEURMPT.scanPUR ? WMEURMPT.getPURs(tileBounds, areaFilter) : null
 
     WMEURMPT.scanAreaBoundsList.shift()
     if (MPs != null) {
@@ -7118,11 +7231,11 @@ function WMEURMPT_Injected () {
 
         WMEURMPT.scanAreaBoundsCount += 4
       } else {
-        WMEURMPT.log('Found: ' + (Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests') ? MPs.mapUpdateRequests.objects.length + ' URs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'problems') ? MPs.problems.objects.length + ' MPs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'mapComments') ? MPs.mapComments.objects.length + ' MCs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'venues') ? MPs.venues.objects.length + ' PURs' : ''))
+        WMEURMPT.log('Found: ' + (Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests') ? MPs.mapUpdateRequests.objects.length + ' URs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'problems') ? MPs.problems.objects.length + ' MPs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'mapComments') ? MPs.mapComments.objects.length + ' MCs; ' : '') + (PURs && Object.prototype.hasOwnProperty.call(PURs, 'venues') ? PURs.venues.objects.length + ' PURs' : ''))
         WMEURMPT.updateURList(MPs)
         WMEURMPT.updateMPList(MPs)
         WMEURMPT.updateMCList(MPs)
-        WMEURMPT.updatePURList(MPs)
+        WMEURMPT.updatePURList(PURs)
         WMEURMPT.removeOldURMP(MPs.area, MPs.filterType, MPs.tile)
       }
     }
@@ -7857,7 +7970,7 @@ function WMEURMPT_Injected () {
   WMEURMPT.getPUR = function (lon, lat, id) {
     const turfLine = turf.lineString([[lon - 0.01, lat - 0.01], [lon + 0.01, lat + 0.01]])
     const bounds = turf.bbox(turfLine)
-    const PURs = WMEURMPT.getMPs(bounds)
+    const PURs = WMEURMPT.getPURs(bounds, null)
     if (PURs == null) {
       return null
     }
