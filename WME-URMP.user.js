@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.37
+// @version     3.9.38
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -196,7 +196,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.37'
+  WMEURMPT.urmpt_version = '3.9.38'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
   WMEURMPT.URMap = {}
@@ -6477,7 +6477,7 @@ function WMEURMPT_Injected () {
     }
     if (filter != null) {
       let filterArea = []
-      if (filter != null && (filter.type === 'editableArea' || filter.type === 'driveArea' || filter.type === 'managedArea')) {
+      if (filter != null && (filter.type === 'driveArea' || filter.type === 'managedArea')) {
         WMEURMPT.logDebug('User Areas: ', MPs.userAreas.objects);
         for (let a = 0; a < MPs.userAreas.objects.length; a++) {
           if (MPs.userAreas.objects[a].geometry.type === 'MultiPolygon') {
@@ -6574,39 +6574,6 @@ function WMEURMPT_Injected () {
           cmp++
         }
       }
-      cmp = 0
-      if (Object.prototype.hasOwnProperty.call(MPs, 'venues')) {
-        while (cmp < MPs.venues.objects.length) {
-          const thePUR = MPs.venues.objects[cmp]
-          if (!Object.prototype.hasOwnProperty.call(thePUR, 'venueUpdateRequests')) {
-            MPs.venues.objects.splice(cmp, 1)
-            continue
-          }
-          if (thePUR.venueUpdateRequests.length === 0) {
-            MPs.venues.objects.splice(cmp, 1)
-            continue
-          }
-          let lonlat = null
-          if (thePUR.geometry.type === 'Point') {
-            lonlat = turf.point(thePUR.geometry.coordinates)
-          } else {
-            const venuePoly = turf.polygon(thePUR.geometry.coordinates)
-            lonlat = turf.centroid(venuePoly)
-          }
-          let inside = false
-          for (let a = 0; a < filterArea.length; a++) {
-            if (turf.booleanPointInPolygon(lonlat,filterArea[a])) {
-              inside = true
-              break
-            }
-          }
-          if (!inside) {
-            MPs.venues.objects.splice(cmp, 1)
-            continue
-          }
-          cmp++
-        }
-      }
       MPs.area = filterArea
       MPs.filterType = filter.type
       MPs.tile = bounds
@@ -6663,12 +6630,12 @@ function WMEURMPT_Injected () {
         }
       }
     }
-    WMEURMPT.logDebug('URs, MPs, MCs, and PURs from server after process: ', MPs)
+    WMEURMPT.logDebug('URs, MPs, and MCs from server after process: ', MPs)
     return MPs
   }
 
-  WMEURMPT.getPURs = function (bounds, filter) {
-    const body = JSON.stringify({
+  WMEURMPT.getPURs = function (bounds, filter, nextPage) {
+    let body = {
         fromCreationTime: null,
         fromUpdateTime: null,
         toCreationTime: null,
@@ -6686,7 +6653,11 @@ function WMEURMPT_Injected () {
             residential: null,
             types: null
         }
-    })
+    }
+
+    if (typeof nextPage === 'number') {
+      body.venueUpdateRequestsFilter.page = nextPage
+    }
 
     let xhr3Object = null
     if (XMLHttpRequest) {
@@ -6696,14 +6667,14 @@ function WMEURMPT_Injected () {
     }
 
     let PURs = null
-    xhr3Object.open('POST', 'https://' + document.location.host + '/Descartes/app/v1/Issues/Search/Map', false)
+    xhr3Object.open('POST', 'https://' + document.location.host + '/Descartes/app/v1/Issues/Search/List', false)
     xhr3Object.withCredentials = true
     xhr3Object.setRequestHeader('content-type', 'application/json; charset=utf-8')
     const csrfToken = document.cookie.split('; ').find(c => c.startsWith('_csrf_token=')) ?.split('=')[1]
     if (csrfToken) {
         xhr3Object.setRequestHeader('x-csrf-token', decodeURIComponent(csrfToken))
     }
-    xhr3Object.send(body)
+    xhr3Object.send(JSON.stringify(body))
 
     if (xhr3Object.status === 200) {
         try {
@@ -6721,7 +6692,7 @@ function WMEURMPT_Injected () {
 
     if (filter != null) {
         let filterArea = []
-        if (filter.type === 'editableArea' || filter.type === 'driveArea' || filter.type === 'managedArea') {
+        if (filter.type === 'driveArea' || filter.type === 'managedArea') {
            filterArea = WMEURMPT.cachedFilterArea ?? []
         }
         if (filter.type === 'country' || filter.type === 'custom') {
@@ -6758,6 +6729,20 @@ function WMEURMPT_Injected () {
         PURs.area = filterArea
         PURs.filterType = filter.type
         PURs.tile = bounds
+    }
+
+    if (PURs?.mapIssues?.venueUpdateRequests?.hasMore) {
+      if (typeof nextPage === 'number') {
+        nextPage += 1
+      } else {
+        nextPage = 2
+      }
+      morePURs = WMEURMPT.getPURs(bounds, filter, nextPage)
+
+      if (morePURs !== null && Object.prototype.hasOwnProperty.call(morePURs, 'venues')) {
+          PURs.venues.objects = PURs.venues.objects.concat(morePURs.venues.objects)
+      }
+
     }
 
     return PURs
@@ -7231,13 +7216,16 @@ function WMEURMPT_Injected () {
 
         WMEURMPT.scanAreaBoundsCount += 4
       } else {
-        WMEURMPT.log('Found: ' + (Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests') ? MPs.mapUpdateRequests.objects.length + ' URs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'problems') ? MPs.problems.objects.length + ' MPs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'mapComments') ? MPs.mapComments.objects.length + ' MCs; ' : '') + (PURs && Object.prototype.hasOwnProperty.call(PURs, 'venues') ? PURs.venues.objects.length + ' PURs' : ''))
+        WMEURMPT.log('Found: ' + (Object.prototype.hasOwnProperty.call(MPs, 'mapUpdateRequests') ? MPs.mapUpdateRequests.objects.length + ' URs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'problems') ? MPs.problems.objects.length + ' MPs; ' : '') + (Object.prototype.hasOwnProperty.call(MPs, 'mapComments') ? MPs.mapComments.objects.length + ' MCs; ' : ''))
         WMEURMPT.updateURList(MPs)
         WMEURMPT.updateMPList(MPs)
         WMEURMPT.updateMCList(MPs)
-        WMEURMPT.updatePURList(PURs)
         WMEURMPT.removeOldURMP(MPs.area, MPs.filterType, MPs.tile)
       }
+    }
+    if (PURs != null) {
+      WMEURMPT.log('Found: ' + (PURs && Object.prototype.hasOwnProperty.call(PURs, 'venues') ? PURs.venues.objects.length + ' PURs' : ''))
+      WMEURMPT.updatePURList(PURs)
     }
     pb.update(progression)
     WMEURMPT.info("Please, don't touch anything during this scan.")
