@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        WME UR-MP tracking
-// @version     3.9.38
+// @version     3.9.39
 // @description Track UR and MP in the Waze Map Editor
 // @namespace   https://greasyfork.org/en/scripts/368141-wme-ur-mp-tracking
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -14,8 +14,8 @@
 // @grant       GM_xmlhttpRequest
 // @grant       GM_info
 // @grant       unsafeWindow
-// @copyright   2025, dummyd2, seb-d59, jangliss
-// @author      dummyd2, seb-d59, jangliss
+// @copyright   2025, dummyd2, seb-d59, jangliss, jushag
+// @author      dummyd2, seb-d59, jangliss, jushag
 // @connect     waze.netdork.net
 // @downloadURL https://update.greasyfork.org/scripts/368141/WME%20UR-MP%20tracking.user.js
 // @updateURL   https://update.greasyfork.org/scripts/368141/WME%20UR-MP%20tracking.meta.js
@@ -196,7 +196,7 @@ function WMEURMPT_Injected () {
   const NL = "\n"
   const WMEURMPT = {}
   WMEURMPT.isDebug = false
-  WMEURMPT.urmpt_version = '3.9.38'
+  WMEURMPT.urmpt_version = '3.9.39'
   WMEURMPT.URList = []
   WMEURMPT.URBlacklist = []
   WMEURMPT.URMap = {}
