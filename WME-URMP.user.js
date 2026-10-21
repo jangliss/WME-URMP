@@ -862,7 +862,9 @@ function WMEURMPT_Injected () {
   WMEURMPT.isInsideDriveArea = function (lon, lat) {
     const pointObj = turf.point([lon, lat])
     for (let a = 0; a < WMEURMPT.driveArea.length; a++) {
-      return turf.booleanPointInPolygon(pointObj, WMEURMPT.driveArea[a])
+      if (turf.booleanPointInPolygon(pointObj, WMEURMPT.driveArea[a])) {
+        return true
+      }
     }
     return false
   }
@@ -870,7 +872,9 @@ function WMEURMPT_Injected () {
   WMEURMPT.isInsideManagedArea = function (lon, lat) {
     const pointObj = turf.point([lon, lat])
     for (let a = 0; a < WMEURMPT.managedAreas.length; a++) {
-      return turf.booleanPointInPolygon(pointObj, WMEURMPT.managedAreas[a])
+      if (turf.booleanPointInPolygon(pointObj, WMEURMPT.managedAreas[a])) {
+        return true
+      }
     }
     return false
   }
