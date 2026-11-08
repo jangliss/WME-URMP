@@ -3937,6 +3937,18 @@ function WMEURMPT_Injected () {
     }
     WMEURMPT.log((WMEURMPT.MPList[i].blackListed ? 'Whitelist' : 'Blacklist') + ' MP: ' + WMEURMPT.MPList[i].id)
     WMEURMPT.MPList[i].blackListed = !WMEURMPT.MPList[i].blackListed
+
+    if (WMEURMPT.keepBlacklist) {
+      if (WMEURMPT.MPList[i].blackListed && WMEURMPT.MPBlacklist.indexOf(WMEURMPT.MPList[i].id) == -1 ) {
+        WMEURMPT.MPBlacklist.push(WMEURMPT.MPList[i].id)
+      } else {
+        const idx = WMEURMPT.MPBlacklist.indexOf(WMEURMPT.MPList[i].id)
+        if (idx > -1) {
+          WMEURMPT.MPBlacklist.splice(idx,1)
+        }
+      }
+    }
+
     WMEURMPT.updateIHMFromMPList()
   }
 
@@ -4037,6 +4049,18 @@ function WMEURMPT_Injected () {
     }
     WMEURMPT.log((WMEURMPT.PURList[i].blackListed ? 'Whitelist' : 'Blacklist') + ' PUR: ' + WMEURMPT.PURList[i].id)
     WMEURMPT.PURList[i].blackListed = !WMEURMPT.PURList[i].blackListed
+
+    if (WMEURMPT.keepBlacklist) {
+      if (WMEURMPT.PURList[i].blackListed && WMEURMPT.PURBlacklist.indexOf(WMEURMPT.PURList[i].id) == -1 ) {
+        WMEURMPT.PURBlacklist.push(WMEURMPT.PURList[i].id)
+      } else {
+        const idx = WMEURMPT.PURBlacklist.indexOf(WMEURMPT.PURList[i].id)
+        if (idx > -1) {
+          WMEURMPT.PURBlacklist.splice(idx,1)
+        }
+      }
+    }
+
     WMEURMPT.updateIHMFromPURList()
   }
 
